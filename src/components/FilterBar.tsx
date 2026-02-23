@@ -96,7 +96,7 @@ export function FilterBar({
             <label>状态</label>
             <div className="filter-options">
               <button
-                className={filter.status === 'pending' ? 'active' : ''}
+                className={filter.status === null ? 'active' : ''}
                 onClick={() => handleStatusChange(null)}
               >
                 全部
