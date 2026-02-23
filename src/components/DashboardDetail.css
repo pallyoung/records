@@ -5,8 +5,8 @@
   padding-bottom: 100px;
 }
 
-/* 视图切换 */
-.view-toggle {
+/* Tab 切换 */
+.tab-toggle {
   display: flex;
   gap: 8px;
   margin-bottom: 20px;
@@ -35,6 +35,46 @@
   color: #fff;
 }
 
+/* Tab 内容 */
+.tab-content {
+  margin-top: 16px;
+}
+
+/* 概览卡片 */
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.overview-card {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  text-align: center;
+}
+
+.overview-card.delayed {
+  background: var(--danger-bg);
+}
+
+.overview-value {
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  font-family: var(--font-heading);
+  color: var(--text-primary);
+}
+
+.overview-card.delayed .overview-value {
+  color: var(--danger);
+}
+
+.overview-label {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
 /* 图表区域 */
 .chart-section {
   margin-bottom: 28px;
@@ -55,6 +95,80 @@
   height: 200px;
   background: var(--bg-secondary);
   border-radius: var(--radius-md);
+  margin-top: 16px;
+}
+
+/* Tag 分析列表 */
+.tag-analysis-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tag-analysis-item {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+}
+
+.tag-analysis-item .tag-name {
+  font-weight: 500;
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+}
+
+.tag-stats {
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.tag-stats .stat {
+  display: flex;
+  gap: 4px;
+  font-size: var(--text-xs);
+}
+
+.tag-stats .label {
+  color: var(--text-muted);
+}
+
+.tag-stats .value {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.tag-stats .value.delayed {
+  color: var(--danger);
+}
+
+.tag-bar {
+  height: 4px;
+  background: var(--accent-tertiary);
+  border-radius: var(--radius-full);
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.tag-bar-fill {
+  height: 100%;
+  background: var(--danger);
+  border-radius: var(--radius-full);
+  transition: width 0.3s ease;
+}
+
+.empty-state {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 40px;
+  font-size: var(--text-sm);
+}
+
+/* 视图切换（保留兼容性） */
+.view-toggle {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
 }
 
 /* 移动端适配 */
@@ -64,7 +178,7 @@
     padding-bottom: 80px;
   }
 
-  .view-toggle {
+  .tab-toggle {
     margin-bottom: 16px;
   }
 
@@ -73,7 +187,27 @@
     font-size: 12px;
   }
 
+  .overview-grid {
+    gap: 8px;
+  }
+
+  .overview-card {
+    padding: 12px;
+  }
+
+  .overview-value {
+    font-size: var(--text-xl);
+  }
+
   .echarts-container {
     height: 180px;
+  }
+
+  .tag-analysis-item {
+    padding: 10px 12px;
+  }
+
+  .tag-stats {
+    gap: 12px;
   }
 }
