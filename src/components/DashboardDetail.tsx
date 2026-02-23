@@ -10,8 +10,8 @@ interface DashboardDetailProps {
 type ViewMode = 'week' | 'month';
 type TabType = 'delay' | 'efficiency' | 'tag';
 
-// 延期分析 Tab
-function DelayAnalysisTab({ records }: { records: Record[] }) {
+// 延期统计区块（独立展示，与 Dashboard 的今日延期平级）
+function DelayStatsSection({ records }: { records: Record[] }) {
   const stats = useMemo(() => {
     const now = new Date();
     const incomplete = records.filter(r => r.status !== 'completed');
@@ -31,23 +31,21 @@ function DelayAnalysisTab({ records }: { records: Record[] }) {
   }, [records]);
 
   return (
-    <div className="tab-content">
-      <div className="overview-grid">
-        <div className="overview-card delayed">
-          <div className="overview-value">{stats.delayedStart}</div>
-          <div className="overview-label">计划开始未开始</div>
-        </div>
-        <div className="overview-card delayed">
-          <div className="overview-value">{stats.delayedEnd}</div>
-          <div className="overview-label">计划完成未完成</div>
-        </div>
+    <div className="overview-grid">
+      <div className="overview-card delayed">
+        <div className="overview-value">{stats.delayedStart}</div>
+        <div className="overview-label">计划开始未开始</div>
+      </div>
+      <div className="overview-card delayed">
+        <div className="overview-value">{stats.delayedEnd}</div>
+        <div className="overview-label">计划完成未完成</div>
       </div>
     </div>
   );
 }
 
-// 效率统计 Tab
-function EfficiencyTab({ records }: { records: Record[] }) {
+// 延期分析 Tab（包含图表）
+function DelayAnalysisTab({ records }: { records: Record[] }) {
   const [viewMode, setViewMode] = useState<ViewMode>('week');
   const chartRef = useRef<HTMLDivElement>(null);
   const chartInstance = useRef<echarts.ECharts | null>(null);
