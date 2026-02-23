@@ -1,0 +1,59 @@
+.timeline {
+  padding: 8px;
+}
+
+.timeline-group {
+  margin-bottom: 24px;
+}
+
+.timeline-header {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 12px;
+}
+
+.timeline-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 48px;
+  color: #999;
+}
+
+/* 响应式时间线 */
+
+/* 移动端 */
+@media (max-width: 640px) {
+  .timeline {
+    padding: 0;
+  }
+
+  .timeline-header {
+    font-size: 13px;
+    padding: 12px 16px;
+    background: #f9f9f9;
+    margin: 0 -16px 12px -16px;
+  }
+}
+
+/* 桌面端 */
+@media (min-width: 1025px) {
+  .timeline-group {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 16px;
+  }
+
+  .timeline-header {
+    text-align: right;
+    border: none;
+    padding: 12px 0;
+  }
+}
