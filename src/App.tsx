@@ -5,7 +5,7 @@ import { Timeline } from './components/Timeline';
 import { RecordForm } from './components/RecordForm';
 import { ReviewPage } from './pages/ReviewPage';
 import { recordActions } from './store/recordStore';
-import type { Record, FilterState } from './types';
+import type { Record, FilterState, RecordStatus } from './types';
 import './App.css';
 
 function AppContent() {
@@ -35,6 +35,10 @@ function AppContent() {
     if (confirm('确定删除这条记录吗？')) {
       await recordActions.deleteRecord(id);
     }
+  };
+
+  const handleStatusChange = async (id: string, status: RecordStatus) => {
+    await recordActions.updateRecord(id, { status });
   };
 
   const handleCloseForm = () => {
@@ -86,6 +90,7 @@ function AppContent() {
             records={records}
             onEdit={handleEdit}
             onDelete={handleDelete}
+            onStatusChange={handleStatusChange}
           />
         )}
       </main>

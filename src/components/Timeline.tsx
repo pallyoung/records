@@ -1,4 +1,4 @@
-import type { Record as RecordType } from '../types';
+import type { Record as RecordType, RecordStatus } from '../types';
 import { RecordCard } from './RecordCard';
 import './Timeline.css';
 
@@ -6,6 +6,7 @@ interface TimelineProps {
   records: RecordType[];
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
+  onStatusChange?: (id: string, status: RecordStatus) => void;
 }
 
 function getGroupKey(date: Date): string {
@@ -18,7 +19,7 @@ function formatGroupKey(key: string): string {
   return date.toLocaleDateString('zh-CN', { month: 'long', day: 'numeric' });
 }
 
-export function Timeline({ records, onEdit, onDelete }: TimelineProps) {
+export function Timeline({ records, onEdit, onDelete, onStatusChange }: TimelineProps) {
   const groups = records.reduce((acc, record) => {
     const key = getGroupKey(new Date(record.createdAt));
     if (!acc[key]) acc[key] = [];
@@ -40,6 +41,7 @@ export function Timeline({ records, onEdit, onDelete }: TimelineProps) {
                 record={record}
                 onEdit={onEdit}
                 onDelete={onDelete}
+                onStatusChange={onStatusChange}
               />
             ))}
           </div>
