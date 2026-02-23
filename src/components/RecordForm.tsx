@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import type { Record, RecordStatus, Achievement } from '../types';
 import './RecordForm.css';
 
@@ -25,6 +25,44 @@ export function RecordForm({ record, existingTags, onClose, onSave }: RecordForm
     record?.review?.achievement || ''
   );
   const [reviewDetails, setReviewDetails] = useState(record?.review?.details || '');
+  const [isSaving, setIsSaving] = useState(false);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+
+  // 防抖保存函数
+  const debouncedSave = useCallback(
+    (() => {
+      let timeoutId: ReturnType<typeof setTimeout>;
+      return (data: Parameters<typeof onSave>[0]) => {
+        setIsSaving(true);
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+          onSave(data);
+          setIsSaving(false);
+          setLastSaved(new Date());
+        }, 1000); // 1秒防抖
+      };
+    })(),
+    [onSave]
+  );
+
+  // 监听字段变化，自动保存
+  useEffect(() => {
+    const data = {
+      content,
+      tags,
+      images,
+      status,
+      plannedStartTime: plannedStartTime ? new Date(plannedStartTime) : undefined,
+      plannedEndTime: plannedEndTime ? new Date(plannedEndTime) : undefined,
+      actualStartTime: record?.actualStartTime,
+      actualEndTime: record?.actualEndTime,
+      review: reviewAchievement ? {
+        achievement: reviewAchievement as Achievement,
+        details: reviewDetails,
+      } : undefined,
+    };
+    debouncedSave(data);
+  }, [content, tags, images, status, plannedStartTime, plannedEndTime, reviewAchievement, reviewDetails]);
 
   const handleAddTag = () => {
     if (tagInput && !tags.includes(tagInput)) {
@@ -61,29 +99,34 @@ export function RecordForm({ record, existingTags, onClose, onSave }: RecordForm
     setStatus(newStatus);
   };
 
-  const handleSubmit = () => {
-    const data = {
-      content,
-      tags,
-      images,
-      status,
-      plannedStartTime: plannedStartTime ? new Date(plannedStartTime) : undefined,
-      plannedEndTime: plannedEndTime ? new Date(plannedEndTime) : undefined,
-      actualStartTime: record?.actualStartTime,
-      actualEndTime: record?.actualEndTime,
-      review: reviewAchievement ? {
-        achievement: reviewAchievement as Achievement,
-        details: reviewDetails,
-      } : undefined,
-    };
-    onSave(data);
-    onClose();
+  // 格式化保存时间
+  const formatSaveTime = () => {
+    if (!lastSaved) return '';
+    const now = new Date();
+    const diff = Math.floor((now.getTime() - lastSaved.getTime()) / 1000);
+    if (diff < 60) return '刚刚保存';
+    if (diff < 3600) return `${Math.floor(diff / 60)}分钟前保存`;
+    return lastSaved.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
   };
 
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="record-form" onClick={e => e.stopPropagation()}>
-        <h2>{record ? '编辑记录' : '新建记录'}</h2>
+        <div className="form-header">
+          <h2>{record ? '编辑记录' : '新建记录'}</h2>
+          <div className="save-status">
+            {isSaving ? (
+              <span className="saving">保存中...</span>
+            ) : lastSaved ? (
+              <span className="saved">{formatSaveTime()}</span>
+            ) : null}
+          </div>
+          <button className="close-btn" onClick={onClose}>
+            <svg viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+            </svg>
+          </button>
+        </div>
 
         <div className="form-group">
           <label>内容</label>
@@ -210,11 +253,6 @@ export function RecordForm({ record, existingTags, onClose, onSave }: RecordForm
             </div>
           </div>
         )}
-
-        <div className="form-actions">
-          <button type="button" onClick={onClose}>取消</button>
-          <button type="button" className="primary" onClick={handleSubmit}>保存</button>
-        </div>
       </div>
     </div>
   );
