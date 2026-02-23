@@ -125,6 +125,7 @@ function AppContent() {
         <RecordForm
           record={editingRecord}
           existingTags={tags}
+          records={records}
           onClose={handleCloseForm}
           onSave={handleSave}
         />

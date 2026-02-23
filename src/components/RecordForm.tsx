@@ -1,16 +1,23 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import type { Record, RecordStatus, Achievement } from '../types';
+import { useTags } from '../hooks/useTags';
 import './RecordForm.css';
 
 interface RecordFormProps {
   record?: Record;
   existingTags: string[];
+  records?: Record[];
   onClose: () => void;
   onSave: (data: Omit<Record, 'id' | 'createdAt' | 'updatedAt'>) => void;
 }
 
-export function RecordForm({ record, existingTags, onClose, onSave }: RecordFormProps) {
+export function RecordForm({ record, records = [], onClose, onSave }: RecordFormProps) {
   const isNewRecord = !record;
+  const { allTags, addCustomTag, getFrequentTags } = useTags();
+  const [showAllTags, setShowAllTags] = useState(false);
+
+  // 计算高频标签
+  const frequentTags = useMemo(() => getFrequentTags(records, 8), [records, getFrequentTags]);
 
   const [content, setContent] = useState(record?.content || '');
   const [tags, setTags] = useState<string[]>(record?.tags || []);
@@ -81,15 +88,30 @@ export function RecordForm({ record, existingTags, onClose, onSave }: RecordForm
     setLastSaved(new Date());
   };
 
-  const handleAddTag = () => {
-    if (tagInput && !tags.includes(tagInput)) {
-      setTags([...tags, tagInput]);
-      setTagInput('');
+  const handleRemoveTag = (tag: string) => {
+    setTags(tags.filter(t => t !== tag));
+  };
+
+  const toggleTag = (tag: string) => {
+    if (tags.includes(tag)) {
+      setTags(tags.filter(t => t !== tag));
+    } else {
+      setTags([...tags, tag]);
     }
   };
 
-  const handleRemoveTag = (tag: string) => {
-    setTags(tags.filter(t => t !== tag));
+  const handleTagInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const value = tagInput.trim();
+      if (value) {
+        addCustomTag(value);
+        if (!tags.includes(value)) {
+          setTags([...tags, value]);
+        }
+        setTagInput('');
+      }
+    }
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -178,30 +200,59 @@ export function RecordForm({ record, existingTags, onClose, onSave }: RecordForm
 
         <div className="form-group">
           <label>Tag</label>
-          <div className="tag-input">
-            <input
-              value={tagInput}
-              onChange={e => setTagInput(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && handleAddTag()}
-              placeholder="输入 Tag 后按回车"
-            />
-            <button type="button" onClick={handleAddTag}>添加</button>
-          </div>
-          <div className="tag-list">
+          {/* 已选标签 */}
+          <div className="tag-list selected-tags">
             {tags.map(tag => (
-              <span key={tag} className="tag" onClick={() => handleRemoveTag(tag)}>
+              <span key={tag} className="tag selected" onClick={() => handleRemoveTag(tag)}>
                 {tag} ×
               </span>
             ))}
           </div>
-          {existingTags.length > 0 && (
-            <div className="existing-tags">
-              <span>已有 Tag:</span>
-              {existingTags.filter(t => !tags.includes(t)).map(tag => (
-                <button key={tag} type="button" onClick={() => setTags([...tags, tag])}>{tag}</button>
+          {/* 常用标签 */}
+          <div className="tag-list frequent-tags">
+            {frequentTags.map(tag => (
+              <span
+                key={tag}
+                className={`tag ${tags.includes(tag) ? 'selected' : ''}`}
+                onClick={() => toggleTag(tag)}
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+          {/* 更多标签按钮 */}
+          {allTags.length > 8 && (
+            <button
+              type="button"
+              className="more-tags-btn"
+              onClick={() => setShowAllTags(!showAllTags)}
+            >
+              {showAllTags ? '收起' : '更多标签'}
+            </button>
+          )}
+          {/* 全部标签列表 */}
+          {showAllTags && (
+            <div className="all-tags-list">
+              {allTags.slice(8).map(tag => (
+                <span
+                  key={tag}
+                  className={`tag ${tags.includes(tag) ? 'selected' : ''}`}
+                  onClick={() => toggleTag(tag)}
+                >
+                  {tag}
+                </span>
               ))}
             </div>
           )}
+          {/* 输入新标签 */}
+          <div className="tag-input">
+            <input
+              value={tagInput}
+              onChange={e => setTagInput(e.target.value)}
+              onKeyDown={handleTagInputKeyDown}
+              placeholder="输入新标签后按回车"
+            />
+          </div>
         </div>
 
         <div className="form-group">
