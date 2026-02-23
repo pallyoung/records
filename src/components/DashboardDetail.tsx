@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useRef, useEffect } from 'react';
+import * as echarts from 'echarts';
 import type { Record } from '../types';
 import './DashboardDetail.css';
 
@@ -10,18 +11,20 @@ type ViewMode = 'week' | 'month';
 
 export function DashboardDetail({ records }: DashboardDetailProps) {
   const [viewMode, setViewMode] = useState<ViewMode>('week');
+  const chart1Ref = useRef<HTMLDivElement>(null);
+  const chart2Ref = useRef<HTMLDivElement>(null);
+  const chart1Instance = useRef<echarts.ECharts | null>(null);
+  const chart2Instance = useRef<echarts.ECharts | null>(null);
 
   // 计算日期范围内的每日数据
   const dailyData = useMemo(() => {
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-    // 确定日期范围
     const days = viewMode === 'week' ? 7 : 30;
     const startDate = new Date(today);
     startDate.setDate(today.getDate() - days + 1);
 
-    // 生成日期数组
     const dates: Date[] = [];
     for (let i = 0; i < days; i++) {
       const date = new Date(startDate);
@@ -29,14 +32,12 @@ export function DashboardDetail({ records }: DashboardDetailProps) {
       dates.push(date);
     }
 
-    // 计算每日数据
     const data = dates.map(date => {
       const dayStart = new Date(date);
       dayStart.setHours(0, 0, 0, 0);
       const dayEnd = new Date(date);
       dayEnd.setHours(23, 59, 59, 999);
 
-      // 当日创建的记录
       const dayRecords = records.filter(r => {
         const created = new Date(r.createdAt);
         return created >= dayStart && created <= dayEnd;
@@ -47,7 +48,6 @@ export function DashboardDetail({ records }: DashboardDetailProps) {
       const completed = dayRecords.filter(r => r.status === 'completed').length;
       const incomplete = pending + inProgress;
 
-      // 延期统计（当日已完成且延期的）
       const delayed = dayRecords.filter(r => {
         if (r.status !== 'completed') return false;
         if (!r.plannedEndTime || !r.actualEndTime) return false;
@@ -61,7 +61,7 @@ export function DashboardDetail({ records }: DashboardDetailProps) {
       return {
         date,
         dateStr: `${date.getMonth() + 1}/${date.getDate()}`,
-        pending: incomplete, // 待完成 = pending + in_progress
+        pending: incomplete,
         completed,
         delayed,
         onTime: onTime > 0 ? onTime : 0,
@@ -71,9 +71,169 @@ export function DashboardDetail({ records }: DashboardDetailProps) {
     return data;
   }, [records, viewMode]);
 
-  // 找到最大值用于Y轴
-  const maxPending = Math.max(...dailyData.map(d => Math.max(d.pending, d.completed)), 5);
-  const maxTimely = Math.max(...dailyData.map(d => Math.max(d.delayed, d.onTime)), 5);
+  // 初始化图表
+  useEffect(() => {
+    if (chart1Ref.current) {
+      chart1Instance.current = echarts.init(chart1Ref.current);
+    }
+    if (chart2Ref.current) {
+      chart2Instance.current = echarts.init(chart2Ref.current);
+    }
+
+    return () => {
+      chart1Instance.current?.dispose();
+      chart2Instance.current?.dispose();
+    };
+  }, []);
+
+  // 更新图表数据
+  useEffect(() => {
+    if (!chart1Instance.current || !chart2Instance.current) return;
+
+    // 图表1：待完成与已完成
+    chart1Instance.current.setOption({
+      backgroundColor: 'transparent',
+      tooltip: {
+        trigger: 'axis',
+        backgroundColor: 'rgba(255,255,255,0.95)',
+        borderColor: '#e0e0e0',
+        textStyle: { color: '#333' },
+      },
+      legend: {
+        data: ['待完成', '已完成'],
+        bottom: 0,
+        textStyle: { color: '#666', fontSize: 12 },
+      },
+      grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '15%',
+        top: '10%',
+        containLabel: true,
+      },
+      xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: dailyData.map(d => d.dateStr),
+        axisLine: { lineStyle: { color: '#e0e0e0' } },
+        axisLabel: { color: '#999', fontSize: 10 },
+      },
+      yAxis: {
+        type: 'value',
+        axisLine: { show: false },
+        axisTick: { show: false },
+        splitLine: { lineStyle: { color: '#f0f0f0' } },
+        axisLabel: { color: '#999', fontSize: 10 },
+      },
+      series: [
+        {
+          name: '待完成',
+          type: 'line',
+          smooth: true,
+          data: dailyData.map(d => d.pending),
+          lineStyle: { color: '#f59e0b', width: 2 },
+          itemStyle: { color: '#f59e0b' },
+          areaStyle: {
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: 'rgba(245,158,11,0.3)' },
+              { offset: 1, color: 'rgba(245,158,11,0.05)' },
+            ]),
+          },
+        },
+        {
+          name: '已完成',
+          type: 'line',
+          smooth: true,
+          data: dailyData.map(d => d.completed),
+          lineStyle: { color: '#10b981', width: 2 },
+          itemStyle: { color: '#10b981' },
+          areaStyle: {
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: 'rgba(16,185,129,0.3)' },
+              { offset: 1, color: 'rgba(16,185,129,0.05)' },
+            ]),
+          },
+        },
+      ],
+    });
+
+    // 图表2：延期与准时
+    chart2Instance.current.setOption({
+      backgroundColor: 'transparent',
+      tooltip: {
+        trigger: 'axis',
+        backgroundColor: 'rgba(255,255,255,0.95)',
+        borderColor: '#e0e0e0',
+        textStyle: { color: '#333' },
+      },
+      legend: {
+        data: ['延期', '准时'],
+        bottom: 0,
+        textStyle: { color: '#666', fontSize: 12 },
+      },
+      grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '15%',
+        top: '10%',
+        containLabel: true,
+      },
+      xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: dailyData.map(d => d.dateStr),
+        axisLine: { lineStyle: { color: '#e0e0e0' } },
+        axisLabel: { color: '#999', fontSize: 10 },
+      },
+      yAxis: {
+        type: 'value',
+        axisLine: { show: false },
+        axisTick: { show: false },
+        splitLine: { lineStyle: { color: '#f0f0f0' } },
+        axisLabel: { color: '#999', fontSize: 10 },
+      },
+      series: [
+        {
+          name: '延期',
+          type: 'line',
+          smooth: true,
+          data: dailyData.map(d => d.delayed),
+          lineStyle: { color: '#ef4444', width: 2 },
+          itemStyle: { color: '#ef4444' },
+          areaStyle: {
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: 'rgba(239,68,68,0.3)' },
+              { offset: 1, color: 'rgba(239,68,68,0.05)' },
+            ]),
+          },
+        },
+        {
+          name: '准时',
+          type: 'line',
+          smooth: true,
+          data: dailyData.map(d => d.onTime),
+          lineStyle: { color: '#3b82f6', width: 2 },
+          itemStyle: { color: '#3b82f6' },
+          areaStyle: {
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: 'rgba(59,130,246,0.3)' },
+              { offset: 1, color: 'rgba(59,130,246,0.05)' },
+            ]),
+          },
+        },
+      ],
+    });
+  }, [dailyData]);
+
+  // 窗口resize时重新调整图表
+  useEffect(() => {
+    const handleResize = () => {
+      chart1Instance.current?.resize();
+      chart2Instance.current?.resize();
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   return (
     <div className="dashboard-detail">
@@ -96,117 +256,13 @@ export function DashboardDetail({ records }: DashboardDetailProps) {
       {/* 图表1：待完成与已完成趋势 */}
       <div className="chart-section">
         <h3 className="section-title">待完成与已完成趋势</h3>
-        <div className="line-chart">
-          <div className="chart-y-axis">
-            {[0, 1, 2, 3, 4].map(i => (
-              <span key={i}>{maxPending - Math.floor((maxPending / 4) * i)}</span>
-            ))}
-          </div>
-          <div className="chart-area">
-            {/* 待完成折线 */}
-            <svg className="chart-line pending-line" viewBox={`0 0 ${dailyData.length * 40} 100`} preserveAspectRatio="none">
-              <polyline
-                fill="none"
-                stroke="var(--warning)"
-                strokeWidth="2"
-                points={dailyData.map((d, i) => `${i * 40 + 20},${100 - (d.pending / maxPending) * 90}`).join(' ')}
-              />
-            </svg>
-            {/* 已完成折线 */}
-            <svg className="chart-line completed-line" viewBox={`0 0 ${dailyData.length * 40} 100`} preserveAspectRatio="none">
-              <polyline
-                fill="none"
-                stroke="var(--accent-secondary)"
-                strokeWidth="2"
-                points={dailyData.map((d, i) => `${i * 40 + 20},${100 - (d.completed / maxPending) * 90}`).join(' ')}
-              />
-            </svg>
-            {/* 数据点 */}
-            {dailyData.map((d, i) => (
-              <div key={i} className="data-points" style={{ left: `${(i / (dailyData.length - 1)) * 100}%` }}>
-                <div className="data-point pending" title={`待完成: ${d.pending}`}>
-                  {d.pending}
-                </div>
-                <div className="data-point completed" title={`已完成: ${d.completed}`}>
-                  {d.completed}
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="chart-x-axis">
-            {dailyData.filter((_, i) => viewMode === 'week' || i % 5 === 0).map((d, i) => (
-              <span key={i}>{d.dateStr}</span>
-            ))}
-          </div>
-        </div>
-        <div className="chart-legend">
-          <span className="legend-item pending">
-            <span className="legend-dot" style={{ background: 'var(--warning)' }}></span>
-            待完成
-          </span>
-          <span className="legend-item completed">
-            <span className="legend-dot" style={{ background: 'var(--accent-secondary)' }}></span>
-            已完成
-          </span>
-        </div>
+        <div ref={chart1Ref} className="echarts-container" />
       </div>
 
       {/* 图表2：延期与准时趋势 */}
       <div className="chart-section">
         <h3 className="section-title">延期与准时趋势</h3>
-        <div className="line-chart">
-          <div className="chart-y-axis">
-            {[0, 1, 2, 3, 4].map(i => (
-              <span key={i}>{maxTimely - Math.floor((maxTimely / 4) * i)}</span>
-            ))}
-          </div>
-          <div className="chart-area">
-            {/* 延期折线 */}
-            <svg className="chart-line delayed-line" viewBox={`0 0 ${dailyData.length * 40} 100`} preserveAspectRatio="none">
-              <polyline
-                fill="none"
-                stroke="var(--danger)"
-                strokeWidth="2"
-                points={dailyData.map((d, i) => `${i * 40 + 20},${100 - (d.delayed / maxTimely) * 90}`).join(' ')}
-              />
-            </svg>
-            {/* 准时折线 */}
-            <svg className="chart-line ontime-line" viewBox={`0 0 ${dailyData.length * 40} 100`} preserveAspectRatio="none">
-              <polyline
-                fill="none"
-                stroke="var(--success)"
-                strokeWidth="2"
-                points={dailyData.map((d, i) => `${i * 40 + 20},${100 - (d.onTime / maxTimely) * 90}`).join(' ')}
-              />
-            </svg>
-            {/* 数据点 */}
-            {dailyData.map((d, i) => (
-              <div key={i} className="data-points" style={{ left: `${(i / (dailyData.length - 1)) * 100}%` }}>
-                <div className="data-point delayed" title={`延期: ${d.delayed}`}>
-                  {d.delayed}
-                </div>
-                <div className="data-point ontime" title={`准时: ${d.onTime}`}>
-                  {d.onTime}
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="chart-x-axis">
-            {dailyData.filter((_, i) => viewMode === 'week' || i % 5 === 0).map((d, i) => (
-              <span key={i}>{d.dateStr}</span>
-            ))}
-          </div>
-        </div>
-        <div className="chart-legend">
-          <span className="legend-item delayed">
-            <span className="legend-dot" style={{ background: 'var(--danger)' }}></span>
-            延期
-          </span>
-          <span className="legend-item ontime">
-            <span className="legend-dot" style={{ background: 'var(--success)' }}></span>
-            准时
-          </span>
-        </div>
+        <div ref={chart2Ref} className="echarts-container" />
       </div>
     </div>
   );

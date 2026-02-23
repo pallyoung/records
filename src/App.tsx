@@ -59,7 +59,7 @@ function AppContent() {
     }
   };
 
-  const editingRecord = editingId ? records.find(r => r.id === editingId) : undefined;
+  const editingRecord = editingId ? records.find((r: Record) => r.id === editingId) : undefined;
 
   if (showReview) {
     return (
