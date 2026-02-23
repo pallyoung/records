@@ -109,6 +109,60 @@
   color: var(--text-primary);
 }
 
+/* 状态徽章按钮（已选择状态时显示） */
+.status-badge-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--accent-primary);
+  border-radius: var(--radius-md);
+  background: var(--accent-primary);
+  color: #fff;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.status-badge-btn:hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+.status-badge-btn svg {
+  width: 14px;
+  height: 14px;
+  opacity: 0.8;
+}
+
+/* 状态选择按钮（未选择状态时显示） */
+.status-select-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--accent-tertiary);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.status-select-btn:hover {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+}
+
+.status-select-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
 /* 展开/折叠按钮 */
 .expand-btn {
   display: flex;
