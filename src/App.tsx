@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { RelaxProvider, useRelaxValue, store, recordsState, tagsState, filterState, loadingState } from './store/recordStore';
 import { FilterBar } from './components/FilterBar';
 import { Timeline } from './components/Timeline';
+import { Dashboard } from './components/Dashboard';
 import { RecordForm } from './components/RecordForm';
 import { ReviewPage } from './pages/ReviewPage';
 import { recordActions } from './store/recordStore';
@@ -86,12 +87,15 @@ function AppContent() {
         {loading ? (
           <div className="loading">加载中...</div>
         ) : (
-          <Timeline
-            records={records}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-            onStatusChange={handleStatusChange}
-          />
+          <>
+            <Timeline
+              records={records}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              onStatusChange={handleStatusChange}
+            />
+            <Dashboard records={records} />
+          </>
         )}
       </main>
 
