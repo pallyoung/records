@@ -54,6 +54,8 @@ function AppContent() {
       await recordActions.updateRecord(editingId, data);
     } else {
       await recordActions.addRecord(data);
+      // 新建记录保存后关闭表单
+      handleCloseForm();
     }
   };
 

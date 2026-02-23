@@ -10,6 +10,8 @@ interface RecordFormProps {
 }
 
 export function RecordForm({ record, existingTags, onClose, onSave }: RecordFormProps) {
+  const isNewRecord = !record;
+
   const [content, setContent] = useState(record?.content || '');
   const [tags, setTags] = useState<string[]>(record?.tags || []);
   const [tagInput, setTagInput] = useState('');
@@ -28,7 +30,23 @@ export function RecordForm({ record, existingTags, onClose, onSave }: RecordForm
   const [isSaving, setIsSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
 
-  // 防抖保存函数
+  // 构建保存数据
+  const buildSaveData = useCallback(() => ({
+    content,
+    tags,
+    images,
+    status,
+    plannedStartTime: plannedStartTime ? new Date(plannedStartTime) : undefined,
+    plannedEndTime: plannedEndTime ? new Date(plannedEndTime) : undefined,
+    actualStartTime: record?.actualStartTime,
+    actualEndTime: record?.actualEndTime,
+    review: reviewAchievement ? {
+      achievement: reviewAchievement as Achievement,
+      details: reviewDetails,
+    } : undefined,
+  }), [content, tags, images, status, plannedStartTime, plannedEndTime, reviewAchievement, reviewDetails, record]);
+
+  // 防抖保存函数（仅用于编辑已有记录）
   const debouncedSave = useCallback(
     (() => {
       let timeoutId: ReturnType<typeof setTimeout>;
@@ -39,30 +57,29 @@ export function RecordForm({ record, existingTags, onClose, onSave }: RecordForm
           onSave(data);
           setIsSaving(false);
           setLastSaved(new Date());
-        }, 1000); // 1秒防抖
+        }, 1000);
       };
     })(),
     [onSave]
   );
 
-  // 监听字段变化，自动保存
+  // 监听字段变化，自动保存（仅对编辑现有记录生效）
   useEffect(() => {
-    const data = {
-      content,
-      tags,
-      images,
-      status,
-      plannedStartTime: plannedStartTime ? new Date(plannedStartTime) : undefined,
-      plannedEndTime: plannedEndTime ? new Date(plannedEndTime) : undefined,
-      actualStartTime: record?.actualStartTime,
-      actualEndTime: record?.actualEndTime,
-      review: reviewAchievement ? {
-        achievement: reviewAchievement as Achievement,
-        details: reviewDetails,
-      } : undefined,
-    };
-    debouncedSave(data);
+    if (isNewRecord) return; // 新建记录不自动保存
+    debouncedSave(buildSaveData());
   }, [content, tags, images, status, plannedStartTime, plannedEndTime, reviewAchievement, reviewDetails]);
+
+  // 手动保存（新建记录时使用）
+  const handleSave = () => {
+    if (!content.trim()) {
+      alert('请输入内容');
+      return;
+    }
+    setIsSaving(true);
+    onSave(buildSaveData());
+    setIsSaving(false);
+    setLastSaved(new Date());
+  };
 
   const handleAddTag = () => {
     if (tagInput && !tags.includes(tagInput)) {
@@ -121,11 +138,18 @@ export function RecordForm({ record, existingTags, onClose, onSave }: RecordForm
               <span className="saved">{formatSaveTime()}</span>
             ) : null}
           </div>
-          <button className="close-btn" onClick={onClose}>
-            <svg viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-            </svg>
-          </button>
+          <div className="header-buttons">
+            {isNewRecord && (
+              <button className="save-btn" onClick={handleSave} disabled={isSaving}>
+                保存
+              </button>
+            )}
+            <button className="close-btn" onClick={onClose}>
+              <svg viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+            </button>
+          </div>
         </div>
 
         <div className="form-group">
