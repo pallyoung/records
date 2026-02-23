@@ -31,20 +31,34 @@ export const recordRepository = {
     return await db.records.orderBy('createdAt').reverse().toArray();
   },
 
-  async getByFilter(filter: FilterState): Promise<Record[]> {
-    let collection = db.records.orderBy('createdAt').reverse();
+  async getByFilter(filter: FilterState, searchQuery?: string): Promise<Record[]> {
+    let records = await db.records.orderBy('createdAt').reverse().toArray();
 
+    // 状态筛选
     if (filter.status) {
-      collection = collection.filter(r => r.status === filter.status);
+      records = records.filter(r => r.status === filter.status);
     }
 
+    // 标签筛选
     if (filter.tags.length > 0) {
-      collection = collection.filter(r =>
+      records = records.filter(r =>
         filter.tags.every(tag => r.tags.includes(tag))
       );
     }
 
-    return await collection.toArray();
+    // 搜索功能
+    if (searchQuery && searchQuery.trim()) {
+      const query = searchQuery.toLowerCase().trim();
+      records = records.filter(r => {
+        // 搜索内容
+        const contentMatch = r.content.toLowerCase().includes(query);
+        // 搜索标签
+        const tagMatch = r.tags.some(tag => tag.toLowerCase().includes(query));
+        return contentMatch || tagMatch;
+      });
+    }
+
+    return records;
   },
 
   async getAllTags(): Promise<string[]> {

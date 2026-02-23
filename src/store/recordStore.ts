@@ -6,11 +6,20 @@ import { state, createStore, useRelaxState, useRelaxValue, RelaxProvider } from 
 const recordsState = state<Record[]>([], 'records');
 const tagsState = state<string[]>([], 'tags');
 const filterState = state<FilterState>({ tags: [], status: null }, 'filter');
+const searchQueryState = state<string>('', 'searchQuery');
 const granularityState = state<TimelineGranularity>('day', 'granularity');
 const loadingState = state<boolean>(false, 'loading');
 
 // 创建 store 实例
 const store = createStore();
+
+// 监听搜索变化事件
+if (typeof window !== 'undefined') {
+  window.addEventListener('filterSearchChange', ((event: CustomEvent<string>) => {
+    store.set(searchQueryState, event.detail);
+    recordActions.loadRecords();
+  }) as EventListener);
+}
 
 // 导出 store 供外部使用
 export { store };
@@ -19,15 +28,16 @@ export { store };
 export { useRelaxState, useRelaxValue, RelaxProvider };
 
 // 导出状态描述符供 store 操作使用
-export { recordsState, tagsState, filterState, granularityState, loadingState };
+export { recordsState, tagsState, filterState, searchQueryState, granularityState, loadingState };
 
 // actions
 export const recordActions = {
   async loadRecords() {
     const currentFilter = store.get(filterState);
+    const searchQuery = store.get(searchQueryState);
     store.set(loadingState, true);
     try {
-      const records = await recordRepository.getByFilter(currentFilter);
+      const records = await recordRepository.getByFilter(currentFilter, searchQuery);
       const tags = await recordRepository.getAllTags();
       store.set(recordsState, records);
       store.set(tagsState, tags);

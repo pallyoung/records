@@ -35,8 +35,8 @@ export function FilterBar({
 
   const handleSearchChange = (value: string) => {
     setSearchQuery(value);
-    // 搜索功能可以扩展为搜索内容和标签
-    // 目前先保持简单
+    // 触发自定义事件通知搜索变化
+    window.dispatchEvent(new CustomEvent('filterSearchChange', { detail: value }));
   };
 
   const clearFilters = () => {
