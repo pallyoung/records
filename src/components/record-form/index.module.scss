@@ -1,6 +1,6 @@
 /* 表单样式 - 日记手账风 */
 
-.modal-overlay {
+.modalOverlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -14,7 +14,7 @@
   backdrop-filter: blur(4px);
 }
 
-.record-form {
+.recordForm {
   background: var(--bg-card);
   border-radius: var(--radius-lg);
   padding: 28px;
@@ -25,14 +25,14 @@
   box-shadow: var(--shadow-lg);
 }
 
-.record-form h2 {
+.recordForm h2 {
   font-family: var(--font-heading);
   color: var(--text-primary);
   margin: 0;
 }
 
 /* 表单头部 */
-.form-header {
+.formHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -41,20 +41,20 @@
   border-bottom: 1px solid var(--accent-tertiary);
 }
 
-.save-status {
+.saveStatus {
   font-size: var(--text-xs);
   color: var(--text-muted);
 }
 
-.save-status .saving {
+.saveStatus .saving {
   color: var(--accent-primary);
 }
 
-.save-status .saved {
+.saveStatus .saved {
   color: var(--accent-secondary);
 }
 
-.close-btn {
+.closeBtn {
   width: 32px;
   height: 32px;
   border: none;
@@ -68,13 +68,13 @@
   transition: all 0.2s ease;
 }
 
-.header-buttons {
+.headerButtons {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.save-btn {
+.saveBtn {
   padding: 8px 20px;
   background: var(--accent-primary);
   color: #fff;
@@ -85,31 +85,31 @@
   transition: all 0.2s ease;
 }
 
-.save-btn:hover {
+.saveBtn:hover {
   background: var(--accent-hover);
 }
 
-.save-btn:disabled {
+.saveBtn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
-.close-btn:hover {
+.closeBtn:hover {
   background: var(--bg-secondary);
   color: var(--text-primary);
 }
 
-.close-btn svg {
+.closeBtn svg {
   width: 20px;
   height: 20px;
 }
 
 /* 表单组 */
-.form-group {
+.formGroup {
   margin-bottom: 20px;
 }
 
-.form-group > label {
+.formGroup > label {
   display: block;
   margin-bottom: 8px;
   font-weight: 500;
@@ -118,9 +118,9 @@
 }
 
 /* 输入框 */
-.form-group input,
-.form-group textarea,
-.form-group select {
+.formGroup input,
+.formGroup textarea,
+.formGroup select {
   width: 100%;
   padding: 12px 16px;
   border: 1px solid var(--accent-tertiary);
@@ -130,31 +130,31 @@
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.form-group input:focus,
-.form-group textarea:focus,
-.form-group select:focus {
+.formGroup input:focus,
+.formGroup textarea:focus,
+.formGroup select:focus {
   outline: none;
   border-color: var(--accent-primary);
   box-shadow: 0 0 0 3px rgba(196, 164, 132, 0.2);
 }
 
-.form-group textarea {
+.formGroup textarea {
   min-height: 120px;
   resize: vertical;
   line-height: 1.6;
 }
 
 /* Tag 输入 */
-.tag-input {
+.tagInput {
   display: flex;
   gap: 8px;
 }
 
-.tag-input input {
+.tagInput input {
   flex: 1;
 }
 
-.tag-input button {
+.tagInput button {
   padding: 12px 20px;
   background: var(--accent-primary);
   color: #fff;
@@ -163,19 +163,19 @@
   transition: background 0.2s ease;
 }
 
-.tag-input button:hover {
+.tagInput button:hover {
   background: var(--accent-hover);
 }
 
 /* Tag 列表 */
-.tag-list {
+.tagList {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
   margin-top: 12px;
 }
 
-.tag-list .tag {
+.tagList .tag {
   background: var(--accent-tertiary);
   color: var(--text-secondary);
   padding: 6px 12px;
@@ -187,28 +187,28 @@
   gap: 4px;
 }
 
-.tag-list .tag:hover {
+.tagList .tag:hover {
   background: var(--danger);
   color: #fff;
 }
 
 /* 已选标签 */
-.selected-tags {
+.selectedTags {
   margin-bottom: 8px;
 }
 
-.selected-tags .tag {
+.selectedTags .tag {
   background: var(--accent-primary);
   color: #fff;
 }
 
 /* 常用标签 */
-.frequent-tags {
+.frequentTags {
   margin-top: 0;
 }
 
 /* 更多标签按钮 */
-.more-tags-btn {
+.moreTagsBtn {
   background: none;
   border: none;
   color: var(--accent-primary);
@@ -218,12 +218,12 @@
   padding: 0;
 }
 
-.more-tags-btn:hover {
+.moreTagsBtn:hover {
   text-decoration: underline;
 }
 
 /* 全部标签列表 */
-.all-tags-list {
+.allTagsList {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
@@ -240,7 +240,7 @@
 }
 
 /* 已有 Tag */
-.existing-tags {
+.existingTags {
   margin-top: 12px;
   display: flex;
   flex-wrap: wrap;
@@ -248,12 +248,12 @@
   align-items: center;
 }
 
-.existing-tags > span {
+.existingTags > span {
   font-size: var(--text-xs);
   color: var(--text-muted);
 }
 
-.existing-tags button {
+.existingTags button {
   background: var(--bg-secondary);
   border: 1px solid var(--accent-tertiary);
   padding: 4px 12px;
@@ -264,25 +264,25 @@
   transition: all 0.2s ease;
 }
 
-.existing-tags button:hover {
+.existingTags button:hover {
   background: var(--accent-primary);
   color: #fff;
   border-color: var(--accent-primary);
 }
 
 /* 图片预览 */
-.image-preview {
+.imagePreview {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
   margin-top: 12px;
 }
 
-.preview-item {
+.previewItem {
   position: relative;
 }
 
-.preview-item img {
+.previewItem img {
   width: 80px;
   height: 80px;
   object-fit: cover;
@@ -290,7 +290,7 @@
   box-shadow: var(--shadow-sm);
 }
 
-.preview-item button {
+.previewItem button {
   position: absolute;
   top: -6px;
   right: -6px;
@@ -309,17 +309,17 @@
   transition: transform 0.2s ease;
 }
 
-.preview-item button:hover {
+.previewItem button:hover {
   transform: scale(1.1);
 }
 
 /* 单选按钮组 */
-.radio-group {
+.radioGroup {
   display: flex;
   gap: 16px;
 }
 
-.radio-group label {
+.radioGroup label {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -328,13 +328,13 @@
   color: var(--text-secondary);
 }
 
-.radio-group input[type="radio"] {
+.radioGroup input[type="radio"] {
   width: auto;
   accent-color: var(--accent-primary);
 }
 
 /* 表单操作按钮 */
-.form-actions {
+.formActions {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
@@ -343,7 +343,7 @@
   border-top: 1px solid var(--accent-tertiary);
 }
 
-.form-actions button {
+.formActions button {
   padding: 12px 24px;
   border-radius: var(--radius-sm);
   font-weight: 500;
@@ -351,23 +351,23 @@
   transition: all 0.2s ease;
 }
 
-.form-actions button:not(.primary) {
+.formActions button:not(.primary) {
   background: var(--bg-secondary);
   color: var(--text-secondary);
   border: 1px solid var(--accent-tertiary);
 }
 
-.form-actions button:not(.primary):hover {
+.formActions button:not(.primary):hover {
   background: var(--accent-tertiary);
 }
 
-.form-actions button.primary {
+.formActions button.primary {
   background: var(--accent-primary);
   color: #fff;
   border: none;
 }
 
-.form-actions button.primary:hover {
+.formActions button.primary:hover {
   background: var(--accent-hover);
 }
 
@@ -375,11 +375,11 @@
 
 /* 移动端：全屏弹窗 */
 @media (max-width: 640px) {
-  .modal-overlay {
+  .modalOverlay {
     align-items: flex-end;
   }
 
-  .record-form {
+  .recordForm {
     width: 100%;
     max-width: 100%;
     max-height: 95vh;
@@ -397,19 +397,19 @@
     }
   }
 
-  .form-group input,
-  .form-group textarea,
-  .form-group select {
+  .formGroup input,
+  .formGroup textarea,
+  .formGroup select {
     padding: 14px;
     font-size: 16px; /* 防止 iOS 缩放 */
   }
 
-  .radio-group {
+  .radioGroup {
     flex-direction: column;
     gap: 12px;
   }
 
-  .form-actions {
+  .formActions {
     position: sticky;
     bottom: 0;
     background: var(--bg-card);
@@ -421,7 +421,7 @@
 
 /* 桌面端：居中弹窗 */
 @media (min-width: 641px) {
-  .record-form {
+  .recordForm {
     animation: fadeIn 0.25s ease;
   }
 

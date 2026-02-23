@@ -1,6 +1,6 @@
-import type { Record as RecordType, RecordStatus } from '../types';
-import { RecordCard } from './RecordCard';
-import './Timeline.css';
+import type { Record as RecordType, RecordStatus } from '../../types';
+import { RecordCard } from '../record-card';
+import styles from './index.module.scss';
 
 interface TimelineProps {
   records: RecordType[];
@@ -30,11 +30,11 @@ export function Timeline({ records, onEdit, onDelete, onStatusChange }: Timeline
   const sortedKeys = Object.keys(groups).sort((a, b) => b.localeCompare(a));
 
   return (
-    <div className="timeline">
+    <div className={styles.timeline}>
       {sortedKeys.map(key => (
-        <div key={key} className="timeline-group">
-          <div className="timeline-header">{formatGroupKey(key)}</div>
-          <div className="timeline-content">
+        <div key={key} className={styles.timelineGroup}>
+          <div className={styles.timelineHeader}>{formatGroupKey(key)}</div>
+          <div className={styles.timelineContent}>
             {groups[key].map(record => (
               <RecordCard
                 key={record.id}
@@ -48,7 +48,7 @@ export function Timeline({ records, onEdit, onDelete, onStatusChange }: Timeline
         </div>
       ))}
       {records.length === 0 && (
-        <div className="empty-state">暂无记录</div>
+        <div className={styles.emptyState}>暂无记录</div>
       )}
     </div>
   );

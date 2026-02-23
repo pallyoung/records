@@ -4,13 +4,13 @@
   padding: 8px;
 }
 
-.timeline-group {
+.timelineGroup {
   margin-bottom: 32px;
   position: relative;
 }
 
 /* 时间线连接线 */
-.timeline-group::before {
+.timelineGroup::before {
   content: '';
   position: absolute;
   left: -1px;
@@ -20,11 +20,11 @@
   background: linear-gradient(to bottom, var(--accent-tertiary), transparent);
 }
 
-.timeline-group:last-child::before {
+.timelineGroup:last-child::before {
   display: none;
 }
 
-.timeline-header {
+.timelineHeader {
   font-family: var(--font-heading);
   font-size: 16px;
   font-weight: 600;
@@ -37,7 +37,7 @@
 }
 
 /* 时间线节点圆圈 */
-.timeline-header::before {
+.timelineHeader::before {
   content: '';
   width: 12px;
   height: 12px;
@@ -47,7 +47,7 @@
   box-shadow: 0 0 0 4px var(--bg-primary);
 }
 
-.timeline-content {
+.timelineContent {
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -61,11 +61,11 @@
     padding: 0;
   }
 
-  .timeline-group {
+  .timelineGroup {
     margin-bottom: 24px;
   }
 
-  .timeline-header {
+  .timelineHeader {
     font-size: 14px;
     padding: 12px 16px;
     background: var(--bg-secondary);
@@ -73,20 +73,20 @@
     border-radius: 0;
   }
 
-  .timeline-group::before {
+  .timelineGroup::before {
     display: none;
   }
 }
 
 /* 桌面端 */
 @media (min-width: 1025px) {
-  .timeline-group {
+  .timelineGroup {
     display: grid;
     grid-template-columns: 100px 1fr;
     gap: 20px;
   }
 
-  .timeline-header {
+  .timelineHeader {
     text-align: right;
     justify-content: flex-end;
     padding: 12px 0;

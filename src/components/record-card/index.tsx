@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
-import type { Record, RecordStatus } from '../types';
-import './RecordCard.css';
+import type { Record, RecordStatus } from '../../types';
+import styles from './index.module.scss';
 
 interface RecordCardProps {
   record: Record;
@@ -107,10 +107,10 @@ export function RecordCard({ record, onEdit, onDelete, onStatusChange }: RecordC
   const canToggleStatus = nextStatus !== null;
 
   return (
-    <div className="record-card-wrapper">
+    <div className={styles.recordCardWrapper}>
       {/* 删除按钮（滑动时显示） */}
       <button
-        className="swipe-delete"
+        className={styles.swipeDelete}
         onClick={() => onDelete(record.id)}
         style={{ opacity: swipeX < -20 ? 1 : 0 }}
       >
@@ -122,20 +122,20 @@ export function RecordCard({ record, onEdit, onDelete, onStatusChange }: RecordC
       {/* 卡片主体 */}
       <div
         ref={cardRef}
-        className={`record-card ${overdue ? 'overdue' : ''} ${isSwiping ? 'swiping' : ''}`}
+        className={`${styles.recordCard} ${overdue ? styles.overdue : ''} ${isSwiping ? styles.swiping : ''}`}
         style={{ transform: `translateX(${swipeX}px)` }}
         onClick={() => onEdit(record.id)}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        <div className="record-header">
-          <div className="record-header-left">
-            <span className={`status-badge ${record.status}`}>{statusText}</span>
+        <div className={styles.recordHeader}>
+          <div className={styles.recordHeaderLeft}>
+            <span className={`${styles.statusBadge} ${styles[record.status]}`}>{statusText}</span>
             {/* 状态切换按钮 */}
             {canToggleStatus && (
               <button
-                className="status-toggle-btn"
+                className={styles.statusToggleBtn}
                 onClick={handleStatusToggle}
                 title={`切换到${getStatusButtonText(record.status)}`}
               >
@@ -147,17 +147,17 @@ export function RecordCard({ record, onEdit, onDelete, onStatusChange }: RecordC
             )}
           </div>
         </div>
-        <div className="record-content">{record.content}</div>
+        <div className={styles.recordContent}>{record.content}</div>
         {record.images.length > 0 && (
-          <div className="record-images">
+          <div className={styles.recordImages}>
             {record.images.map((img, i) => (
               <img key={i} src={img} alt="" />
             ))}
           </div>
         )}
-        <div className="record-tags">
+        <div className={styles.recordTags}>
           {record.tags.map(tag => (
-            <span key={tag} className="tag">{tag}</span>
+            <span key={tag} className={styles.tag}>{tag}</span>
           ))}
         </div>
       </div>

@@ -1,7 +1,7 @@
 import { useMemo, useState, useRef, useEffect } from 'react';
 import * as echarts from 'echarts';
-import type { Record } from '../types';
-import './DashboardDetail.css';
+import type { Record } from '../../types';
+import styles from './index.module.scss';
 
 interface DashboardDetailProps {
   records: Record[];
@@ -31,14 +31,14 @@ function DelayStatsSection({ records }: { records: Record[] }) {
   }, [records]);
 
   return (
-    <div className="overview-grid">
-      <div className="overview-card delayed">
-        <div className="overview-value">{stats.delayedStart}</div>
-        <div className="overview-label">计划开始未开始</div>
+    <div className={styles.overviewGrid}>
+      <div className={`${styles.overviewCard} ${styles.delayed}`}>
+        <div className={styles.overviewValue}>{stats.delayedStart}</div>
+        <div className={styles.overviewLabel}>计划开始未开始</div>
       </div>
-      <div className="overview-card delayed">
-        <div className="overview-value">{stats.delayedEnd}</div>
-        <div className="overview-label">计划完成未完成</div>
+      <div className={`${styles.overviewCard} ${styles.delayed}`}>
+        <div className={styles.overviewValue}>{stats.delayedEnd}</div>
+        <div className={styles.overviewLabel}>计划完成未完成</div>
       </div>
     </div>
   );
@@ -197,32 +197,32 @@ function DelayAnalysisTab({ records }: { records: Record[] }) {
   }, []);
 
   return (
-    <div className="tab-content">
-      <div className="overview-grid">
-        <div className="overview-card">
-          <div className="overview-value">{efficiencyStats.onTimeRate}%</div>
-          <div className="overview-label">按时完成率</div>
+    <div className={styles.tabContent}>
+      <div className={styles.overviewGrid}>
+        <div className={styles.overviewCard}>
+          <div className={styles.overviewValue}>{efficiencyStats.onTimeRate}%</div>
+          <div className={styles.overviewLabel}>按时完成率</div>
         </div>
-        <div className="overview-card delayed">
-          <div className="overview-value">{efficiencyStats.delayedRate}%</div>
-          <div className="overview-label">延期完成率</div>
+        <div className={`${styles.overviewCard} ${styles.delayed}`}>
+          <div className={styles.overviewValue}>{efficiencyStats.delayedRate}%</div>
+          <div className={styles.overviewLabel}>延期完成率</div>
         </div>
       </div>
-      <div className="view-toggle" style={{ marginTop: '16px' }}>
+      <div className={styles.viewToggle} style={{ marginTop: '16px' }}>
         <button
-          className={`toggle-btn ${viewMode === 'week' ? 'active' : ''}`}
+          className={`${styles.toggleBtn} ${viewMode === 'week' ? styles.active : ''}`}
           onClick={() => setViewMode('week')}
         >
           周视图
         </button>
         <button
-          className={`toggle-btn ${viewMode === 'month' ? 'active' : ''}`}
+          className={`${styles.toggleBtn} ${viewMode === 'month' ? styles.active : ''}`}
           onClick={() => setViewMode('month')}
         >
           月视图
         </button>
       </div>
-      <div ref={chartRef} className="echarts-container" />
+      <div ref={chartRef} className={styles.echartsContainer} />
     </div>
   );
 }
@@ -272,27 +272,27 @@ function TagAnalysisTab({ records }: { records: Record[] }) {
   }, [records]);
 
   return (
-    <div className="tab-content">
-      <div className="tag-analysis-list">
+    <div className={styles.tabContent}>
+      <div className={styles.tagAnalysisList}>
         {tagStats.length === 0 ? (
-          <div className="empty-state">暂无数据</div>
+          <div className={styles.emptyState}>暂无数据</div>
         ) : (
           tagStats.map(item => (
-            <div key={item.tag} className="tag-analysis-item">
-              <span className="tag-name">{item.tag}</span>
-              <div className="tag-stats">
-                <span className="stat">
-                  <span className="label">延期率</span>
-                  <span className="value delayed">{item.delayedRate}%</span>
+            <div key={item.tag} className={styles.tagAnalysisItem}>
+              <span className={styles.tagName}>{item.tag}</span>
+              <div className={styles.tagStats}>
+                <span className={styles.stat}>
+                  <span className={styles.label}>延期率</span>
+                  <span className={`${styles.value} ${styles.delayed}`}>{item.delayedRate}%</span>
                 </span>
-                <span className="stat">
-                  <span className="label">完成率</span>
-                  <span className="value">{item.completed > 0 ? Math.round((item.completed / item.total) * 100) : 0}%</span>
+                <span className={styles.stat}>
+                  <span className={styles.label}>完成率</span>
+                  <span className={styles.value}>{item.completed > 0 ? Math.round((item.completed / item.total) * 100) : 0}%</span>
                 </span>
               </div>
-              <div className="tag-bar">
+              <div className={styles.tagBar}>
                 <div
-                  className="tag-bar-fill"
+                  className={styles.tagBarFill}
                   style={{ width: `${item.delayedRate}%` }}
                 />
               </div>
@@ -308,26 +308,26 @@ export function DashboardDetail({ records }: DashboardDetailProps) {
   const [activeTab, setActiveTab] = useState<TabType>('delay');
 
   return (
-    <div className="dashboard-detail">
+    <div className={styles.dashboardDetail}>
       {/* 延期统计 - 独立展示 */}
-      <section className="delay-summary">
-        <h3 className="section-title">延期统计</h3>
+      <section className={styles.delaySummary}>
+        <h3 className={styles.sectionTitle}>延期统计</h3>
         <DelayStatsSection records={records} />
       </section>
 
       {/* 效率分析模块 */}
-      <section className="efficiency-analysis">
-        <h3 className="module-title">效率分析</h3>
+      <section className={styles.efficiencyAnalysis}>
+        <h3 className={styles.moduleTitle}>效率分析</h3>
         {/* Tab 切换 */}
-        <div className="tab-toggle">
+        <div className={styles.tabToggle}>
           <button
-            className={`toggle-btn ${activeTab === 'delay' ? 'active' : ''}`}
+            className={`${styles.toggleBtn} ${activeTab === 'delay' ? styles.active : ''}`}
             onClick={() => setActiveTab('delay')}
           >
             延期分析
           </button>
           <button
-            className={`toggle-btn ${activeTab === 'tag' ? 'active' : ''}`}
+            className={`${styles.toggleBtn} ${activeTab === 'tag' ? styles.active : ''}`}
             onClick={() => setActiveTab('tag')}
           >
             Tag分析

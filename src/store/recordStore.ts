@@ -2,6 +2,8 @@ import type { Record, FilterState, TimelineGranularity } from '../types';
 import { recordRepository } from '../db/recordRepository';
 import { state, createStore, useRelaxState, useRelaxValue, RelaxProvider } from '@relax-state/react';
 
+import { action,type Store } from '@relax-state/react';
+
 // 创建状态描述符
 const recordsState = state<Record[]>([], 'records');
 const tagsState = state<string[]>([], 'tags');
@@ -30,45 +32,61 @@ export { useRelaxState, useRelaxValue, RelaxProvider };
 // 导出状态描述符供 store 操作使用
 export { recordsState, tagsState, filterState, searchQueryState, granularityState, loadingState };
 
-// actions
+// ==================== Action API ====================
+// 使用 action() 包装业务逻辑，将逻辑与视图分离
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const loadRecordsAction = action<void, void>(async (s: Store) => {
+  const currentFilter = s.get(filterState);
+  const searchQuery = s.get(searchQueryState);
+  s.set(loadingState , true);
+  try {
+    const records = await recordRepository.getByFilter(currentFilter, searchQuery);
+    const tags = await recordRepository.getAllTags();
+    s.set(recordsState , records);
+    s.set(tagsState , tags);
+  } catch (error) {
+    console.error('Failed to load records:', error);
+  } finally {
+    s.set(loadingState , false);
+  }
+}, { name: 'loadRecords' });
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const addRecordAction = action<Omit<Record, 'id' | 'createdAt' | 'updatedAt'>, void>(async (s: any, data) => {
+  await recordRepository.create(data);
+  loadRecordsAction(s);
+}, { name: 'addRecord' });
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const updateRecordAction = action<{ id: string; data: Partial<Record> }, void>(async (s: any, { id, data }) => {
+  await recordRepository.update(id, data);
+  loadRecordsAction(s);
+}, { name: 'updateRecord' });
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const deleteRecordAction = action<string, void>(async (s: any, id) => {
+  await recordRepository.delete(id);
+  loadRecordsAction(s);
+}, { name: 'deleteRecord' });
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const setFilterAction = action<FilterState, void>((s: any, filter) => {
+  s.set(filterState , filter);
+  loadRecordsAction(s);
+}, { name: 'setFilter' });
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const setGranularityAction = action<TimelineGranularity, void>((s: any, granularity) => {
+  s.set(granularityState , granularity);
+}, { name: 'setGranularity' });
+
+// 导出 actions (保持向后兼容)
 export const recordActions = {
-  async loadRecords() {
-    const currentFilter = store.get(filterState);
-    const searchQuery = store.get(searchQueryState);
-    store.set(loadingState, true);
-    try {
-      const records = await recordRepository.getByFilter(currentFilter, searchQuery);
-      const tags = await recordRepository.getAllTags();
-      store.set(recordsState, records);
-      store.set(tagsState, tags);
-      store.set(loadingState, false);
-    } catch (error) {
-      console.error('Failed to load records:', error);
-      store.set(loadingState, false);
-    }
-  },
-
-  async addRecord(data: Omit<Record, 'id' | 'createdAt' | 'updatedAt'>) {
-    await recordRepository.create(data);
-    await recordActions.loadRecords();
-  },
-
-  async updateRecord(id: string, data: Partial<Record>) {
-    await recordRepository.update(id, data);
-    await recordActions.loadRecords();
-  },
-
-  async deleteRecord(id: string) {
-    await recordRepository.delete(id);
-    await recordActions.loadRecords();
-  },
-
-  setFilter(filter: FilterState) {
-    store.set(filterState, filter);
-    recordActions.loadRecords();
-  },
-
-  setGranularity(granularity: TimelineGranularity) {
-    store.set(granularityState, granularity);
-  },
+  loadRecords: () => loadRecordsAction(store ),
+  addRecord: (data: Omit<Record, 'id' | 'createdAt' | 'updatedAt'>) => addRecordAction(store , data),
+  updateRecord: (id: string, data: Partial<Record>) => updateRecordAction(store , { id, data }),
+  deleteRecord: (id: string) => deleteRecordAction(store , id),
+  setFilter: (filter: FilterState) => setFilterAction(store , filter),
+  setGranularity: (granularity: TimelineGranularity) => setGranularityAction(store , granularity),
 };

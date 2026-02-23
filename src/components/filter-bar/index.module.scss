@@ -1,6 +1,6 @@
 /* 筛选栏样式 - 折叠式设计 */
 
-.filter-bar {
+.filterBar {
   background: var(--bg-card);
   border-radius: var(--radius-md);
   margin-bottom: 20px;
@@ -9,7 +9,7 @@
 }
 
 /* 头部行 - 始终显示 */
-.filter-bar-header {
+.filterBarHeader {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -18,7 +18,7 @@
 }
 
 /* 搜索框 */
-.filter-search {
+.filterSearch {
   flex: 1;
   display: flex;
   align-items: center;
@@ -31,18 +31,18 @@
   transition: border-color 0.2s ease;
 }
 
-.filter-search:focus-within {
+.filterSearch:focus-within {
   border-color: var(--accent-primary);
 }
 
-.filter-search .search-icon {
+.filterSearch .searchIcon {
   width: 16px;
   height: 16px;
   color: var(--text-muted);
   flex-shrink: 0;
 }
 
-.filter-search input {
+.filterSearch input {
   flex: 1;
   border: none;
   background: transparent;
@@ -53,11 +53,11 @@
   min-width: 0;
 }
 
-.filter-search input::placeholder {
+.filterSearch input::placeholder {
   color: var(--text-muted);
 }
 
-.filter-search .clear-search {
+.filterSearch .clearSearch {
   width: 18px;
   height: 18px;
   border-radius: 50%;
@@ -73,13 +73,13 @@
   transition: background 0.2s ease;
 }
 
-.filter-search .clear-search:hover {
+.filterSearch .clearSearch:hover {
   background: var(--accent-primary);
   color: #fff;
 }
 
 /* 头部操作按钮 */
-.filter-header-actions {
+.filterHeaderActions {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -87,7 +87,7 @@
 }
 
 /* 状态下拉选择 */
-.status-select {
+.statusSelect {
   height: 36px;
   padding: 0 12px;
   border: 1px solid var(--accent-tertiary);
@@ -100,17 +100,17 @@
   transition: border-color 0.2s ease;
 }
 
-.status-select:focus {
+.statusSelect:focus {
   border-color: var(--accent-primary);
 }
 
-.status-select option {
+.statusSelect option {
   background: var(--bg-card);
   color: var(--text-primary);
 }
 
 /* 状态徽章按钮（已选择状态时显示） */
-.status-badge-btn {
+.statusBadgeBtn {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -126,19 +126,19 @@
   transition: all 0.2s ease;
 }
 
-.status-badge-btn:hover {
+.statusBadgeBtn:hover {
   background: var(--accent-hover);
   border-color: var(--accent-hover);
 }
 
-.status-badge-btn svg {
+.statusBadgeBtn svg {
   width: 14px;
   height: 14px;
   opacity: 0.8;
 }
 
 /* 状态选择按钮（未选择状态时显示） */
-.status-select-btn {
+.statusSelectBtn {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -153,18 +153,18 @@
   transition: all 0.2s ease;
 }
 
-.status-select-btn:hover {
+.statusSelectBtn:hover {
   border-color: var(--accent-primary);
   color: var(--accent-primary);
 }
 
-.status-select-btn svg {
+.statusSelectBtn svg {
   width: 14px;
   height: 14px;
 }
 
 /* 展开/折叠按钮 */
-.expand-btn {
+.expandBtn {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -179,18 +179,18 @@
   transition: all 0.2s ease;
 }
 
-.expand-btn:hover {
+.expandBtn:hover {
   border-color: var(--accent-primary);
   color: var(--accent-primary);
 }
 
-.expand-btn.active {
+.expandBtn.active {
   background: var(--accent-primary);
   color: #fff;
   border-color: var(--accent-primary);
 }
 
-.expand-btn .filter-badge {
+.expandBtn .filterBadge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -204,23 +204,23 @@
   border-radius: var(--radius-full);
 }
 
-.expand-btn.active .filter-badge {
+.expandBtn.active .filterBadge {
   background: #fff;
   color: var(--accent-primary);
 }
 
-.expand-btn .expand-icon {
+.expandBtn .expandIcon {
   width: 16px;
   height: 16px;
   transition: transform 0.2s ease;
 }
 
-.expand-btn.active .expand-icon {
+.expandBtn.active .expandIcon {
   transform: rotate(180deg);
 }
 
 /* 展开内容区域 */
-.filter-bar-content {
+.filterBarContent {
   padding: 0 16px 16px;
   border-top: 1px solid var(--accent-tertiary);
   animation: slideDown 0.2s ease;
@@ -237,15 +237,15 @@
   }
 }
 
-.filter-group {
+.filterGroup {
   margin-top: 16px;
 }
 
-.filter-group:first-child {
+.filterGroup:first-child {
   margin-top: 12px;
 }
 
-.filter-group > label {
+.filterGroup > label {
   display: block;
   font-size: var(--text-xs);
   color: var(--text-muted);
@@ -255,7 +255,7 @@
   letter-spacing: 1px;
 }
 
-.filter-group .selected-count {
+.filterGroup .selectedCount {
   margin-left: 8px;
   padding: 2px 8px;
   background: var(--accent-tertiary);
@@ -268,15 +268,15 @@
 }
 
 /* 选项按钮组 */
-.filter-options,
-.filter-tags {
+.filterOptions,
+.filterTags {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
 }
 
-.filter-options button,
-.filter-tags button {
+.filterOptions button,
+.filterTags button {
   padding: 8px 16px;
   border: 1px solid var(--accent-tertiary);
   border-radius: var(--radius-full);
@@ -287,33 +287,33 @@
   transition: all 0.2s ease;
 }
 
-.filter-options button:hover,
-.filter-tags button:hover {
+.filterOptions button:hover,
+.filterTags button:hover {
   border-color: var(--accent-primary);
   color: var(--accent-primary);
 }
 
-.filter-options button.active,
-.filter-tags button.active {
+.filterOptions button.active,
+.filterTags button.active {
   background: var(--accent-primary);
   color: #fff;
   border-color: var(--accent-primary);
 }
 
 /* 显示更多标签按钮 */
-.show-more-tags {
+.showMoreTags {
   background: transparent !important;
   border-style: dashed !important;
   color: var(--text-muted) !important;
 }
 
-.show-more-tags:hover {
+.showMoreTags:hover {
   border-color: var(--accent-primary) !important;
   color: var(--accent-primary) !important;
 }
 
 /* 底部操作 */
-.filter-actions {
+.filterActions {
   margin-top: 20px;
   padding-top: 16px;
   border-top: 1px solid var(--accent-tertiary);
@@ -321,7 +321,7 @@
   justify-content: flex-end;
 }
 
-.clear-filters {
+.clearFilters {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -335,63 +335,63 @@
   transition: all 0.2s ease;
 }
 
-.clear-filters:hover {
+.clearFilters:hover {
   background: var(--danger);
   color: #fff;
 }
 
-.clear-filters svg {
+.clearFilters svg {
   width: 16px;
   height: 16px;
 }
 
 /* 响应式适配 */
 @media (max-width: 640px) {
-  .filter-bar {
+  .filterBar {
     border-radius: 0;
     margin: 0 -16px 16px;
   }
 
-  .filter-bar-header {
+  .filterBarHeader {
     padding: 12px;
     gap: 8px;
   }
 
-  .filter-search {
+  .filterSearch {
     height: 40px;
   }
 
-  .filter-header-actions {
+  .filterHeaderActions {
     gap: 6px;
   }
 
-  .status-select,
-  .expand-btn {
+  .statusSelect,
+  .expandBtn {
     height: 40px;
     padding: 0 10px;
   }
 
-  .expand-btn span:first-child {
+  .expandBtn span:first-child {
     display: none;
   }
 
-  .filter-bar-content {
+  .filterBarContent {
     padding: 0 12px 12px;
   }
 
-  .filter-group {
+  .filterGroup {
     margin-top: 12px;
   }
 
-  .filter-options button,
-  .filter-tags button {
+  .filterOptions button,
+  .filterTags button {
     padding: 10px 14px;
     font-size: var(--text-sm);
   }
 }
 
 @media (min-width: 641px) and (max-width: 1024px) {
-  .filter-bar-header {
+  .filterBarHeader {
     padding: 12px 16px;
   }
 }

@@ -1,13 +1,13 @@
 /* 记录卡片样式 - 日记手账风 */
 
 /* 卡片容器 - 用于滑动操作 */
-.record-card-wrapper {
+.recordCardWrapper {
   position: relative;
   margin-bottom: 16px;
 }
 
 /* 滑动删除按钮 */
-.swipe-delete {
+.swipeDelete {
   position: absolute;
   right: 0;
   top: 0;
@@ -25,13 +25,13 @@
   z-index: 1;
 }
 
-.swipe-delete svg {
+.swipeDelete svg {
   width: 24px;
   height: 24px;
 }
 
 /* 记录卡片 */
-.record-card {
+.recordCard {
   background: var(--bg-card);
   border-radius: var(--radius-md);
   padding: 20px;
@@ -44,36 +44,36 @@
   background-color: var(--bg-card);
 }
 
-.record-card:hover {
+.recordCard:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
 }
 
-.record-card.swiping {
+.recordCard.swiping {
   transition: none;
 }
 
 /* 超期状态 - 左侧边框提示 */
-.record-card.overdue {
+.recordCard.overdue {
   border-left: 4px solid var(--danger);
   background: linear-gradient(90deg, var(--danger-bg) 0%, var(--bg-card) 8%);
 }
 
-.record-header {
+.recordHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12px;
 }
 
-.record-header-left {
+.recordHeaderLeft {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
 /* 状态标签 - 药丸形状 + 左侧小圆点 */
-.status-badge {
+.statusBadge {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -84,7 +84,7 @@
   position: relative;
 }
 
-.status-badge::before {
+.statusBadge::before {
   content: '';
   width: 6px;
   height: 6px;
@@ -92,29 +92,29 @@
   background: currentColor;
 }
 
-.status-badge.pending {
+.statusBadge.pending {
   background: var(--status-pending-bg);
   color: var(--status-pending-text);
 }
 
-.status-badge.in_progress {
+.statusBadge.in_progress {
   background: var(--status-in-progress-bg);
   color: var(--status-in-progress-text);
 }
 
-.status-badge.completed {
+.statusBadge.completed {
   background: var(--status-completed-bg);
   color: var(--status-completed-text);
 }
 
 /* 超期状态 */
-.status-badge.overdue {
+.statusBadge.overdue {
   background: var(--danger-bg);
   color: var(--danger);
 }
 
 /* 状态切换按钮 */
-.status-toggle-btn {
+.statusToggleBtn {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -129,12 +129,12 @@
   transition: all 0.2s ease;
 }
 
-.status-toggle-btn:hover {
+.statusToggleBtn:hover {
   background: var(--accent-primary);
   color: #fff;
 }
 
-.status-toggle-btn svg {
+.statusToggleBtn svg {
   width: 12px;
   height: 12px;
 }
@@ -145,7 +145,7 @@
   gap: 4px;
 }
 
-.action-btn {
+.actionBtn {
   width: 32px;
   height: 32px;
   padding: 0;
@@ -160,36 +160,36 @@
   opacity: 0.6;
 }
 
-.action-btn:hover {
+.actionBtn:hover {
   opacity: 1;
 }
 
-.action-btn svg {
+.actionBtn svg {
   width: 16px;
   height: 16px;
 }
 
-.action-btn.edit {
+.actionBtn.edit {
   color: var(--text-muted);
 }
 
-.action-btn.edit:hover {
+.actionBtn.edit:hover {
   background: var(--accent-tertiary);
   color: var(--text-primary);
 }
 
-.action-btn.delete {
+.actionBtn.delete {
   color: var(--text-muted);
 }
 
-.action-btn.delete:hover {
+.actionBtn.delete:hover {
   background: var(--danger-bg);
   border-color: var(--danger);
   color: var(--danger);
 }
 
 /* 记录内容 */
-.record-content {
+.recordContent {
   margin-bottom: 12px;
   font-size: var(--text-base);
   line-height: 1.7;
@@ -197,14 +197,14 @@
 }
 
 /* 图片预览 */
-.record-images {
+.recordImages {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
   margin-bottom: 12px;
 }
 
-.record-images img {
+.recordImages img {
   width: 80px;
   height: 80px;
   object-fit: cover;
@@ -214,12 +214,12 @@
   cursor: pointer;
 }
 
-.record-images img:hover {
+.recordImages img:hover {
   transform: scale(1.05);
 }
 
 /* Tags */
-.record-tags {
+.recordTags {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
@@ -241,22 +241,22 @@
 
 /* 移动端适配 */
 @media (max-width: 640px) {
-  .record-card {
+  .recordCard {
     padding: 16px;
   }
 
-  .record-images img {
+  .recordImages img {
     width: 70px;
     height: 70px;
   }
 
-  .action-btn {
+  .actionBtn {
     width: 36px;
     height: 36px;
     opacity: 1;
   }
 
-  .action-btn svg {
+  .actionBtn svg {
     width: 18px;
     height: 18px;
   }

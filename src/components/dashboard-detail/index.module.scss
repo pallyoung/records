@@ -1,19 +1,19 @@
 /* DashboardDetail 样式 */
 
-.dashboard-detail {
+.dashboardDetail {
   padding: 20px;
   padding-bottom: 100px;
 }
 
 /* Tab 切换 */
-.tab-toggle {
+.tabToggle {
   display: flex;
   gap: 8px;
   margin-bottom: 20px;
   justify-content: center;
 }
 
-.toggle-btn {
+.toggleBtn {
   padding: 8px 20px;
   border: 1px solid var(--accent-tertiary);
   background: var(--bg-card);
@@ -24,63 +24,63 @@
   transition: all 0.2s ease;
 }
 
-.toggle-btn:hover {
+.toggleBtn:hover {
   border-color: var(--accent-primary);
   color: var(--accent-primary);
 }
 
-.toggle-btn.active {
+.toggleBtn.active {
   background: var(--accent-primary);
   border-color: var(--accent-primary);
   color: #fff;
 }
 
 /* Tab 内容 */
-.tab-content {
+.tabContent {
   margin-top: 16px;
 }
 
 /* 概览卡片 */
-.overview-grid {
+.overviewGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
 }
 
-.overview-card {
+.overviewCard {
   background: var(--bg-secondary);
   border-radius: var(--radius-md);
   padding: 16px;
   text-align: center;
 }
 
-.overview-card.delayed {
+.overviewCard.delayed {
   background: var(--danger-bg);
 }
 
-.overview-value {
+.overviewValue {
   font-size: var(--text-2xl);
   font-weight: 700;
   font-family: var(--font-heading);
   color: var(--text-primary);
 }
 
-.overview-card.delayed .overview-value {
+.overviewCard.delayed .overviewValue {
   color: var(--danger);
 }
 
-.overview-label {
+.overviewLabel {
   font-size: var(--text-xs);
   color: var(--text-muted);
   margin-top: 4px;
 }
 
 /* 图表区域 */
-.chart-section {
+.chartSection {
   margin-bottom: 28px;
 }
 
-.chart-section .section-title {
+.chartSection .sectionTitle {
   font-size: var(--text-sm);
   font-weight: 600;
   color: var(--text-primary);
@@ -90,7 +90,7 @@
 }
 
 /* ECharts 容器 */
-.echarts-container {
+.echartsContainer {
   width: 100%;
   height: 200px;
   background: var(--bg-secondary);
@@ -99,50 +99,50 @@
 }
 
 /* Tag 分析列表 */
-.tag-analysis-list {
+.tagAnalysisList {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.tag-analysis-item {
+.tagAnalysisItem {
   background: var(--bg-secondary);
   border-radius: var(--radius-md);
   padding: 12px 16px;
 }
 
-.tag-analysis-item .tag-name {
+.tagAnalysisItem .tagName {
   font-weight: 500;
   color: var(--text-primary);
   font-size: var(--text-sm);
 }
 
-.tag-stats {
+.tagStats {
   display: flex;
   gap: 16px;
   margin-top: 8px;
 }
 
-.tag-stats .stat {
+.tagStats .stat {
   display: flex;
   gap: 4px;
   font-size: var(--text-xs);
 }
 
-.tag-stats .label {
+.tagStats .label {
   color: var(--text-muted);
 }
 
-.tag-stats .value {
+.tagStats .value {
   color: var(--text-secondary);
   font-weight: 500;
 }
 
-.tag-stats .value.delayed {
+.tagStats .value.delayed {
   color: var(--danger);
 }
 
-.tag-bar {
+.tagBar {
   height: 4px;
   background: var(--accent-tertiary);
   border-radius: var(--radius-full);
@@ -150,14 +150,14 @@
   overflow: hidden;
 }
 
-.tag-bar-fill {
+.tagBarFill {
   height: 100%;
   background: var(--danger);
   border-radius: var(--radius-full);
   transition: width 0.3s ease;
 }
 
-.empty-state {
+.emptyState {
   text-align: center;
   color: var(--text-muted);
   padding: 40px;
@@ -165,7 +165,7 @@
 }
 
 /* 视图切换（保留兼容性） */
-.view-toggle {
+.viewToggle {
   display: flex;
   gap: 8px;
   justify-content: center;
@@ -173,41 +173,41 @@
 
 /* 移动端适配 */
 @media (max-width: 640px) {
-  .dashboard-detail {
+  .dashboardDetail {
     padding: 16px;
     padding-bottom: 80px;
   }
 
-  .tab-toggle {
+  .tabToggle {
     margin-bottom: 16px;
   }
 
-  .toggle-btn {
+  .toggleBtn {
     padding: 6px 16px;
     font-size: 12px;
   }
 
-  .overview-grid {
+  .overviewGrid {
     gap: 8px;
   }
 
-  .overview-card {
+  .overviewCard {
     padding: 12px;
   }
 
-  .overview-value {
+  .overviewValue {
     font-size: var(--text-xl);
   }
 
-  .echarts-container {
+  .echartsContainer {
     height: 180px;
   }
 
-  .tag-analysis-item {
+  .tagAnalysisItem {
     padding: 10px 12px;
   }
 
-  .tag-stats {
+  .tagStats {
     gap: 12px;
   }
 }

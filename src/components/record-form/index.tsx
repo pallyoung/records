@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import type { Record, RecordStatus, Achievement } from '../types';
-import { useTags } from '../hooks/useTags';
-import './RecordForm.css';
+import type { Record, RecordStatus, Achievement } from '../../types';
+import { useTags } from '../../hooks/useTags';
+import styles from './index.module.scss';
 
 interface RecordFormProps {
   record?: Record;
@@ -149,24 +149,24 @@ export function RecordForm({ record, records = [], onClose, onSave }: RecordForm
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="record-form" onClick={e => e.stopPropagation()}>
-        <div className="form-header">
+    <div className={styles.modalOverlay} onClick={onClose}>
+      <div className={styles.recordForm} onClick={e => e.stopPropagation()}>
+        <div className={styles.formHeader}>
           <h2>{record ? '编辑记录' : '新建记录'}</h2>
-          <div className="save-status">
+          <div className={styles.saveStatus}>
             {isSaving ? (
-              <span className="saving">保存中...</span>
+              <span className={styles.saving}>保存中...</span>
             ) : lastSaved ? (
-              <span className="saved">{formatSaveTime()}</span>
+              <span className={styles.saved}>{formatSaveTime()}</span>
             ) : null}
           </div>
-          <div className="header-buttons">
+          <div className={styles.headerButtons}>
             {isNewRecord && (
-              <button className="save-btn" onClick={handleSave} disabled={isSaving}>
+              <button className={styles.saveBtn} onClick={handleSave} disabled={isSaving}>
                 保存
               </button>
             )}
-            <button className="close-btn" onClick={onClose}>
+            <button className={styles.closeBtn} onClick={onClose}>
               <svg viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
               </svg>
@@ -174,7 +174,7 @@ export function RecordForm({ record, records = [], onClose, onSave }: RecordForm
           </div>
         </div>
 
-        <div className="form-group">
+        <div className={styles.formGroup}>
           <label>内容</label>
           <textarea
             value={content}
@@ -183,13 +183,13 @@ export function RecordForm({ record, records = [], onClose, onSave }: RecordForm
           />
         </div>
 
-        <div className="form-group">
+        <div className={styles.formGroup}>
           <label>图片</label>
           <input type="file" accept="image/*" multiple onChange={handleImageUpload} />
           {images.length > 0 && (
-            <div className="image-preview">
+            <div className={styles.imagePreview}>
               {images.map((img, i) => (
-                <div key={i} className="preview-item">
+                <div key={i} className={styles.previewItem}>
                   <img src={img} alt="" />
                   <button onClick={() => setImages(images.filter((_, idx) => idx !== i))}>×</button>
                 </div>
@@ -198,22 +198,22 @@ export function RecordForm({ record, records = [], onClose, onSave }: RecordForm
           )}
         </div>
 
-        <div className="form-group">
+        <div className={styles.formGroup}>
           <label>Tag</label>
           {/* 已选标签 */}
-          <div className="tag-list selected-tags">
+          <div className={`${styles.tagList} ${styles.selectedTags}`}>
             {tags.map(tag => (
-              <span key={tag} className="tag selected" onClick={() => handleRemoveTag(tag)}>
+              <span key={tag} className={styles.tag} onClick={() => handleRemoveTag(tag)}>
                 {tag} ×
               </span>
             ))}
           </div>
           {/* 常用标签 */}
-          <div className="tag-list frequent-tags">
+          <div className={`${styles.tagList} ${styles.frequentTags}`}>
             {frequentTags.map(tag => (
               <span
                 key={tag}
-                className={`tag ${tags.includes(tag) ? 'selected' : ''}`}
+                className={`${styles.tag} ${tags.includes(tag) ? styles.selected : ''}`}
                 onClick={() => toggleTag(tag)}
               >
                 {tag}
@@ -224,7 +224,7 @@ export function RecordForm({ record, records = [], onClose, onSave }: RecordForm
           {allTags.length > 8 && (
             <button
               type="button"
-              className="more-tags-btn"
+              className={styles.moreTagsBtn}
               onClick={() => setShowAllTags(!showAllTags)}
             >
               {showAllTags ? '收起' : '更多标签'}
@@ -232,11 +232,11 @@ export function RecordForm({ record, records = [], onClose, onSave }: RecordForm
           )}
           {/* 全部标签列表 */}
           {showAllTags && (
-            <div className="all-tags-list">
+            <div className={styles.allTagsList}>
               {allTags.slice(8).map(tag => (
                 <span
                   key={tag}
-                  className={`tag ${tags.includes(tag) ? 'selected' : ''}`}
+                  className={`${styles.tag} ${tags.includes(tag) ? styles.selected : ''}`}
                   onClick={() => toggleTag(tag)}
                 >
                   {tag}
@@ -245,7 +245,7 @@ export function RecordForm({ record, records = [], onClose, onSave }: RecordForm
             </div>
           )}
           {/* 输入新标签 */}
-          <div className="tag-input">
+          <div className={styles.tagInput}>
             <input
               value={tagInput}
               onChange={e => setTagInput(e.target.value)}
@@ -255,7 +255,7 @@ export function RecordForm({ record, records = [], onClose, onSave }: RecordForm
           </div>
         </div>
 
-        <div className="form-group">
+        <div className={styles.formGroup}>
           <label>状态</label>
           <select value={status} onChange={e => handleStatusChange(e.target.value as RecordStatus)}>
             <option value="pending">未开始</option>
@@ -264,7 +264,7 @@ export function RecordForm({ record, records = [], onClose, onSave }: RecordForm
           </select>
         </div>
 
-        <div className="form-group">
+        <div className={styles.formGroup}>
           <label>计划开始时间</label>
           <input
             type="datetime-local"
@@ -273,7 +273,7 @@ export function RecordForm({ record, records = [], onClose, onSave }: RecordForm
           />
         </div>
 
-        <div className="form-group">
+        <div className={styles.formGroup}>
           <label>计划结束时间</label>
           <input
             type="datetime-local"
@@ -283,11 +283,11 @@ export function RecordForm({ record, records = [], onClose, onSave }: RecordForm
         </div>
 
         {status === 'completed' && (
-          <div className="form-group">
+          <div className={styles.formGroup}>
             <label>复盘信息</label>
-            <div className="review-section">
+            <div className={styles.reviewSection}>
               <label>计划达成</label>
-              <div className="radio-group">
+              <div className={styles.radioGroup}>
                 <label>
                   <input
                     type="radio"

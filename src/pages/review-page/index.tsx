@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
-import type { Record as RecordType } from '../types';
-import './ReviewPage.css';
+import type { Record as RecordType } from '../../types';
+import styles from './index.module.scss';
 
 interface ReviewPageProps {
   records: RecordType[];
@@ -65,16 +65,16 @@ export function ReviewPage({ records, allTags, onBack }: ReviewPageProps) {
   };
 
   return (
-    <div className="review-page">
-      <div className="review-header">
+    <div className={styles['review-page']}>
+      <div className={styles['review-header']}>
         <button onClick={onBack}>← 返回</button>
         <h1>复盘</h1>
       </div>
 
-      <div className="review-filters">
-        <div className="filter-row">
+      <div className={styles['review-filters']}>
+        <div className={styles['filter-row']}>
           <label>时间范围</label>
-          <div className="month-picker">
+          <div className={styles['month-picker']}>
             <input
               type="month"
               value={startMonth}
@@ -89,11 +89,11 @@ export function ReviewPage({ records, allTags, onBack }: ReviewPageProps) {
           </div>
         </div>
 
-        <div className="filter-row">
+        <div className={styles['filter-row']}>
           <label>Tag</label>
-          <div className="tag-filters">
+          <div className={styles['tag-filters']}>
             <button
-              className={selectedTags.length === 0 ? 'active' : ''}
+              className={selectedTags.length === 0 ? styles['active'] : ''}
               onClick={() => setSelectedTags([])}
             >
               全部
@@ -101,7 +101,7 @@ export function ReviewPage({ records, allTags, onBack }: ReviewPageProps) {
             {allTags.map(tag => (
               <button
                 key={tag}
-                className={selectedTags.includes(tag) ? 'active' : ''}
+                className={selectedTags.includes(tag) ? styles['active'] : ''}
                 onClick={() => toggleTag(tag)}
               >
                 {tag}
@@ -111,57 +111,57 @@ export function ReviewPage({ records, allTags, onBack }: ReviewPageProps) {
         </div>
       </div>
 
-      <div className="review-stats">
-        <div className="stat-card">
-          <div className="stat-value">{stats.total}</div>
-          <div className="stat-label">总记录数</div>
+      <div className={styles['review-stats']}>
+        <div className={styles['stat-card']}>
+          <div className={styles['stat-value']}>{stats.total}</div>
+          <div className={styles['stat-label']}>总记录数</div>
         </div>
-        <div className="stat-card">
-          <div className="stat-value">{stats.completed.length}</div>
-          <div className="stat-label">已完成</div>
+        <div className={styles['stat-card']}>
+          <div className={styles['stat-value']}>{stats.completed.length}</div>
+          <div className={styles['stat-label']}>已完成</div>
         </div>
-        <div className="stat-card">
-          <div className="stat-value">{stats.delayed}</div>
-          <div className="stat-label">延期</div>
+        <div className={styles['stat-card']}>
+          <div className={styles['stat-value']}>{stats.delayed}</div>
+          <div className={styles['stat-label']}>延期</div>
         </div>
-        <div className="stat-card">
-          <div className="stat-value">{stats.onTime}</div>
-          <div className="stat-label">按期</div>
+        <div className={styles['stat-card']}>
+          <div className={styles['stat-value']}>{stats.onTime}</div>
+          <div className={styles['stat-label']}>按期</div>
         </div>
-        <div className="stat-card">
-          <div className="stat-value">{stats.early}</div>
-          <div className="stat-label">提前</div>
+        <div className={styles['stat-card']}>
+          <div className={styles['stat-value']}>{stats.early}</div>
+          <div className={styles['stat-label']}>提前</div>
         </div>
       </div>
 
-      <div className="review-achievement">
+      <div className={styles['review-achievement']}>
         <h3>计划达成</h3>
-        <div className="achievement-bars">
-          <div className="achievement-item">
+        <div className={styles['achievement-bars']}>
+          <div className={styles['achievement-item']}>
             <span>未达预期</span>
-            <div className="bar">
+            <div className={styles['bar']}>
               <div
-                className="bar-fill below"
+                className={`${styles['bar-fill']} ${styles['below']}`}
                 style={{ width: `${(stats.below / stats.completed.length) * 100 || 0}%` }}
               />
             </div>
             <span>{stats.below}</span>
           </div>
-          <div className="achievement-item">
+          <div className={styles['achievement-item']}>
             <span>达成预期</span>
-            <div className="bar">
+            <div className={styles['bar']}>
               <div
-                className="bar-fill met"
+                className={`${styles['bar-fill']} ${styles['met']}`}
                 style={{ width: `${(stats.met / stats.completed.length) * 100 || 0}%` }}
               />
             </div>
             <span>{stats.met}</span>
           </div>
-          <div className="achievement-item">
+          <div className={styles['achievement-item']}>
             <span>超出预期</span>
-            <div className="bar">
+            <div className={styles['bar']}>
               <div
-                className="bar-fill exceeded"
+                className={`${styles['bar-fill']} ${styles['exceeded']}`}
                 style={{ width: `${(stats.exceeded / stats.completed.length) * 100 || 0}%` }}
               />
             </div>
@@ -170,26 +170,26 @@ export function ReviewPage({ records, allTags, onBack }: ReviewPageProps) {
         </div>
       </div>
 
-      <div className="review-details">
+      <div className={styles['review-details']}>
         <h3>详细记录</h3>
         {stats.completed.map(record => {
           const delayStatus = calculateDelayStatus(record);
           return (
-            <div key={record.id} className="review-item">
-              <div className="review-item-header">
-                <span className="review-tags">
-                  {record.tags.map(t => <span key={t} className="tag">{t}</span>)}
+            <div key={record.id} className={styles['review-item']}>
+              <div className={styles['review-item-header']}>
+                <span className={styles['review-tags']}>
+                  {record.tags.map(t => <span key={t} className={styles['tag']}>{t}</span>)}
                 </span>
-                <span className={`delay-status ${delayStatus}`}>
+                <span className={`${styles['delay-status']} ${styles[delayStatus || '']}`}>
                   {delayStatus === 'delayed' && '延期'}
                   {delayStatus === 'on_time' && '按期'}
                   {delayStatus === 'early' && '提前'}
                 </span>
               </div>
-              <div className="review-item-content">{record.content}</div>
+              <div className={styles['review-item-content']}>{record.content}</div>
               {record.review && (
-                <div className="review-item-review">
-                  <span className={`achievement ${record.review.achievement}`}>
+                <div className={styles['review-item-review']}>
+                  <span className={`${styles['achievement']} ${styles[record.review.achievement]}`}>
                     {record.review.achievement === 'below' && '未达预期'}
                     {record.review.achievement === 'met' && '达成预期'}
                     {record.review.achievement === 'exceeded' && '超出预期'}

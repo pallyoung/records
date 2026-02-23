@@ -8,7 +8,7 @@
 }
 
 /* 吸底栏 */
-.dashboard-bar {
+.dashboardBar {
   display: flex;
   gap: 24px;
   padding: 8px 16px;
@@ -19,25 +19,25 @@
 
 }
 
-.dashboard-bar:hover {
+.dashboardBar:hover {
   background: var(--bg-secondary);
 }
 
 /* 紧凑布局 */
-.dashboard-section.compact {
+.dashboardSection.compact {
   display: flex;
   align-items: center;
   gap: 12px;
   flex: 1;
 }
 
-.dashboard-section.compact .section-label {
+.dashboardSection.compact .sectionLabel {
   font-size: 11px;
   color: var(--text-muted);
   white-space: nowrap;
 }
 
-.dashboard-section.compact .stat-numbers {
+.dashboardSection.compact .statNumbers {
   display: flex;
   align-items: center;
   gap: 4px;
@@ -46,19 +46,19 @@
   font-weight: 600;
 }
 
-.dashboard-section.compact .stat-numbers .num {
+.dashboardSection.compact .statNumbers .num {
   color: var(--text-primary);
 }
 
-.dashboard-section.compact .stat-numbers .num.completed {
+.dashboardSection.compact .statNumbers .num.completed {
   color: var(--accent-secondary);
 }
 
-.dashboard-section.compact .stat-numbers .num.delayed {
+.dashboardSection.compact .statNumbers .num.delayed {
   color: var(--danger);
 }
 
-.dashboard-section.compact .stat-numbers .sep {
+.dashboardSection.compact .statNumbers .sep {
   color: var(--text-muted);
   font-weight: 400;
   font-size: 12px;
@@ -66,29 +66,29 @@
 
 /* 移动端适配 */
 @media (max-width: 640px) {
-  .dashboard-bar {
+  .dashboardBar {
     gap: 16px;
     padding: 6px 12px;
   }
 
-  .dashboard-section.compact .section-label {
+  .dashboardSection.compact .sectionLabel {
     font-size: 10px;
   }
 
-  .dashboard-section.compact .stat-numbers {
+  .dashboardSection.compact .statNumbers {
     font-size: 14px;
   }
 }
 
 /* 保留旧样式兼容性 */
-.dashboard-summary {
+.dashboardSummary {
   display: flex;
   align-items: center;
   gap: 20px;
   flex-wrap: wrap;
 }
 
-.stat-item {
+.statItem {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -96,15 +96,15 @@
   color: var(--text-secondary);
 }
 
-.stat-item.overdue {
+.statItem.overdue {
   color: var(--danger);
 }
 
-.stat-item.delayed {
+.statItem.delayed {
   color: var(--warning);
 }
 
-.stat-rate {
+.statRate {
   font-size: var(--text-xs);
   color: var(--accent);
   background: var(--accent-light);
@@ -113,30 +113,30 @@
   font-weight: 500;
 }
 
-.stat-icon {
+.statIcon {
   font-size: 14px;
 }
 
 /* 移动端适配 */
 @media (max-width: 640px) {
-  .dashboard-bar {
+  .dashboardBar {
     padding: 12px 16px;
     gap: 12px;
   }
 
-  .dashboard-section {
+  .dashboardSection {
     width: 100%;
   }
 
-  .stat-card {
+  .statCard {
     padding: 10px 8px;
   }
 
-  .stat-value {
+  .statValue {
     font-size: var(--text-lg);
   }
 
-  .stat-label {
+  .statLabel {
     font-size: 11px;
   }
 }

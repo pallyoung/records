@@ -1,5 +1,5 @@
-import { useTags } from '../hooks/useTags';
-import './TagManagementPage.css';
+import { useTags } from '../../hooks/useTags';
+import styles from './index.module.scss';
 
 interface TagManagementPageProps {
   onBack: () => void;
@@ -15,31 +15,31 @@ export function TagManagementPage({ onBack }: TagManagementPageProps) {
   };
 
   return (
-    <div className="tag-management-page">
-      <header className="page-header">
-        <button className="back-btn" onClick={onBack}>← 返回</button>
+    <div className={styles['tag-management-page']}>
+      <header className={styles['page-header']}>
+        <button className={styles['back-btn']} onClick={onBack}>← 返回</button>
         <h1>管理标签</h1>
       </header>
 
-      <section className="tag-section">
+      <section className={styles['tag-section']}>
         <h3>默认标签（不可删除）</h3>
-        <div className="tag-grid default">
+        <div className={`${styles['tag-grid']} ${styles['default']}`}>
           {allTags.filter(isDefaultTag).map(tag => (
-            <span key={tag} className="tag default">{tag}</span>
+            <span key={tag} className={`${styles['tag']} ${styles['default']}`}>{tag}</span>
           ))}
         </div>
       </section>
 
-      <section className="tag-section">
+      <section className={styles['tag-section']}>
         <h3>自定义标签</h3>
         {customTags.length === 0 ? (
-          <p className="empty-message">暂无自定义标签</p>
+          <p className={styles['empty-message']}>暂无自定义标签</p>
         ) : (
-          <div className="tag-grid custom">
+          <div className={`${styles['tag-grid']} ${styles['custom']}`}>
             {customTags.map(tag => (
               <span
                 key={tag}
-                className="tag custom"
+                className={`${styles['tag']} ${styles['custom']}`}
                 onClick={() => handleRemoveTag(tag)}
               >
                 {tag} ×
