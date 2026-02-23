@@ -9,7 +9,6 @@ interface DashboardProps {
 }
 
 export function Dashboard({ records, isExpanded, onExpandChange }: DashboardProps) {
-
   const stats = useMemo(() => {
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -75,118 +74,43 @@ export function Dashboard({ records, isExpanded, onExpandChange }: DashboardProp
     };
   }, [records]);
 
-  // 计算完成率
-  const getCompletionRate = (completed: number, total: number) => {
-    if (total === 0) return 0;
-    return Math.round((completed / total) * 100);
-  };
-
   const handleExpand = (expanded: boolean) => {
     onExpandChange(expanded);
   };
 
   return (
-    <div className={`dashboard ${isExpanded ? 'expanded' : ''}`}>
-      {/* 折叠时的显示 */}
-      <div className="dashboard-collapsed" onClick={() => handleExpand(!isExpanded)}>
+    <div className="dashboard">
+      {/* 吸底栏 - 始终显示 */}
+      <div className="dashboard-bar" onClick={() => handleExpand(!isExpanded)}>
         <div className="dashboard-summary">
-          <div className="stat-item" onClick={(e) => { e.stopPropagation(); handleExpand(true); }}>
+          <div className="stat-item">
             <span className="stat-icon">📅</span>
             <span className="stat-text">今日 {stats.todayCompleted}</span>
           </div>
-          <div className="stat-item" onClick={(e) => { e.stopPropagation(); handleExpand(true); }}>
+          <div className="stat-item">
             <span className="stat-icon">📆</span>
             <span className="stat-text">本周 {stats.weekCompleted}</span>
           </div>
-          <div className="stat-item" onClick={(e) => { e.stopPropagation(); handleExpand(true); }}>
+          <div className="stat-item">
             <span className="stat-icon">📊</span>
             <span className="stat-text">本月 {stats.monthCompleted}/{stats.monthTotal}</span>
           </div>
           {stats.overdueCount > 0 && (
-            <div className="stat-item overdue" onClick={(e) => { e.stopPropagation(); handleExpand(true); }}>
+            <div className="stat-item overdue">
               <span className="stat-icon">⚠️</span>
               <span className="stat-text">超期 {stats.overdueCount}</span>
             </div>
           )}
+          {stats.topTags.length > 0 && (
+            <div className="stat-item tags">
+              <span className="tag-count">{stats.topTags[0][0]} {stats.topTags[0][1]}</span>
+            </div>
+          )}
         </div>
         <button className="dashboard-toggle">
-          {isExpanded ? '▼' : '▲'}
+          {isExpanded ? '✕' : '▲'}
         </button>
       </div>
-
-      {/* 展开时的显示 */}
-      {isExpanded && (
-        <div className="dashboard-expanded">
-          {/* 统计卡片 */}
-          <div className="dashboard-stats">
-            <div className="dashboard-stat-card">
-              <div className="stat-title">今日进度</div>
-              <div className="stat-progress">
-                <div className="progress-bar">
-                  <div
-                    className="progress-fill"
-                    style={{ width: `${getCompletionRate(stats.todayCompleted, stats.todayTotal)}%` }}
-                  />
-                </div>
-                <span className="progress-text">
-                  {stats.todayCompleted}/{stats.todayTotal} ({getCompletionRate(stats.todayCompleted, stats.todayTotal)}%)
-                </span>
-              </div>
-            </div>
-
-            <div className="dashboard-stat-card">
-              <div className="stat-title">本周进度</div>
-              <div className="stat-progress">
-                <div className="progress-bar">
-                  <div
-                    className="progress-fill"
-                    style={{ width: `${getCompletionRate(stats.weekCompleted, stats.weekTotal)}%` }}
-                  />
-                </div>
-                <span className="progress-text">
-                  {stats.weekCompleted}/{stats.weekTotal} ({getCompletionRate(stats.weekCompleted, stats.weekTotal)}%)
-                </span>
-              </div>
-            </div>
-
-            <div className="dashboard-stat-card">
-              <div className="stat-title">本月进度</div>
-              <div className="stat-progress">
-                <div className="progress-bar">
-                  <div
-                    className="progress-fill"
-                    style={{ width: `${getCompletionRate(stats.monthCompleted, stats.monthTotal)}%` }}
-                  />
-                </div>
-                <span className="progress-text">
-                  {stats.monthCompleted}/{stats.monthTotal} ({getCompletionRate(stats.monthCompleted, stats.monthTotal)}%)
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* 底部信息行 */}
-          <div className="dashboard-footer">
-            {/* 超期提醒 */}
-            {stats.overdueCount > 0 && (
-              <div className="overdue-warning">
-                <span className="warning-icon">⚠️</span>
-                <span>有 {stats.overdueCount} 项超期</span>
-              </div>
-            )}
-
-            {/* 热门标签 */}
-            {stats.topTags.length > 0 && (
-              <div className="top-tags">
-                <span className="tags-label">热门:</span>
-                {stats.topTags.map(([tag, count]) => (
-                  <span key={tag} className="tag-count">{tag} {count}</span>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
     </div>
   );
 }

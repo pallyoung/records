@@ -96,22 +96,14 @@ function AppContent() {
         )}
       </main>
 
-      {/* Dashboard 展开时的半浮层遮罩 */}
+      {/* Dashboard 展开时的半透明遮罩 */}
       {dashboardExpanded && (
-        <div className="dashboard-expanded-overlay" onClick={() => setDashboardExpanded(false)}>
-          <div className="dashboard-expanded-content" onClick={e => e.stopPropagation()}>
-            <Dashboard
-              records={records}
-              isExpanded={true}
-              onExpandChange={setDashboardExpanded}
-            />
-          </div>
-        </div>
+        <div className="dashboard-expanded-overlay" onClick={() => setDashboardExpanded(false)} />
       )}
 
-      {/* Dashboard 固定在底部 */}
+      {/* Dashboard Drawer - 从底部弹出 */}
       {!loading && (
-        <div className="dashboard-fixed">
+        <div className={`dashboard-drawer ${dashboardExpanded ? 'open' : ''}`}>
           <Dashboard
             records={records}
             isExpanded={dashboardExpanded}

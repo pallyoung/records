@@ -41,38 +41,37 @@
   max-width: none;
 }
 
-/* Dashboard 展开时的半浮层 */
+/* Dashboard 展开时的半浮层 - drawer从底部弹出 */
 .dashboard-expanded-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  bottom: 80px;
-  background: var(--bg-primary);
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
   z-index: 49;
-  overflow-y: auto;
-  animation: slideUp 0.3s ease;
+  animation: fadeIn 0.2s ease;
 }
 
-.dashboard-expanded-content {
-  padding: 24px;
-  max-width: 600px;
-  margin: 0 auto;
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-.dashboard-expanded-content .dashboard {
-  box-shadow: var(--shadow-lg);
-  border-radius: var(--radius-lg);
-}
+.dashboard-drawer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--bg-card);
+  box-shadow: 0 -4px 24px rgba(61, 51, 41, 0.15);
+  z-index: 50;
+  transform: translateY(calc(100% - 60px));
+  transition: transform 0.3s ease;
 }
 
-@keyframes slideUp {
-  from {
-    transform: translateY(100%);
-  }
-  to {
-    transform: translateY(0);
-  }
+.dashboard-drawer.open {
+  transform: translateY(0);
 }
 
 @media (max-width: 640px) {
