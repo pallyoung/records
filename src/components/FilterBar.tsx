@@ -29,12 +29,8 @@ export function FilterBar({
     onFilterChange({ ...filter, tags: newTags });
   };
 
-  const handleStatusChange = (status: RecordStatus) => {
+  const handleStatusChange = (status: RecordStatus | null) => {
     onFilterChange({ ...filter, status });
-  };
-
-  const handleClearStatus = () => {
-    onFilterChange({ ...filter, status: null });
   };
 
   const handleSearchChange = (value: string) => {
@@ -74,32 +70,7 @@ export function FilterBar({
         </div>
 
         <div className="filter-header-actions">
-          {/* 状态快速切换 */}
-          {filter.status ? (
-            <button
-              className="status-badge-btn"
-              onClick={handleClearStatus}
-              title="清除状态筛选"
-            >
-              {filter.status === 'pending' && '未开始'}
-              {filter.status === 'in_progress' && '进行中'}
-              {filter.status === 'completed' && '已完成'}
-              <svg viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-              </svg>
-            </button>
-          ) : (
-            <button
-              className="status-select-btn"
-              onClick={() => setIsExpanded(true)}
-              title="选择状态"
-            >
-              状态
-              <svg viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-              </svg>
-            </button>
-          )}
+
 
           {/* 展开/折叠按钮 */}
           <button
@@ -124,6 +95,12 @@ export function FilterBar({
           <div className="filter-group">
             <label>状态</label>
             <div className="filter-options">
+              <button
+                className={filter.status === 'pending' ? 'active' : ''}
+                onClick={() => handleStatusChange(null)}
+              >
+                全部
+              </button>
               <button
                 className={filter.status === 'pending' ? 'active' : ''}
                 onClick={() => handleStatusChange('pending')}
