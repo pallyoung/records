@@ -16,50 +16,64 @@ export function Dashboard({ records, isExpanded, onExpandChange }: DashboardProp
   // 今日统计
   const todayStats = useMemo(() => {
     const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const todayRecords = records.filter(r => {
-      const created = new Date(r.createdAt);
-      return created >= today;
+
+    // 今日待完成：所有未完成记录
+    const incompleteRecords = records.filter(r => r.status !== 'completed');
+    const pending = incompleteRecords.filter(r => r.status === 'pending').length;
+    const inProgress = incompleteRecords.filter(r => r.status === 'in_progress').length;
+    const completed = records.filter(r => r.status === 'completed').length;
+
+    // 今日延期计算
+    const delayed = incompleteRecords.filter(r => {
+      const plannedStart = r.plannedStartTime || r.createdAt;
+      const plannedEnd = r.plannedEndTime ? new Date(r.plannedEndTime) : new Date(r.createdAt);
+      plannedEnd.setHours(23, 59, 59, 999);
+
+      // 计划开始未开始
+      if (r.status === 'pending' && now > plannedStart) return true;
+      // 计划完成未完成
+      if (r.status === 'in_progress' && now > plannedEnd) return true;
+      return false;
     });
 
-    const pending = todayRecords.filter(r => r.status === 'pending').length;
-    const inProgress = todayRecords.filter(r => r.status === 'in_progress').length;
-    const completed = todayRecords.filter(r => r.status === 'completed').length;
-    const total = todayRecords.length;
-    const incomplete = pending + inProgress;
+    const delayedStart = delayed.filter(r => r.status === 'pending').length;
+    const delayedEnd = delayed.filter(r => r.status === 'in_progress').length;
 
-    // 延期统计
-    const delayed = todayRecords.filter(r => {
-      if (r.status === 'completed') return false;
-      if (r.status === 'pending' && r.plannedStartTime && now > r.plannedStartTime) return true;
-      if (r.status === 'in_progress' && r.plannedEndTime && now > r.plannedEndTime) return true;
-      return false;
-    }).length;
-
-    const delayedRate = incomplete > 0 ? Math.round((delayed / incomplete) * 100) : 0;
-
-    return { pending, inProgress, completed, total, incomplete, delayed, delayedRate };
+    return { pending, inProgress, completed, incomplete: pending + inProgress, delayedStart, delayedEnd };
   }, [records]);
 
   return (
     <div className="dashboard">
       {/* 吸底栏 - 始终显示 */}
       <div className="dashboard-bar" onClick={() => handleExpand(!isExpanded)}>
-        <div className="dashboard-summary">
-          <div className="stat-item">
-            <span className="stat-icon">📋</span>
-            <span className="stat-text">待办 {todayStats.incomplete}</span>
-          </div>
-          <div className="stat-item">
-            <span className="stat-icon">✅</span>
-            <span className="stat-text">已完成 {todayStats.completed}</span>
-          </div>
-          {todayStats.delayed > 0 && (
-            <div className="stat-item delayed">
-              <span className="stat-icon">⚠️</span>
-              <span className="stat-text">延期率 {todayStats.delayedRate}%</span>
+        {/* 今日待完成 */}
+        <div className="dashboard-section">
+          <div className="section-title">今日待完成</div>
+          <div className="stat-cards">
+            <div className="stat-card">
+              <span className="stat-value">{todayStats.incomplete}</span>
+              <span className="stat-label">待办</span>
             </div>
-          )}
+            <div className="stat-card completed">
+              <span className="stat-value">{todayStats.completed}</span>
+              <span className="stat-label">已完成</span>
+            </div>
+          </div>
+        </div>
+
+        {/* 今日延期 */}
+        <div className="dashboard-section">
+          <div className="section-title">今日延期</div>
+          <div className="stat-cards">
+            <div className="stat-card delayed">
+              <span className="stat-value">{todayStats.delayedStart}</span>
+              <span className="stat-label">未开始</span>
+            </div>
+            <div className="stat-card delayed">
+              <span className="stat-value">{todayStats.delayedEnd}</span>
+              <span className="stat-label">未完成</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
