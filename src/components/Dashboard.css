@@ -125,7 +125,7 @@
   text-align: right;
 }
 
-/* 底部信息 */
+/* 底部信息 - 折叠时也显示 */
 .dashboard-footer {
   display: flex;
   justify-content: space-between;
@@ -134,6 +134,19 @@
   border-top: 1px solid var(--accent-tertiary);
   flex-wrap: wrap;
   gap: 12px;
+}
+
+/* 折叠状态时也显示底部信息 */
+.dashboard:not(.expanded) .dashboard-footer {
+  display: flex;
+}
+
+.dashboard:not(.expanded) .dashboard-stats {
+  display: none;
+}
+
+.dashboard:not(.expanded) .dashboard-collapsed {
+  flex-wrap: wrap;
 }
 
 .overdue-warning {

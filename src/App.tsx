@@ -18,6 +18,7 @@ function AppContent() {
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showReview, setShowReview] = useState(false);
+  const [dashboardExpanded, setDashboardExpanded] = useState(false);
 
   useEffect(() => {
     recordActions.loadRecords();
@@ -73,7 +74,6 @@ function AppContent() {
         <h1>记录</h1>
         <div className="header-actions">
           <button onClick={() => setShowReview(true)}>复盘</button>
-          <button className="primary" onClick={() => setShowForm(true)}>新建</button>
         </div>
       </header>
 
@@ -96,8 +96,29 @@ function AppContent() {
         )}
       </main>
 
+      {/* Dashboard 展开时的半浮层遮罩 */}
+      {dashboardExpanded && (
+        <div className="dashboard-expanded-overlay" onClick={() => setDashboardExpanded(false)}>
+          <div className="dashboard-expanded-content" onClick={e => e.stopPropagation()}>
+            <Dashboard
+              records={records}
+              isExpanded={true}
+              onExpandChange={setDashboardExpanded}
+            />
+          </div>
+        </div>
+      )}
+
       {/* Dashboard 固定在底部 */}
-      {!loading && <div className="dashboard-fixed"><Dashboard records={records} /></div>}
+      {!loading && (
+        <div className="dashboard-fixed">
+          <Dashboard
+            records={records}
+            isExpanded={dashboardExpanded}
+            onExpandChange={setDashboardExpanded}
+          />
+        </div>
+      )}
 
       {/* 移动端 FAB 按钮 */}
       <button className="fab-button" onClick={() => setShowForm(true)}>

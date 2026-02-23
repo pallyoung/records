@@ -1,13 +1,14 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import type { Record } from '../types';
 import './Dashboard.css';
 
 interface DashboardProps {
   records: Record[];
+  isExpanded: boolean;
+  onExpandChange: (expanded: boolean) => void;
 }
 
-export function Dashboard({ records }: DashboardProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
+export function Dashboard({ records, isExpanded, onExpandChange }: DashboardProps) {
 
   const stats = useMemo(() => {
     const now = new Date();
@@ -80,25 +81,29 @@ export function Dashboard({ records }: DashboardProps) {
     return Math.round((completed / total) * 100);
   };
 
+  const handleExpand = (expanded: boolean) => {
+    onExpandChange(expanded);
+  };
+
   return (
     <div className={`dashboard ${isExpanded ? 'expanded' : ''}`}>
       {/* 折叠时的显示 */}
-      <div className="dashboard-collapsed" onClick={() => setIsExpanded(!isExpanded)}>
+      <div className="dashboard-collapsed" onClick={() => handleExpand(!isExpanded)}>
         <div className="dashboard-summary">
-          <div className="stat-item" onClick={(e) => { e.stopPropagation(); setIsExpanded(true); }}>
+          <div className="stat-item" onClick={(e) => { e.stopPropagation(); handleExpand(true); }}>
             <span className="stat-icon">📅</span>
             <span className="stat-text">今日 {stats.todayCompleted}</span>
           </div>
-          <div className="stat-item" onClick={(e) => { e.stopPropagation(); setIsExpanded(true); }}>
+          <div className="stat-item" onClick={(e) => { e.stopPropagation(); handleExpand(true); }}>
             <span className="stat-icon">📆</span>
             <span className="stat-text">本周 {stats.weekCompleted}</span>
           </div>
-          <div className="stat-item" onClick={(e) => { e.stopPropagation(); setIsExpanded(true); }}>
+          <div className="stat-item" onClick={(e) => { e.stopPropagation(); handleExpand(true); }}>
             <span className="stat-icon">📊</span>
             <span className="stat-text">本月 {stats.monthCompleted}/{stats.monthTotal}</span>
           </div>
           {stats.overdueCount > 0 && (
-            <div className="stat-item overdue" onClick={(e) => { e.stopPropagation(); setIsExpanded(true); }}>
+            <div className="stat-item overdue" onClick={(e) => { e.stopPropagation(); handleExpand(true); }}>
               <span className="stat-icon">⚠️</span>
               <span className="stat-text">超期 {stats.overdueCount}</span>
             </div>

@@ -30,26 +30,53 @@
   }
 }
 
-/* Dashboard 固定在底部 */
+/* Dashboard 固定在底部 - 全屏宽度 */
 .dashboard-fixed {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
   z-index: 50;
-  max-width: 1200px;
+  width: 100%;
+  max-width: none;
+}
+
+/* Dashboard 展开时的半浮层 */
+.dashboard-expanded-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 80px;
+  background: var(--bg-primary);
+  z-index: 49;
+  overflow-y: auto;
+  animation: slideUp 0.3s ease;
+}
+
+.dashboard-expanded-content {
+  padding: 24px;
+  max-width: 600px;
   margin: 0 auto;
-  left: 50%;
-  transform: translateX(-50%);
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.dashboard-expanded-content .dashboard {
+  box-shadow: var(--shadow-lg);
+  border-radius: var(--radius-lg);
+}
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
 }
 
 @media (max-width: 640px) {
-  .dashboard-fixed {
-    border-radius: 0;
-  }
-
-  /* 为FAB按钮腾出空间 */
+  /* 移动端为FAB按钮腾出空间 */
   .fab-button {
     bottom: 100px;
   }
