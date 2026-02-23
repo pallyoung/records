@@ -77,11 +77,35 @@ export function Dashboard({ records, isExpanded, onExpandChange }: DashboardProp
   const handleExpand = (expanded: boolean) => {
     onExpandChange(expanded);
   };
-  /**
-   * @todo ：
-   * - 展示今日待办数量以及今日需完成数量
-   * - 展示完成率、延期率等关键指标
-  */
+
+  // 计算今日待办和完成率
+  const todayStats = useMemo(() => {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const todayRecords = records.filter(r => {
+      const created = new Date(r.createdAt);
+      return created >= today;
+    });
+
+    const pending = todayRecords.filter(r => r.status === 'pending').length;
+    const inProgress = todayRecords.filter(r => r.status === 'in_progress').length;
+    const completed = todayRecords.filter(r => r.status === 'completed').length;
+    const total = todayRecords.length;
+    const completionRate = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+    // 延期统计（今日创建且已延期的）
+    const delayed = todayRecords.filter(r => {
+      if (r.status === 'completed') return false;
+      if (r.status === 'pending' && r.plannedStartTime && now > r.plannedStartTime) return true;
+      if (r.status === 'in_progress' && r.plannedEndTime && now > r.plannedEndTime) return true;
+      return false;
+    }).length;
+
+    const delayedRate = total > 0 ? Math.round((delayed / total) * 100) : 0;
+
+    return { pending, inProgress, completed, total, completionRate, delayed, delayedRate };
+  }, [records]);
+
   return (
     <div className="dashboard">
       {/* 吸底栏 - 始终显示 */}
@@ -89,7 +113,8 @@ export function Dashboard({ records, isExpanded, onExpandChange }: DashboardProp
         <div className="dashboard-summary">
           <div className="stat-item">
             <span className="stat-icon">📅</span>
-            <span className="stat-text">今日 {stats.todayCompleted}</span>
+            <span className="stat-text">今日 {todayStats.completed}/{todayStats.total}</span>
+            <span className="stat-rate">{todayStats.completionRate}%</span>
           </div>
           <div className="stat-item">
             <span className="stat-icon">📆</span>
@@ -99,10 +124,15 @@ export function Dashboard({ records, isExpanded, onExpandChange }: DashboardProp
             <span className="stat-icon">📊</span>
             <span className="stat-text">本月 {stats.monthCompleted}/{stats.monthTotal}</span>
           </div>
-          {stats.overdueCount > 0 && (
-            <div className="stat-item overdue">
+          <div className="stat-item">
+            <span className="stat-icon">⏳</span>
+            <span className="stat-text">待办 {todayStats.pending + todayStats.inProgress}</span>
+          </div>
+          {todayStats.delayed > 0 && (
+            <div className="stat-item delayed">
               <span className="stat-icon">⚠️</span>
-              <span className="stat-text">超期 {stats.overdueCount}</span>
+              <span className="stat-text">延期 {todayStats.delayed}</span>
+              <span className="stat-rate">{todayStats.delayedRate}%</span>
             </div>
           )}
         </div>
