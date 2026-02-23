@@ -311,31 +311,34 @@ export function DashboardDetail({ records }: DashboardDetailProps) {
 
   return (
     <div className="dashboard-detail">
-      {/* Tab 切换 */}
-      <div className="tab-toggle">
-        <button
-          className={`toggle-btn ${activeTab === 'delay' ? 'active' : ''}`}
-          onClick={() => setActiveTab('delay')}
-        >
-          延期分析
-        </button>
-        <button
-          className={`toggle-btn ${activeTab === 'efficiency' ? 'active' : ''}`}
-          onClick={() => setActiveTab('efficiency')}
-        >
-          效率统计
-        </button>
-        <button
-          className={`toggle-btn ${activeTab === 'tag' ? 'active' : ''}`}
-          onClick={() => setActiveTab('tag')}
-        >
-          Tag分析
-        </button>
-      </div>
+      {/* 延期统计 - 独立展示 */}
+      <section className="delay-summary">
+        <h3 className="section-title">延期统计</h3>
+        <DelayStatsSection records={records} />
+      </section>
 
-      {activeTab === 'delay' && <DelayAnalysisTab records={records} />}
-      {activeTab === 'efficiency' && <EfficiencyTab records={records} />}
-      {activeTab === 'tag' && <TagAnalysisTab records={records} />}
+      {/* 效率分析模块 */}
+      <section className="efficiency-analysis">
+        <h3 className="module-title">效率分析</h3>
+        {/* Tab 切换 */}
+        <div className="tab-toggle">
+          <button
+            className={`toggle-btn ${activeTab === 'delay' ? 'active' : ''}`}
+            onClick={() => setActiveTab('delay')}
+          >
+            延期分析
+          </button>
+          <button
+            className={`toggle-btn ${activeTab === 'tag' ? 'active' : ''}`}
+            onClick={() => setActiveTab('tag')}
+          >
+            Tag分析
+          </button>
+        </div>
+
+        {activeTab === 'delay' && <DelayAnalysisTab records={records} />}
+        {activeTab === 'tag' && <TagAnalysisTab records={records} />}
+      </section>
     </div>
   );
 }

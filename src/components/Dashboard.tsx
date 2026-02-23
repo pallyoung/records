@@ -44,36 +44,26 @@ export function Dashboard({ records, isExpanded, onExpandChange }: DashboardProp
 
   return (
     <div className="dashboard">
-      {/* 吸底栏 - 始终显示 */}
+      {/* 吸底栏 - 紧凑单行布局 */}
       <div className="dashboard-bar" onClick={() => handleExpand(!isExpanded)}>
         {/* 今日待完成 */}
-        <div className="dashboard-section">
-          <div className="section-title">今日待完成</div>
-          <div className="stat-cards">
-            <div className="stat-card">
-              <span className="stat-value">{todayStats.incomplete}</span>
-              <span className="stat-label">待办</span>
-            </div>
-            <div className="stat-card completed">
-              <span className="stat-value">{todayStats.completed}</span>
-              <span className="stat-label">已完成</span>
-            </div>
-          </div>
+        <div className="dashboard-section compact">
+          <span className="section-label">今日待完成</span>
+          <span className="stat-numbers">
+            <span className="num">{todayStats.incomplete}</span>
+            <span className="sep">/</span>
+            <span className="num completed">{todayStats.completed}</span>
+          </span>
         </div>
 
         {/* 今日延期 */}
-        <div className="dashboard-section">
-          <div className="section-title">今日延期</div>
-          <div className="stat-cards">
-            <div className="stat-card delayed">
-              <span className="stat-value">{todayStats.delayedStart}</span>
-              <span className="stat-label">未开始</span>
-            </div>
-            <div className="stat-card delayed">
-              <span className="stat-value">{todayStats.delayedEnd}</span>
-              <span className="stat-label">未完成</span>
-            </div>
-          </div>
+        <div className="dashboard-section compact">
+          <span className="section-label">今日延期</span>
+          <span className="stat-numbers">
+            <span className="num delayed">{todayStats.delayedStart}</span>
+            <span className="sep">/</span>
+            <span className="num delayed">{todayStats.delayedEnd}</span>
+          </span>
         </div>
       </div>
     </div>
