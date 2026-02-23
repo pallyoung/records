@@ -6,6 +6,7 @@ import { Dashboard } from './components/Dashboard';
 import { DashboardDetail } from './components/DashboardDetail';
 import { RecordForm } from './components/RecordForm';
 import { ReviewPage } from './pages/ReviewPage';
+import { TagManagementPage } from './pages/TagManagementPage';
 import { recordActions } from './store/recordStore';
 import type { Record, FilterState, RecordStatus } from './types';
 import './App.css';
@@ -19,6 +20,7 @@ function AppContent() {
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showReview, setShowReview] = useState(false);
+  const [showTagManagement, setShowTagManagement] = useState(false);
   const [dashboardExpanded, setDashboardExpanded] = useState(false);
 
   useEffect(() => {
@@ -71,11 +73,20 @@ function AppContent() {
     );
   }
 
+  if (showTagManagement) {
+    return (
+      <TagManagementPage
+        onBack={() => setShowTagManagement(false)}
+      />
+    );
+  }
+
   return (
     <div className="app">
       <header className="app-header">
         <h1>记录</h1>
         <div className="header-actions">
+          <button onClick={() => setShowTagManagement(true)}>标签</button>
           <button onClick={() => setShowReview(true)}>复盘</button>
         </div>
       </header>
