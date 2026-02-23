@@ -1,42 +1,130 @@
-#root {
-  max-width: 1280px;
+/* 响应式变量 - 移动端优先 */
+:root {
+  --app-max-width: 100%;
+  --app-padding: 16px;
+  --fab-size: 56px;
+  --fab-bottom: 24px;
+  --fab-right: 24px;
+}
+
+/* 平板 */
+@media (min-width: 641px) {
+  :root {
+    --app-max-width: 720px;
+  }
+}
+
+/* 桌面 */
+@media (min-width: 1025px) {
+  :root {
+    --app-max-width: 1200px;
+    --app-padding: 32px;
+  }
+}
+
+.app {
+  max-width: var(--app-max-width);
   margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  padding: var(--app-padding);
+  min-height: 100vh;
+  background: #f5f5f5;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+/* 桌面双栏布局 */
+@media (min-width: 1025px) {
+  .app {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 32px;
   }
-  to {
-    transform: rotate(360deg);
+
+  .app-header {
+    grid-column: 1 / -1;
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+/* 移动端单栏 */
+@media (max-width: 1024px) {
+  .app {
+    padding-bottom: 100px;
   }
 }
 
-.card {
-  padding: 2em;
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
 }
 
-.read-the-docs {
-  color: #888;
+.app-header h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+/* 移动端 header 更紧凑 */
+@media (max-width: 640px) {
+  .app-header {
+    margin-bottom: 16px;
+  }
+
+  .app-header h1 {
+    font-size: 20px;
+  }
+}
+
+.header-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.header-actions button {
+  padding: 8px 16px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.header-actions button.primary {
+  background: #2196f3;
+  color: #fff;
+  border-color: #2196f3;
+}
+
+/* 桌面端隐藏 FAB，使用 header 按钮 */
+@media (min-width: 1025px) {
+  .fab-button {
+    display: none;
+  }
+}
+
+/* 移动端 FAB 按钮 */
+.fab-button {
+  position: fixed;
+  bottom: var(--fab-bottom);
+  right: var(--fab-right);
+  width: var(--fab-size);
+  height: var(--fab-size);
+  border-radius: 50%;
+  background: #2196f3;
+  color: #fff;
+  border: none;
+  box-shadow: 0 4px 16px rgba(33, 150, 243, 0.4);
+  cursor: pointer;
+  font-size: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+  z-index: 100;
+}
+
+.fab-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 24px rgba(33, 150, 243, 0.5);
+}
+
+.app-main {
+  min-height: calc(100vh - 100px);
 }
