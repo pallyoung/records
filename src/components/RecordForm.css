@@ -1,49 +1,78 @@
+/* 表单样式 - 日记手账风 */
+
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(61, 51, 41, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  backdrop-filter: blur(4px);
 }
 
 .record-form {
-  background: #fff;
-  border-radius: 12px;
-  padding: 24px;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 28px;
   width: 90%;
-  max-width: 500px;
+  max-width: 520px;
   max-height: 90vh;
   overflow-y: auto;
+  box-shadow: var(--shadow-lg);
 }
 
+.record-form h2 {
+  font-family: var(--font-heading);
+  text-align: center;
+  margin-bottom: 24px;
+  color: var(--text-primary);
+}
+
+/* 表单组 */
 .form-group {
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
-.form-group label {
+.form-group > label {
   display: block;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
   font-weight: 500;
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
 }
 
+/* 输入框 */
 .form-group input,
 .form-group textarea,
 .form-group select {
   width: 100%;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  padding: 12px 16px;
+  border: 1px solid var(--accent-tertiary);
+  border-radius: var(--radius-sm);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(196, 164, 132, 0.2);
 }
 
 .form-group textarea {
-  min-height: 100px;
+  min-height: 120px;
+  resize: vertical;
+  line-height: 1.6;
 }
 
+/* Tag 输入 */
 .tag-input {
   display: flex;
   gap: 8px;
@@ -53,41 +82,81 @@
   flex: 1;
 }
 
+.tag-input button {
+  padding: 12px 20px;
+  background: var(--accent-primary);
+  color: #fff;
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+  transition: background 0.2s ease;
+}
+
+.tag-input button:hover {
+  background: var(--accent-hover);
+}
+
+/* Tag 列表 */
 .tag-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
-  margin-top: 8px;
+  gap: 8px;
+  margin-top: 12px;
 }
 
 .tag-list .tag {
-  background: #e3f2fd;
-  padding: 2px 8px;
-  border-radius: 4px;
+  background: var(--accent-tertiary);
+  color: var(--text-secondary);
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
-}
-
-.existing-tags {
-  margin-top: 8px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
+  transition: all 0.2s ease;
+  display: inline-flex;
   align-items: center;
+  gap: 4px;
 }
 
-.existing-tags button {
-  background: #f5f5f5;
-  border: none;
-  padding: 2px 8px;
-  border-radius: 4px;
-  cursor: pointer;
+.tag-list .tag:hover {
+  background: var(--danger);
+  color: #fff;
 }
 
-.image-preview {
+/* 已有 Tag */
+.existing-tags {
+  margin-top: 12px;
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: 8px;
+  align-items: center;
+}
+
+.existing-tags > span {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+.existing-tags button {
+  background: var(--bg-secondary);
+  border: 1px solid var(--accent-tertiary);
+  padding: 4px 12px;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.existing-tags button:hover {
+  background: var(--accent-primary);
+  color: #fff;
+  border-color: var(--accent-primary);
+}
+
+/* 图片预览 */
+.image-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 12px;
 }
 
 .preview-item {
@@ -98,45 +167,89 @@
   width: 80px;
   height: 80px;
   object-fit: cover;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
 }
 
 .preview-item button {
   position: absolute;
-  top: -8px;
-  right: -8px;
-  width: 20px;
-  height: 20px;
+  top: -6px;
+  right: -6px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   border: none;
-  background: #e74c3c;
+  background: var(--danger);
   color: #fff;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  line-height: 1;
+  transition: transform 0.2s ease;
 }
 
+.preview-item button:hover {
+  transform: scale(1.1);
+}
+
+/* 单选按钮组 */
 .radio-group {
   display: flex;
   gap: 16px;
 }
 
+.radio-group label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.radio-group input[type="radio"] {
+  width: auto;
+  accent-color: var(--accent-primary);
+}
+
+/* 表单操作按钮 */
 .form-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 8px;
-  margin-top: 24px;
+  gap: 12px;
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid var(--accent-tertiary);
 }
 
 .form-actions button {
-  padding: 8px 16px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  padding: 12px 24px;
+  border-radius: var(--radius-sm);
+  font-weight: 500;
   cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.form-actions button:not(.primary) {
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  border: 1px solid var(--accent-tertiary);
+}
+
+.form-actions button:not(.primary):hover {
+  background: var(--accent-tertiary);
 }
 
 .form-actions button.primary {
-  background: #2196f3;
+  background: var(--accent-primary);
   color: #fff;
   border: none;
+}
+
+.form-actions button.primary:hover {
+  background: var(--accent-hover);
 }
 
 /* 响应式表单样式 */
@@ -151,8 +264,8 @@
     width: 100%;
     max-width: 100%;
     max-height: 95vh;
-    border-radius: 20px 20px 0 0;
-    padding: 20px;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    padding: 24px;
     animation: slideUp 0.3s ease;
   }
 
@@ -168,39 +281,39 @@
   .form-group input,
   .form-group textarea,
   .form-group select {
-    padding: 12px;
-    font-size: 16px;
+    padding: 14px;
+    font-size: 16px; /* 防止 iOS 缩放 */
   }
 
   .radio-group {
     flex-direction: column;
-    gap: 8px;
+    gap: 12px;
   }
 
   .form-actions {
     position: sticky;
     bottom: 0;
-    background: #fff;
-    padding-top: 16px;
-    margin: 0 -20px -20px -20px;
-    padding: 16px 20px;
+    background: var(--bg-card);
+    margin: 0 -24px -24px -24px;
+    padding: 16px 24px;
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
   }
 }
 
 /* 桌面端：居中弹窗 */
 @media (min-width: 641px) {
   .record-form {
-    animation: fadeIn 0.2s ease;
+    animation: fadeIn 0.25s ease;
   }
 
   @keyframes fadeIn {
     from {
       opacity: 0;
-      transform: scale(0.95);
+      transform: scale(0.95) translateY(10px);
     }
     to {
       opacity: 1;
-      transform: scale(1);
+      transform: scale(1) translateY(0);
     }
   }
 }
