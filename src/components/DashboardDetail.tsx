@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import type { Record } from '../types';
 import './DashboardDetail.css';
 
@@ -6,220 +6,208 @@ interface DashboardDetailProps {
   records: Record[];
 }
 
+type ViewMode = 'week' | 'month';
+
 export function DashboardDetail({ records }: DashboardDetailProps) {
-  const stats = useMemo(() => {
+  const [viewMode, setViewMode] = useState<ViewMode>('week');
+
+  // 计算日期范围内的每日数据
+  const dailyData = useMemo(() => {
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const weekStart = new Date(today);
-    weekStart.setDate(today.getDate() - today.getDay());
-    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
 
-    // 今日数据
-    const todayRecords = records.filter(r => {
-      const created = new Date(r.createdAt);
-      return created >= today;
-    });
-    const todayCompleted = todayRecords.filter(r => r.status === 'completed').length;
-    const todayPending = todayRecords.filter(r => r.status === 'pending').length;
-    const todayInProgress = todayRecords.filter(r => r.status === 'in_progress').length;
+    // 确定日期范围
+    const days = viewMode === 'week' ? 7 : 30;
+    const startDate = new Date(today);
+    startDate.setDate(today.getDate() - days + 1);
 
-    // 本周数据
-    const weekRecords = records.filter(r => {
-      const created = new Date(r.createdAt);
-      return created >= weekStart;
-    });
-    const weekCompleted = weekRecords.filter(r => r.status === 'completed').length;
-    const weekTotal = weekRecords.length;
+    // 生成日期数组
+    const dates: Date[] = [];
+    for (let i = 0; i < days; i++) {
+      const date = new Date(startDate);
+      date.setDate(startDate.getDate() + i);
+      dates.push(date);
+    }
 
-    // 本月数据
-    const monthRecords = records.filter(r => {
-      const created = new Date(r.createdAt);
-      return created >= monthStart;
-    });
-    const monthCompleted = monthRecords.filter(r => r.status === 'completed').length;
-    const monthTotal = monthRecords.length;
+    // 计算每日数据
+    const data = dates.map(date => {
+      const dayStart = new Date(date);
+      dayStart.setHours(0, 0, 0, 0);
+      const dayEnd = new Date(date);
+      dayEnd.setHours(23, 59, 59, 999);
 
-    // 超期数据
-    const overdueRecords = records.filter(r => {
-      if (r.status === 'completed') return false;
-      if (r.status === 'pending' && r.plannedStartTime) {
-        return now > r.plannedStartTime;
-      }
-      if (r.status === 'in_progress' && r.plannedEndTime) {
-        return now > r.plannedEndTime;
-      }
-      return false;
-    });
-
-    // 延期数据（已完成且超期的）
-    const delayedRecords = records.filter(r => {
-      if (r.status !== 'completed') return false;
-      if (!r.plannedEndTime || !r.actualEndTime) return false;
-      return r.actualEndTime > r.plannedEndTime;
-    });
-
-    // 标签统计
-    const tagCounts = new Map<string, number>();
-    records.forEach(r => {
-      r.tags.forEach(tag => {
-        tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+      // 当日创建的记录
+      const dayRecords = records.filter(r => {
+        const created = new Date(r.createdAt);
+        return created >= dayStart && created <= dayEnd;
       });
+
+      const pending = dayRecords.filter(r => r.status === 'pending').length;
+      const inProgress = dayRecords.filter(r => r.status === 'in_progress').length;
+      const completed = dayRecords.filter(r => r.status === 'completed').length;
+      const incomplete = pending + inProgress;
+
+      // 延期统计（当日已完成且延期的）
+      const delayed = dayRecords.filter(r => {
+        if (r.status !== 'completed') return false;
+        if (!r.plannedEndTime || !r.actualEndTime) return false;
+        const actualEnd = new Date(r.actualEndTime);
+        const plannedEnd = new Date(r.plannedEndTime);
+        return actualEnd > plannedEnd;
+      }).length;
+
+      const onTime = completed - delayed;
+
+      return {
+        date,
+        dateStr: `${date.getMonth() + 1}/${date.getDate()}`,
+        pending: incomplete, // 待完成 = pending + in_progress
+        completed,
+        delayed,
+        onTime: onTime > 0 ? onTime : 0,
+      };
     });
-    const topTags = Array.from(tagCounts.entries())
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 6);
 
-    // 状态分布
-    const statusDistribution = [
-      { status: 'pending', count: records.filter(r => r.status === 'pending').length, label: '未开始' },
-      { status: 'in_progress', count: records.filter(r => r.status === 'in_progress').length, label: '进行中' },
-      { status: 'completed', count: records.filter(r => r.status === 'completed').length, label: '已完成' },
-    ];
+    return data;
+  }, [records, viewMode]);
 
-    return {
-      todayTotal: todayRecords.length,
-      todayCompleted,
-      todayPending,
-      todayInProgress,
-      weekCompleted,
-      weekTotal,
-      weekRate: weekTotal > 0 ? Math.round((weekCompleted / weekTotal) * 100) : 0,
-      monthCompleted,
-      monthTotal,
-      monthRate: monthTotal > 0 ? Math.round((monthCompleted / monthTotal) * 100) : 0,
-      overdueCount: overdueRecords.length,
-      delayedCount: delayedRecords.length,
-      delayedRate: monthCompleted > 0 ? Math.round((delayedRecords.length / monthCompleted) * 100) : 0,
-      topTags,
-      statusDistribution,
-      totalRecords: records.length,
-    };
-  }, [records]);
+  // 找到最大值用于Y轴
+  const maxPending = Math.max(...dailyData.map(d => Math.max(d.pending, d.completed)), 5);
+  const maxTimely = Math.max(...dailyData.map(d => Math.max(d.delayed, d.onTime)), 5);
 
   return (
     <div className="dashboard-detail">
-      {/* 今日概览 */}
-      <div className="detail-section">
-        <h3 className="section-title">今日概览</h3>
-        <div className="overview-grid">
-          <div className="overview-card">
-            <div className="overview-value">{stats.todayTotal}</div>
-            <div className="overview-label">今日记录</div>
-          </div>
-          <div className="overview-card highlight">
-            <div className="overview-value">{stats.todayCompleted}</div>
-            <div className="overview-label">已完成</div>
-          </div>
-          <div className="overview-card">
-            <div className="overview-value">{stats.todayPending}</div>
-            <div className="overview-label">待开始</div>
-          </div>
-          <div className="overview-card">
-            <div className="overview-value">{stats.todayInProgress}</div>
-            <div className="overview-label">进行中</div>
-          </div>
-        </div>
+      {/* 视图切换 */}
+      <div className="view-toggle">
+        <button
+          className={`toggle-btn ${viewMode === 'week' ? 'active' : ''}`}
+          onClick={() => setViewMode('week')}
+        >
+          周视图
+        </button>
+        <button
+          className={`toggle-btn ${viewMode === 'month' ? 'active' : ''}`}
+          onClick={() => setViewMode('month')}
+        >
+          月视图
+        </button>
       </div>
 
-      {/* 进度条 */}
-      <div className="detail-section">
-        <h3 className="section-title">完成进度</h3>
-        <div className="progress-list">
-          <div className="progress-item">
-            <div className="progress-header">
-              <span>今日</span>
-              <span className="progress-value">{stats.todayTotal > 0 ? Math.round((stats.todayCompleted / stats.todayTotal) * 100) : 0}%</span>
-            </div>
-            <div className="progress-bar">
-              <div
-                className="progress-fill"
-                style={{ width: `${stats.todayTotal > 0 ? (stats.todayCompleted / stats.todayTotal) * 100 : 0}%` }}
+      {/* 图表1：待完成与已完成趋势 */}
+      <div className="chart-section">
+        <h3 className="section-title">待完成与已完成趋势</h3>
+        <div className="line-chart">
+          <div className="chart-y-axis">
+            {[0, 1, 2, 3, 4].map(i => (
+              <span key={i}>{maxPending - Math.floor((maxPending / 4) * i)}</span>
+            ))}
+          </div>
+          <div className="chart-area">
+            {/* 待完成折线 */}
+            <svg className="chart-line pending-line" viewBox={`0 0 ${dailyData.length * 40} 100`} preserveAspectRatio="none">
+              <polyline
+                fill="none"
+                stroke="var(--warning)"
+                strokeWidth="2"
+                points={dailyData.map((d, i) => `${i * 40 + 20},${100 - (d.pending / maxPending) * 90}`).join(' ')}
               />
-            </div>
-          </div>
-          <div className="progress-item">
-            <div className="progress-header">
-              <span>本周</span>
-              <span className="progress-value">{stats.weekRate}%</span>
-            </div>
-            <div className="progress-bar">
-              <div
-                className="progress-fill"
-                style={{ width: `${stats.weekRate}%` }}
+            </svg>
+            {/* 已完成折线 */}
+            <svg className="chart-line completed-line" viewBox={`0 0 ${dailyData.length * 40} 100`} preserveAspectRatio="none">
+              <polyline
+                fill="none"
+                stroke="var(--accent-secondary)"
+                strokeWidth="2"
+                points={dailyData.map((d, i) => `${i * 40 + 20},${100 - (d.completed / maxPending) * 90}`).join(' ')}
               />
-            </div>
-          </div>
-          <div className="progress-item">
-            <div className="progress-header">
-              <span>本月</span>
-              <span className="progress-value">{stats.monthRate}%</span>
-            </div>
-            <div className="progress-bar">
-              <div
-                className="progress-fill"
-                style={{ width: `${stats.monthRate}%` }}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* 状态分布 */}
-      <div className="detail-section">
-        <h3 className="section-title">状态分布</h3>
-        <div className="status-chart">
-          {stats.statusDistribution.map(item => (
-            <div key={item.status} className="status-bar-item">
-              <span className="status-label">{item.label}</span>
-              <div className="status-bar">
-                <div
-                  className={`status-fill ${item.status}`}
-                  style={{ width: `${stats.totalRecords > 0 ? (item.count / stats.totalRecords) * 100 : 0}%` }}
-                />
-              </div>
-              <span className="status-count">{item.count}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* 关键指标 */}
-      <div className="detail-section">
-        <h3 className="section-title">关键指标</h3>
-        <div className="metrics-grid">
-          <div className={`metric-card ${stats.overdueCount > 0 ? 'warning' : ''}`}>
-            <div className="metric-value">{stats.overdueCount}</div>
-            <div className="metric-label">超期记录</div>
-          </div>
-          <div className="metric-card">
-            <div className="metric-value">{stats.delayedCount}</div>
-            <div className="metric-label">延期完成</div>
-          </div>
-          <div className="metric-card">
-            <div className="metric-value">{stats.delayedRate}%</div>
-            <div className="metric-label">延期率</div>
-          </div>
-          <div className="metric-card">
-            <div className="metric-value">{stats.totalRecords}</div>
-            <div className="metric-label">总记录</div>
-          </div>
-        </div>
-      </div>
-
-      {/* 热门标签 */}
-      {stats.topTags.length > 0 && (
-        <div className="detail-section">
-          <h3 className="section-title">热门标签</h3>
-          <div className="tags-cloud">
-            {stats.topTags.map(([tag, count]) => (
-              <div key={tag} className="tag-item">
-                <span className="tag-name">{tag}</span>
-                <span className="tag-count">{count}</span>
+            </svg>
+            {/* 数据点 */}
+            {dailyData.map((d, i) => (
+              <div key={i} className="data-points" style={{ left: `${(i / (dailyData.length - 1)) * 100}%` }}>
+                <div className="data-point pending" title={`待完成: ${d.pending}`}>
+                  {d.pending}
+                </div>
+                <div className="data-point completed" title={`已完成: ${d.completed}`}>
+                  {d.completed}
+                </div>
               </div>
             ))}
           </div>
+          <div className="chart-x-axis">
+            {dailyData.filter((_, i) => viewMode === 'week' || i % 5 === 0).map((d, i) => (
+              <span key={i}>{d.dateStr}</span>
+            ))}
+          </div>
         </div>
-      )}
+        <div className="chart-legend">
+          <span className="legend-item pending">
+            <span className="legend-dot" style={{ background: 'var(--warning)' }}></span>
+            待完成
+          </span>
+          <span className="legend-item completed">
+            <span className="legend-dot" style={{ background: 'var(--accent-secondary)' }}></span>
+            已完成
+          </span>
+        </div>
+      </div>
+
+      {/* 图表2：延期与准时趋势 */}
+      <div className="chart-section">
+        <h3 className="section-title">延期与准时趋势</h3>
+        <div className="line-chart">
+          <div className="chart-y-axis">
+            {[0, 1, 2, 3, 4].map(i => (
+              <span key={i}>{maxTimely - Math.floor((maxTimely / 4) * i)}</span>
+            ))}
+          </div>
+          <div className="chart-area">
+            {/* 延期折线 */}
+            <svg className="chart-line delayed-line" viewBox={`0 0 ${dailyData.length * 40} 100`} preserveAspectRatio="none">
+              <polyline
+                fill="none"
+                stroke="var(--danger)"
+                strokeWidth="2"
+                points={dailyData.map((d, i) => `${i * 40 + 20},${100 - (d.delayed / maxTimely) * 90}`).join(' ')}
+              />
+            </svg>
+            {/* 准时折线 */}
+            <svg className="chart-line ontime-line" viewBox={`0 0 ${dailyData.length * 40} 100`} preserveAspectRatio="none">
+              <polyline
+                fill="none"
+                stroke="var(--success)"
+                strokeWidth="2"
+                points={dailyData.map((d, i) => `${i * 40 + 20},${100 - (d.onTime / maxTimely) * 90}`).join(' ')}
+              />
+            </svg>
+            {/* 数据点 */}
+            {dailyData.map((d, i) => (
+              <div key={i} className="data-points" style={{ left: `${(i / (dailyData.length - 1)) * 100}%` }}>
+                <div className="data-point delayed" title={`延期: ${d.delayed}`}>
+                  {d.delayed}
+                </div>
+                <div className="data-point ontime" title={`准时: ${d.onTime}`}>
+                  {d.onTime}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="chart-x-axis">
+            {dailyData.filter((_, i) => viewMode === 'week' || i % 5 === 0).map((d, i) => (
+              <span key={i}>{d.dateStr}</span>
+            ))}
+          </div>
+        </div>
+        <div className="chart-legend">
+          <span className="legend-item delayed">
+            <span className="legend-dot" style={{ background: 'var(--danger)' }}></span>
+            延期
+          </span>
+          <span className="legend-item ontime">
+            <span className="legend-dot" style={{ background: 'var(--success)' }}></span>
+            准时
+          </span>
+        </div>
+      </div>
     </div>
   );
 }
