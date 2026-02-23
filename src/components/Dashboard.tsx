@@ -77,7 +77,11 @@ export function Dashboard({ records, isExpanded, onExpandChange }: DashboardProp
   const handleExpand = (expanded: boolean) => {
     onExpandChange(expanded);
   };
-
+  /**
+   * @todo ：
+   * - 展示今日待办数量以及今日需完成数量
+   * - 展示完成率、延期率等关键指标
+  */
   return (
     <div className="dashboard">
       {/* 吸底栏 - 始终显示 */}
@@ -101,15 +105,7 @@ export function Dashboard({ records, isExpanded, onExpandChange }: DashboardProp
               <span className="stat-text">超期 {stats.overdueCount}</span>
             </div>
           )}
-          {stats.topTags.length > 0 && (
-            <div className="stat-item tags">
-              <span className="tag-count">{stats.topTags[0][0]} {stats.topTags[0][1]}</span>
-            </div>
-          )}
         </div>
-        <button className="dashboard-toggle">
-          {isExpanded ? '✕' : '▲'}
-        </button>
       </div>
     </div>
   );

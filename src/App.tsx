@@ -3,6 +3,7 @@ import { RelaxProvider, useRelaxValue, store, recordsState, tagsState, filterSta
 import { FilterBar } from './components/FilterBar';
 import { Timeline } from './components/Timeline';
 import { Dashboard } from './components/Dashboard';
+import { DashboardDetail } from './components/DashboardDetail';
 import { RecordForm } from './components/RecordForm';
 import { ReviewPage } from './pages/ReviewPage';
 import { recordActions } from './store/recordStore';
@@ -109,6 +110,7 @@ function AppContent() {
             isExpanded={dashboardExpanded}
             onExpandChange={setDashboardExpanded}
           />
+          {dashboardExpanded && <DashboardDetail records={records} />}
         </div>
       )}
 

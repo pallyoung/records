@@ -1,0 +1,242 @@
+/* DashboardDetail 样式 */
+
+.dashboard-detail {
+  padding: 20px;
+  padding-bottom: 100px;
+}
+
+.detail-section {
+  margin-bottom: 24px;
+}
+
+.section-title {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+  padding-left: 4px;
+  border-left: 3px solid var(--accent-primary);
+}
+
+/* 概览卡片 */
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.overview-card {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  padding: 16px 12px;
+  text-align: center;
+}
+
+.overview-card.highlight {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-hover));
+}
+
+.overview-card.highlight .overview-value,
+.overview-card.highlight .overview-label {
+  color: #fff;
+}
+
+.overview-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-family: var(--font-heading);
+}
+
+.overview-label {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* 进度条 */
+.progress-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.progress-item {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.progress-value {
+  font-weight: 600;
+  color: var(--accent-primary);
+}
+
+.progress-bar {
+  height: 8px;
+  background: var(--accent-tertiary);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+  border-radius: var(--radius-full);
+  transition: width 0.5s ease;
+}
+
+/* 状态分布图表 */
+.status-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.status-bar-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.status-label {
+  width: 50px;
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.status-bar {
+  flex: 1;
+  height: 20px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.status-fill {
+  height: 100%;
+  border-radius: var(--radius-sm);
+  transition: width 0.5s ease;
+}
+
+.status-fill.pending {
+  background: var(--status-pending-bg);
+}
+
+.status-fill.in_progress {
+  background: var(--status-in-progress-bg);
+}
+
+.status-fill.completed {
+  background: var(--status-completed-bg);
+}
+
+.status-count {
+  width: 30px;
+  text-align: right;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+/* 关键指标 */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.metric-card {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  text-align: center;
+}
+
+.metric-card.warning {
+  background: var(--danger-bg);
+  border: 1px solid var(--danger);
+}
+
+.metric-card.warning .metric-value {
+  color: var(--danger);
+}
+
+.metric-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-family: var(--font-heading);
+}
+
+.metric-label {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* 标签云 */
+.tags-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--accent-tertiary);
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+}
+
+.tag-name {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.tag-count {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  background: var(--bg-card);
+  padding: 2px 6px;
+  border-radius: var(--radius-full);
+}
+
+/* 移动端适配 */
+@media (max-width: 640px) {
+  .dashboard-detail {
+    padding: 16px;
+    padding-bottom: 80px;
+  }
+
+  .overview-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .overview-card {
+    padding: 12px 8px;
+  }
+
+  .overview-value {
+    font-size: 20px;
+  }
+
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .metric-value {
+    font-size: 22px;
+  }
+}
