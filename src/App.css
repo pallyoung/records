@@ -30,6 +30,31 @@
   }
 }
 
+/* Dashboard 固定在底部 */
+.dashboard-fixed {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  max-width: 1200px;
+  margin: 0 auto;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+@media (max-width: 640px) {
+  .dashboard-fixed {
+    border-radius: 0;
+  }
+
+  /* 为FAB按钮腾出空间 */
+  .fab-button {
+    bottom: 100px;
+  }
+}
+
 /* Header */
 .app-header {
   display: flex;

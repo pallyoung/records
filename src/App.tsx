@@ -87,17 +87,17 @@ function AppContent() {
         {loading ? (
           <div className="loading">加载中...</div>
         ) : (
-          <>
-            <Timeline
-              records={records}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-              onStatusChange={handleStatusChange}
-            />
-            <Dashboard records={records} />
-          </>
+          <Timeline
+            records={records}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+            onStatusChange={handleStatusChange}
+          />
         )}
       </main>
+
+      {/* Dashboard 固定在底部 */}
+      {!loading && <div className="dashboard-fixed"><Dashboard records={records} /></div>}
 
       {/* 移动端 FAB 按钮 */}
       <button className="fab-button" onClick={() => setShowForm(true)}>
