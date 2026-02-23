@@ -1,18 +1,17 @@
 import { useState, useEffect } from 'react';
-import { RelaxProvider, useRelaxValue, store, recordsState, tagsState, filterState, granularityState, loadingState } from './store/recordStore';
+import { RelaxProvider, useRelaxValue, store, recordsState, tagsState, filterState, loadingState } from './store/recordStore';
 import { FilterBar } from './components/FilterBar';
 import { Timeline } from './components/Timeline';
 import { RecordForm } from './components/RecordForm';
 import { ReviewPage } from './pages/ReviewPage';
 import { recordActions } from './store/recordStore';
-import type { Record, FilterState, TimelineGranularity } from './types';
+import type { Record, FilterState } from './types';
 import './App.css';
 
 function AppContent() {
   const records = useRelaxValue(recordsState);
   const tags = useRelaxValue(tagsState);
   const filter = useRelaxValue(filterState);
-  const granularity = useRelaxValue(granularityState);
   const loading = useRelaxValue(loadingState);
 
   const [showForm, setShowForm] = useState(false);
@@ -25,10 +24,6 @@ function AppContent() {
 
   const handleFilterChange = (newFilter: FilterState) => {
     recordActions.setFilter(newFilter);
-  };
-
-  const handleGranularityChange = (newGranularity: TimelineGranularity) => {
-    recordActions.setGranularity(newGranularity);
   };
 
   const handleEdit = (id: string) => {
@@ -81,9 +76,7 @@ function AppContent() {
         <FilterBar
           filter={filter}
           tags={tags}
-          granularity={granularity}
           onFilterChange={handleFilterChange}
-          onGranularityChange={handleGranularityChange}
         />
 
         {loading ? (
@@ -91,7 +84,6 @@ function AppContent() {
         ) : (
           <Timeline
             records={records}
-            granularity={granularity}
             onEdit={handleEdit}
             onDelete={handleDelete}
           />
