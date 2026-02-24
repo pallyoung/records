@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { RelaxProvider, useRelaxValue, store, recordsState, tagsState, filterState, loadingState } from './store/recordStore';
 import { FilterBar } from './components/filter-bar';
 import { Timeline } from './components/timeline';
@@ -37,29 +37,29 @@ function AppContent() {
     recordActions.loadRecords();
   }, []);
 
+  const handleEdit = (id: string) => {
+    setEditingId(id);
+    setShowForm(true);
+    setActiveTab('records');
+  };
+
   // 键盘快捷键
-  const shortcuts = [
+  const shortcuts = useMemo(() => [
     { key: 'n', handler: () => setShowQuickAdd(true), description: '新建记录' },
     { key: '/', handler: () => document.getElementById('search-input')?.focus(), description: '搜索' },
-    { key: 'j', handler: () => setSelectedIndex((i) => Math.min(i + 1, records.length - 1)), description: '下一条' },
-    { key: 'k', handler: () => setSelectedIndex((i) => Math.max(i - 1, 0)), description: '上一条' },
+    { key: 'j', handler: () => setSelectedIndex((i) => records.length > 0 ? Math.min(i + 1, records.length - 1) : 0), description: '下一条' },
+    { key: 'k', handler: () => setSelectedIndex((i) => records.length > 0 ? Math.max(i - 1, 0) : 0), description: '上一条' },
     { key: '1', handler: () => setActiveTab('habits'), description: '切换到习惯' },
     { key: '2', handler: () => setActiveTab('records'), description: '切换到事务' },
     { key: '3', handler: () => setActiveTab('profile'), description: '切换到个人中心' },
     { key: 'Enter', handler: () => records[selectedIndex] && handleEdit(records[selectedIndex].id), description: '编辑' },
     { key: 'Escape', handler: () => { setShowForm(false); setShowReview(false); setShowTagManagement(false); setShowSettings(false); setShowDashboardDetail(false); }, description: '关闭' },
-  ];
+  ], [handleEdit, records.length]);
 
   useKeyboardShortcuts(shortcuts, !showForm && !showReview && !showTagManagement && !showSettings && !showDashboardDetail);
 
   const handleFilterChange = (newFilter: FilterState) => {
     recordActions.setFilter(newFilter);
-  };
-
-  const handleEdit = (id: string) => {
-    setEditingId(id);
-    setShowForm(true);
-    setActiveTab('records');
   };
 
   const handleDelete = async (id: string) => {
@@ -80,6 +80,7 @@ function AppContent() {
   const handleSave = async (data: Omit<Record, 'id' | 'createdAt' | 'updatedAt'>) => {
     if (editingId) {
       await recordActions.updateRecord(editingId, data);
+      handleCloseForm();
     } else {
       await recordActions.addRecord(data);
       // 新建记录保存后关闭表单
@@ -170,7 +171,7 @@ function AppContent() {
           />
 
           {/* 移动端 FAB 按钮 - only visible on records tab */}
-          <button className="fab-button" onClick={() => setShowForm(true)}>
+          <button className="fab-button" aria-label="新建记录" onClick={() => setShowForm(true)}>
             +
           </button>
         </main>
@@ -183,7 +184,13 @@ function AppContent() {
       )}
 
       {/* TabBar at bottom */}
-      <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
+      <TabBar
+        activeTab={activeTab}
+        onTabChange={(tab) => {
+          setActiveTab(tab);
+          setSelectedIndex(0);
+        }}
+      />
 
       {showForm && (
         <RecordForm
