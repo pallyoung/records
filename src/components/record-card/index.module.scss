@@ -3,7 +3,7 @@
 /* 卡片容器 - 用于滑动操作 */
 .recordCardWrapper {
   position: relative;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
 }
 
 /* 滑动删除按钮 */
@@ -34,7 +34,7 @@
 .recordCard {
   background: var(--bg-card);
   border-radius: var(--radius-md);
-  padding: 20px;
+  padding: 12px;
   box-shadow: var(--shadow-sm);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   border: 1px solid transparent;
