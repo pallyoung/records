@@ -10,7 +10,6 @@ import { TagManagementPage } from './pages/tag-management-page';
 import { HabitsPage } from './pages/habits-page';
 import { recordActions } from './store/recordStore';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
-import { KeyboardHints } from './components/keyboard-hints';
 import { QuickAdd } from './components/quick-add';
 import type { Record, FilterState, RecordStatus } from './types';
 import './App.css';
@@ -181,9 +180,6 @@ function AppContent() {
           });
         }}
       />
-
-      {/* 键盘快捷键提示栏 */}
-      <KeyboardHints />
     </div>
   );
 }
