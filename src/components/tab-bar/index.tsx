@@ -2,7 +2,7 @@ import styles from './index.module.scss';
 
 export type TabType = 'habits' | 'records' | 'profile';
 
-interface TabBarProps {
+export interface TabBarProps {
   activeTab: TabType;
   onTabChange: (tab: TabType) => void;
 }
@@ -26,6 +26,7 @@ export function TabBar({ activeTab, onTabChange }: TabBarProps) {
           key={tab.id}
           className={`${styles.tabItem} ${activeTab === tab.id ? styles.active : ''}`}
           onClick={() => onTabChange(tab.id)}
+          aria-current={activeTab === tab.id ? 'page' : undefined}
         >
           {tab.label}
         </button>

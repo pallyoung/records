@@ -30,6 +30,11 @@
   background: var(--bg-secondary);
 }
 
+.tabItem:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
 .tabItem.active {
   color: var(--accent-primary);
   font-weight: 600;
