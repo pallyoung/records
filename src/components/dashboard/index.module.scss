@@ -1,142 +1,64 @@
-/* 仪表盘样式 - 日记手账风 */
-
-/* 容器 */
-.dashboard {
-  background: var(--bg-card);
-  box-shadow: 0 -2px 12px rgba(61, 51, 41, 0.08);
-  overflow: hidden;
-}
-
-/* 吸底栏 */
 .dashboardBar {
   display: flex;
-  gap: 24px;
-  padding: 8px 16px;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--accent-tertiary);
+  margin-bottom: 16px;
   cursor: pointer;
   transition: background 0.2s ease;
-  align-items: center;
-  min-height: 44px;
-
+  border-radius: var(--radius-md);
 }
 
 .dashboardBar:hover {
   background: var(--bg-secondary);
 }
 
-/* 紧凑布局 */
-.dashboardSection.compact {
+.dashboardSection {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  flex: 1;
-}
-
-.dashboardSection.compact .sectionLabel {
-  font-size: 11px;
-  color: var(--text-muted);
-  white-space: nowrap;
-}
-
-.dashboardSection.compact .statNumbers {
-  display: flex;
+  flex-direction: column;
   align-items: center;
   gap: 4px;
-  font-family: var(--font-heading);
-  font-size: 16px;
-  font-weight: 600;
+  min-width: 120px;
 }
 
-.dashboardSection.compact .statNumbers .num {
-  color: var(--text-primary);
-}
-
-.dashboardSection.compact .statNumbers .num.completed {
-  color: var(--accent-secondary);
-}
-
-.dashboardSection.compact .statNumbers .num.delayed {
-  color: var(--danger);
-}
-
-.dashboardSection.compact .statNumbers .sep {
-  color: var(--text-muted);
-  font-weight: 400;
-  font-size: 12px;
-}
-
-/* 移动端适配 */
-@media (max-width: 640px) {
-  .dashboardBar {
-    gap: 16px;
-    padding: 6px 12px;
-  }
-
-  .dashboardSection.compact .sectionLabel {
-    font-size: 10px;
-  }
-
-  .dashboardSection.compact .statNumbers {
-    font-size: 14px;
-  }
-}
-
-/* 保留旧样式兼容性 */
-.dashboardSummary {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  flex-wrap: wrap;
-}
-
-.statItem {
-  display: flex;
-  align-items: center;
-  gap: 6px;
+.sectionLabel {
   font-size: var(--text-sm);
   color: var(--text-secondary);
 }
 
-.statItem.overdue {
-  color: var(--danger);
+.statNumbers {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
-.statItem.delayed {
-  color: var(--warning);
+.num {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
 }
 
-.statRate {
-  font-size: var(--text-xs);
-  color: var(--accent);
-  background: var(--accent-light);
-  padding: 1px 6px;
-  border-radius: var(--radius-sm);
-  font-weight: 500;
+.num.completed {
+  color: var(--accent-success, #10b981);
 }
 
-.statIcon {
-  font-size: 14px;
+.num.delayed {
+  color: var(--accent-warning, #f59e0b);
 }
 
-/* 移动端适配 */
-@media (max-width: 640px) {
+.sep {
+  color: var(--text-muted);
+  font-size: 16px;
+}
+
+@media (min-width: 1025px) {
   .dashboardBar {
-    padding: 12px 16px;
-    gap: 12px;
+    padding: 20px 24px;
   }
 
-  .dashboardSection {
-    width: 100%;
-  }
-
-  .statCard {
-    padding: 10px 8px;
-  }
-
-  .statValue {
-    font-size: var(--text-lg);
-  }
-
-  .statLabel {
-    font-size: 11px;
+  .num {
+    font-size: 24px;
   }
 }
