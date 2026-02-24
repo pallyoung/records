@@ -8,6 +8,7 @@ import { RecordForm } from './components/record-form';
 import { ReviewPage } from './pages/review-page';
 import { TagManagementPage } from './pages/tag-management-page';
 import { HabitsPage } from './pages/habits-page';
+import { SettingsPage } from './pages/settings-page';
 import { recordActions } from './store/recordStore';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { QuickAdd } from './components/quick-add';
@@ -26,6 +27,7 @@ function AppContent() {
   const [showReview, setShowReview] = useState(false);
   const [showTagManagement, setShowTagManagement] = useState(false);
   const [showHabits, setShowHabits] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const [dashboardExpanded, setDashboardExpanded] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -40,10 +42,10 @@ function AppContent() {
     { key: 'j', handler: () => setSelectedIndex((i) => Math.min(i + 1, records.length - 1)), description: '下一条' },
     { key: 'k', handler: () => setSelectedIndex((i) => Math.max(i - 1, 0)), description: '上一条' },
     { key: 'Enter', handler: () => records[selectedIndex] && handleEdit(records[selectedIndex].id), description: '编辑' },
-    { key: 'Escape', handler: () => { setShowForm(false); setShowReview(false); setShowTagManagement(false); setShowHabits(false); }, description: '关闭' },
+    { key: 'Escape', handler: () => { setShowForm(false); setShowReview(false); setShowTagManagement(false); setShowHabits(false); setShowSettings(false); }, description: '关闭' },
   ];
 
-  useKeyboardShortcuts(shortcuts, !showForm && !showReview && !showTagManagement && !showHabits);
+  useKeyboardShortcuts(shortcuts, !showForm && !showReview && !showTagManagement && !showHabits && !showSettings);
 
   const handleFilterChange = (newFilter: FilterState) => {
     recordActions.setFilter(newFilter);
@@ -107,11 +109,20 @@ function AppContent() {
     );
   }
 
+  if (showSettings) {
+    return (
+      <SettingsPage
+        onBack={() => setShowSettings(false)}
+      />
+    );
+  }
+
   return (
     <div className="app">
       <header className="app-header">
         <h1>记录</h1>
         <div className="header-actions">
+          <button onClick={() => setShowSettings(true)}>设置</button>
           <button onClick={() => setShowHabits(true)}>习惯</button>
           <button onClick={() => setShowTagManagement(true)}>标签</button>
           <button onClick={() => setShowReview(true)}>复盘</button>
