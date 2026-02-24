@@ -2,19 +2,31 @@
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
-**Goal:** 合并习惯功能到事务、优化样式、移除筛选功能
+**Goal:** 合并习惯功能到事务、优化样式、移除筛选功能，对齐现代深色主题App设计
 
-**Architecture:** 在Record类型中添加循环事务配置，修改表单和列表显示，简化样式尺寸
+**Architecture:** 在Record类型中添加循环事务配置，修改表单和列表显示，简化样式尺寸，采用深色主题和4x2卡片网格
 
 **Tech Stack:** React, TypeScript, SCSS modules, IndexedDB (Dexie)
 
+**UI风格说明：**
+- App整体采用深色主题 (#121212 炭黑色背景)
+- 个人中心采用4x2图标网格布局（参考粉色系个人中心设计）
+- 保持现有App的陶土色调作为accent色
+- 大量圆角、简洁现代风格
+
 ---
 
-## Task 1: 个人中心样式改为卡片网格布局
+## Task 1: 个人中心样式改为4x2卡片网格布局
 
 **Files:**
 - Modify: `src/pages/profile-center-page/index.tsx`
 - Modify: `src/pages/profile-center-page/index.module.scss`
+
+**UI参考：**
+- 4x2网格布局（2行4列）
+- 大图标 + 简洁文字
+- 圆角卡片
+- 陶土色accent
 
 **Step 1: Update ProfileCenterPage component**
 
@@ -61,7 +73,7 @@ export function ProfileCenterPage({ onNavigate }: ProfileCenterPageProps) {
 }
 ```
 
-**Step 2: Update SCSS**
+**Step 2: Update SCSS - 4x2 grid with modern dark theme style**
 
 ```scss
 // src/pages/profile-center-page/index.module.scss
@@ -78,6 +90,68 @@ export function ProfileCenterPage({ onNavigate }: ProfileCenterPageProps) {
   color: var(--text-primary);
   letter-spacing: 2px;
   margin-bottom: 24px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);  // 4列
+  gap: 12px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--accent-tertiary);
+  border-radius: 16px;  // 大圆角
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);  // 柔和阴影
+}
+
+.card:hover {
+  background: var(--bg-secondary);
+  transform: translateY(-2px);
+  border-color: var(--accent-primary);  // 陶土色accent
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+.cardIcon {
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+.cardLabel {
+  font-size: var(--text-xs);
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+@media (min-width: 1025px) {
+  .profileCenter {
+    padding: 32px;
+  }
+
+  .grid {
+    gap: 16px;
+  }
+
+  .card {
+    padding: 24px 16px;
+  }
+
+  .cardIcon {
+    font-size: 32px;
+  }
+}
 }
 
 .grid {
