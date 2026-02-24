@@ -78,6 +78,27 @@
   gap: 8px;
 }
 
+/* 循环事务标签 */
+.recurringBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: var(--accent-primary-bg);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+  color: var(--accent-primary);
+}
+
+.recurringIcon {
+  font-size: 12px;
+}
+
+.completionCount {
+  color: var(--text-muted);
+  margin-left: 4px;
+}
+
 /* 状态标签 - 药丸形状 + 左侧小圆点 */
 .statusBadge {
   display: inline-flex;

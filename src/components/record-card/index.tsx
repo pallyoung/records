@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import type { Record, RecordStatus } from '../../types';
+import type { Record, RecordStatus, RecurringConfig } from '../../types';
 import styles from './index.module.scss';
 
 interface RecordCardProps {
@@ -61,6 +61,18 @@ function getStatusButtonText(current: RecordStatus): string {
   if (current === 'in_progress') return '完成';
   return '';
 }
+
+// 获取循环事务标签文本
+const getRecurringLabel = (config: RecurringConfig) => {
+  switch (config.frequency) {
+    case 'daily': return '每日';
+    case 'weekly': return '每周';
+    case 'monthly': return '每月';
+    case 'interval_days': return `每${config.intervalValue}天`;
+    case 'interval_hours': return `每${config.intervalValue}小时`;
+    default: return '循环';
+  }
+};
 
 export function RecordCard({ record, isSelected = false, onEdit, onDelete, onStatusChange }: RecordCardProps) {
   const statusText = getStatusText(record);
@@ -133,6 +145,17 @@ export function RecordCard({ record, isSelected = false, onEdit, onDelete, onSta
         <div className={styles.recordHeader}>
           <div className={styles.recordHeaderLeft}>
             <span className={`${styles.statusBadge} ${styles[record.status]}`}>{statusText}</span>
+            {record.type === 'recurring' && record.recurringConfig && (
+              <div className={styles.recurringBadge}>
+                <span className={styles.recurringIcon}>🔄</span>
+                <span>{getRecurringLabel(record.recurringConfig)}</span>
+                {record.recurringConfig.totalCompletions > 0 && (
+                  <span className={styles.completionCount}>
+                    累计{record.recurringConfig.totalCompletions}次
+                  </span>
+                )}
+              </div>
+            )}
             {/* 状态切换按钮 */}
             {canToggleStatus && (
               <button
