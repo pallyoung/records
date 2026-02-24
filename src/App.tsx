@@ -129,7 +129,7 @@ function AppContent() {
 
   if (showDashboardDetail) {
     return (
-      <div className="app">
+      <div className="app-full-page">
         <DashboardDetail
           records={records}
           onBack={() => setShowDashboardDetail(false)}
