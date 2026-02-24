@@ -1,0 +1,206 @@
+.page {
+  padding: 16px;
+  min-height: 100vh;
+  background: #F9FAFB;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+
+  h2 { margin: 0; }
+}
+
+.backBtn {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.addBtn {
+  padding: 8px 16px;
+  background: #3B82F6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 150ms;
+  border: 2px solid transparent;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  &.completed {
+    border-color: #10B981;
+  }
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.icon {
+  font-size: 24px;
+}
+
+.name {
+  flex: 1;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.streak {
+  font-size: 12px;
+  color: #3B82F6;
+  font-weight: 600;
+}
+
+.progress {
+  height: 6px;
+  background: #E5E7EB;
+  border-radius: 3px;
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+
+.progressBar {
+  height: 100%;
+  background: linear-gradient(90deg, #3B82F6, #10B981);
+  border-radius: 3px;
+  transition: width 300ms ease-out;
+}
+
+.cardFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.status {
+  font-size: 12px;
+  color: #6B7280;
+}
+
+.deleteBtn {
+  background: none;
+  border: none;
+  color: #EF4444;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 4px 8px;
+
+  &:hover {
+    background: #FEF2F2;
+    border-radius: 4px;
+  }
+}
+
+.emptyState {
+  text-align: center;
+  padding: 48px 16px;
+  color: #6B7280;
+}
+
+.formOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.form {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  width: 90%;
+  max-width: 400px;
+
+  h3 { margin: 0 0 16px; }
+
+  input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    font-size: 14px;
+    margin-bottom: 16px;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: none;
+      border-color: #3B82F6;
+    }
+  }
+}
+
+.icons {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+
+  button {
+    font-size: 24px;
+    padding: 8px;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    background: #F3F4F6;
+    cursor: pointer;
+
+    &.selected {
+      border-color: #3B82F6;
+      background: #EFF6FF;
+    }
+  }
+}
+
+.formActions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.cancelBtn {
+  padding: 8px 16px;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  background: white;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.saveBtn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  background: #3B82F6;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+}

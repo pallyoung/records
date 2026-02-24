@@ -4,6 +4,7 @@ import styles from './index.module.scss';
 
 interface RecordCardProps {
   record: Record;
+  isSelected?: boolean;
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
   onStatusChange?: (id: string, status: RecordStatus) => void;
@@ -61,7 +62,7 @@ function getStatusButtonText(current: RecordStatus): string {
   return '';
 }
 
-export function RecordCard({ record, onEdit, onDelete, onStatusChange }: RecordCardProps) {
+export function RecordCard({ record, isSelected = false, onEdit, onDelete, onStatusChange }: RecordCardProps) {
   const statusText = getStatusText(record);
   const overdue = isOverdue(record);
   const [isSwiping, setIsSwiping] = useState(false);
@@ -122,7 +123,7 @@ export function RecordCard({ record, onEdit, onDelete, onStatusChange }: RecordC
       {/* 卡片主体 */}
       <div
         ref={cardRef}
-        className={`${styles.recordCard} ${overdue ? styles.overdue : ''} ${isSwiping ? styles.swiping : ''}`}
+        className={`${styles.recordCard} ${overdue ? styles.overdue : ''} ${isSwiping ? styles.swiping : ''} ${isSelected ? styles.selected : ''}`}
         style={{ transform: `translateX(${swipeX}px)` }}
         onClick={() => onEdit(record.id)}
         onTouchStart={handleTouchStart}

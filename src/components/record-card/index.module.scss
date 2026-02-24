@@ -59,6 +59,12 @@
   background: linear-gradient(90deg, var(--danger-bg) 0%, var(--bg-card) 8%);
 }
 
+/* 选中状态 - 键盘导航 */
+.recordCard.selected {
+  border-left: 4px solid var(--accent-primary);
+  background: linear-gradient(90deg, var(--accent-primary-bg) 0%, var(--bg-card) 8%);
+}
+
 .recordHeader {
   display: flex;
   justify-content: space-between;

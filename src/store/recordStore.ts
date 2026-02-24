@@ -81,6 +81,12 @@ const setGranularityAction = action<TimelineGranularity, void>((s: any, granular
   s.set(granularityState , granularity);
 }, { name: 'setGranularity' });
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const searchAction = action<string, void>((s: any, query) => {
+  s.set(searchQueryState, query);
+  loadRecordsAction(s);
+}, { name: 'search' });
+
 // 导出 actions (保持向后兼容)
 export const recordActions = {
   loadRecords: () => loadRecordsAction(store ),
@@ -89,4 +95,5 @@ export const recordActions = {
   deleteRecord: (id: string) => deleteRecordAction(store , id),
   setFilter: (filter: FilterState) => setFilterAction(store , filter),
   setGranularity: (granularity: TimelineGranularity) => setGranularityAction(store , granularity),
+  search: (query: string) => searchAction(store, query),
 };

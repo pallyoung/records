@@ -28,3 +28,19 @@ export interface FilterState {
   tags: string[];
   status: RecordStatus | null;
 }
+
+export interface Habit {
+  id: string;
+  name: string;
+  icon: string;
+  frequency: 'daily' | 'weekly';
+  targetDays: number[];
+  createdAt: Date;
+}
+
+export interface HabitLog {
+  id: string;
+  habitId: string;
+  date: string; // YYYY-MM-DD
+  completed: boolean;
+}
