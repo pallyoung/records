@@ -18,10 +18,11 @@ export function Dashboard({ records, onClick }: DashboardProps) {
 
     const delayed = incompleteRecords.filter(r => {
       const plannedStart = r.plannedStartTime || r.createdAt;
-      const plannedEnd = new Date(r.plannedEndTime ? new Date(r.plannedEndTime) : new Date(r.createdAt)).setHours(23, 59, 59, 999);
+      const plannedEndDate = new Date(r.plannedEndTime ? new Date(r.plannedEndTime) : new Date(r.createdAt));
+      plannedEndDate.setHours(23, 59, 59, 999);
 
       if (r.status === 'pending' && now > plannedStart) return true;
-      if (r.status === 'in_progress' && now > plannedEnd) return true;
+      if (r.status === 'in_progress' && now > plannedEndDate) return true;
       return false;
     });
 
