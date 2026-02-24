@@ -1,6 +1,6 @@
 .profileCenter {
   padding: 24px;
-  padding-bottom: 100px; // Space for TabBar
+  padding-bottom: 100px;
   min-height: 100vh;
   background: var(--bg-primary);
 }
@@ -10,56 +10,66 @@
   font-size: 28px;
   color: var(--text-primary);
   letter-spacing: 2px;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
 }
 
-.menuList {
-  display: flex;
-  flex-direction: column;
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);  // 4 columns
   gap: 12px;
 }
 
-.menuItem {
+.card {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  padding: 16px 20px;
+  justify-content: center;
+  padding: 20px 12px;
   background: var(--bg-card);
   border: 1px solid var(--accent-tertiary);
-  border-radius: var(--radius-md);
+  border-radius: 16px;  // Large rounded corners
   cursor: pointer;
-  transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);  // Soft shadow
 }
 
-.menuItem:hover {
+.card:hover {
   background: var(--bg-secondary);
-  transform: translateX(2px);
-  border-color: var(--accent-secondary);
+  transform: translateY(-2px);
+  border-color: var(--accent-primary);  // Terracotta accent
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-.menuItem:focus-visible {
+.card:focus-visible {
   outline: 2px solid var(--accent-primary);
   outline-offset: 2px;
 }
 
-.menuIcon {
-  font-size: 20px;
-  margin-right: 16px;
+.cardIcon {
+  font-size: 28px;
+  margin-bottom: 8px;
 }
 
-.menuLabel {
-  flex: 1;
-  font-size: var(--text-base);
+.cardLabel {
+  font-size: var(--text-xs);
   color: var(--text-primary);
-  text-align: left;
-}
-
-.menuArrow {
-  font-size: 20px;
-  color: var(--text-muted);
+  font-weight: 500;
 }
 
 @media (min-width: 1025px) {
   .profileCenter {
     padding: 32px;
+  }
+
+  .grid {
+    gap: 16px;
+  }
+
+  .card {
+    padding: 24px 16px;
+  }
+
+  .cardIcon {
+    font-size: 32px;
   }
 }

@@ -21,17 +21,16 @@ export function ProfileCenterPage({ onNavigate }: ProfileCenterPageProps) {
     <div className={styles.profileCenter}>
       <h1 className={styles.title}>个人中心</h1>
 
-      <div className={styles.menuList}>
+      <div className={styles.grid}>
         {MENU_ITEMS.map(item => (
           <button
             key={item.id}
-            className={styles.menuItem}
+            className={styles.card}
             aria-label={item.label}
             onClick={() => onNavigate(item.id)}
           >
-            <span className={styles.menuIcon}>{item.icon}</span>
-            <span className={styles.menuLabel}>{item.label}</span>
-            <span className={styles.menuArrow}>›</span>
+            <span className={styles.cardIcon}>{item.icon}</span>
+            <span className={styles.cardLabel}>{item.label}</span>
           </button>
         ))}
       </div>
