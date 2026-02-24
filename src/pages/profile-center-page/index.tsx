@@ -26,6 +26,7 @@ export function ProfileCenterPage({ onNavigate }: ProfileCenterPageProps) {
           <button
             key={item.id}
             className={styles.menuItem}
+            aria-label={item.label}
             onClick={() => onNavigate(item.id)}
           >
             <span className={styles.menuIcon}>{item.icon}</span>
