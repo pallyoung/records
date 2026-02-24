@@ -1,0 +1,60 @@
+.profileCenter {
+  padding: 24px;
+  padding-bottom: 100px; // Space for TabBar
+  min-height: 100vh;
+  background: var(--bg-primary);
+}
+
+.title {
+  font-family: var(--font-heading);
+  font-size: 28px;
+  color: var(--text-primary);
+  letter-spacing: 2px;
+  margin-bottom: 32px;
+}
+
+.menuList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  padding: 16px 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--accent-tertiary);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.menuItem:hover {
+  background: var(--bg-secondary);
+  transform: translateX(2px);
+  border-color: var(--accent-secondary);
+}
+
+.menuIcon {
+  font-size: 20px;
+  margin-right: 16px;
+}
+
+.menuLabel {
+  flex: 1;
+  font-size: var(--text-base);
+  color: var(--text-primary);
+  text-align: left;
+}
+
+.menuArrow {
+  font-size: 20px;
+  color: var(--text-muted);
+}
+
+@media (min-width: 1025px) {
+  .profileCenter {
+    padding: 32px;
+  }
+}
