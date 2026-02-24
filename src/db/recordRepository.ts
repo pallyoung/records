@@ -75,3 +75,84 @@ export const recordRepository = {
       .toArray();
   }
 };
+
+// 检查并处理循环事务重置
+export async function checkAndResetRecurringRecords() {
+  const records = await db.records.where('type').equals('recurring').toArray();
+  const today = new Date();
+  const todayStr = today.toISOString().split('T')[0];
+  const currentHour = today.getHours();
+  const currentDay = today.getDay();
+
+  for (const record of records) {
+    if (!record.recurringConfig) continue;
+
+    const config = record.recurringConfig;
+    let shouldReset = false;
+
+    switch (config.frequency) {
+      case 'daily':
+        shouldReset = config.lastResetDate !== todayStr;
+        break;
+
+      case 'weekly':
+        if (config.daysOfWeek?.includes(currentDay) && config.lastResetDate !== todayStr) {
+          shouldReset = true;
+        }
+        break;
+
+      case 'monthly':
+        const currentDayOfMonth = today.getDate();
+        if (config.dayOfMonth === currentDayOfMonth && config.lastResetDate !== todayStr) {
+          shouldReset = true;
+        }
+        break;
+
+      case 'interval_days':
+        if (config.lastResetDate) {
+          const lastReset = new Date(config.lastResetDate);
+          const diffDays = Math.floor((today.getTime() - lastReset.getTime()) / (1000 * 60 * 60 * 24));
+          shouldReset = diffDays >= (config.intervalValue || 2);
+        } else {
+          shouldReset = true;
+        }
+        break;
+
+      case 'interval_hours':
+        if (config.lastResetTime) {
+          const [lastHour, lastMin] = config.lastResetTime.split(':').map(Number);
+          const lastTime = new Date(today);
+          lastTime.setHours(lastHour, lastMin, 0, 0);
+          const diffHours = (today.getTime() - lastTime.getTime()) / (1000 * 60 * 60);
+          shouldReset = diffHours >= (config.intervalValue || 2);
+        } else {
+          shouldReset = true;
+        }
+        break;
+    }
+
+    if (shouldReset && record.status === 'completed') {
+      await db.records.update(record.id, {
+        status: 'pending',
+        recurringConfig: {
+          ...config,
+          lastResetDate: todayStr,
+          lastResetTime: `${currentHour}:${today.getMinutes().toString().padStart(2, '0')}`,
+        },
+      });
+    }
+  }
+}
+
+// 在事务完成时更新累计次数
+export async function completeRecurringRecord(id: string) {
+  const record = await db.records.get(id);
+  if (record?.recurringConfig) {
+    await db.records.update(id, {
+      recurringConfig: {
+        ...record.recurringConfig,
+        totalCompletions: (record.recurringConfig.totalCompletions || 0) + 1,
+      },
+    });
+  }
+}

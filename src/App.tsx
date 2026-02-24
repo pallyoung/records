@@ -11,6 +11,7 @@ import { SettingsPage } from './pages/settings-page';
 import { ProfileCenterPage } from './pages/profile-center-page';
 import { TabBar, TabType } from './components/tab-bar';
 import { recordActions } from './store/recordStore';
+import { checkAndResetRecurringRecords } from './db/recordRepository';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { QuickAdd } from './components/quick-add';
 import type { Record, FilterState, RecordStatus } from './types';
@@ -34,6 +35,7 @@ function AppContent() {
 
   useEffect(() => {
     recordActions.loadRecords();
+    checkAndResetRecurringRecords();
   }, []);
 
   const handleEdit = (id: string) => {
