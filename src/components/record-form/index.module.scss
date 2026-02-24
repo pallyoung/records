@@ -1,3 +1,49 @@
+/* 事务类型切换 */
+.typeToggle {
+  display: flex;
+  gap: 8px;
+}
+
+.typeBtn {
+  flex: 1;
+  padding: 10px 16px;
+  border: 1px solid var(--accent-tertiary);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.typeBtn.active {
+  background: var(--accent-primary);
+  color: #fff;
+  border-color: var(--accent-primary);
+}
+
+.weekDays {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.dayBtn {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--accent-tertiary);
+  border-radius: 50%;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dayBtn.selected {
+  background: var(--accent-primary);
+  color: #fff;
+  border-color: var(--accent-primary);
+}
+
 /* 表单样式 - 日记手账风 */
 
 .modalOverlay {

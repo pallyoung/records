@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import type { Record, RecordStatus, Achievement } from '../../types';
+import type { Record, RecordStatus, Achievement, RecurringFrequency, RecurringConfig } from '../../types';
 import { useTags } from '../../hooks/useTags';
 import styles from './index.module.scss';
 
@@ -34,6 +34,16 @@ export function RecordForm({ record, records = [], onClose, onSave }: RecordForm
     record?.review?.achievement || ''
   );
   const [reviewDetails, setReviewDetails] = useState(record?.review?.details || '');
+  const [recordType, setRecordType] = useState<'normal' | 'recurring'>(record?.type || 'normal');
+  const [recurringConfig, setRecurringConfig] = useState<RecurringConfig>({
+    frequency: 'daily',
+    daysOfWeek: [],
+    dayOfMonth: 1,
+    intervalValue: 2,
+    totalCompletions: record?.recurringConfig?.totalCompletions || 0,
+    lastResetDate: record?.recurringConfig?.lastResetDate,
+    lastResetTime: record?.recurringConfig?.lastResetTime,
+  });
   const [isSaving, setIsSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
 
@@ -43,6 +53,8 @@ export function RecordForm({ record, records = [], onClose, onSave }: RecordForm
     tags,
     images,
     status,
+    type: recordType,
+    ...(recordType === 'recurring' ? { recurringConfig } : {}),
     plannedStartTime: plannedStartTime ? new Date(plannedStartTime) : undefined,
     plannedEndTime: plannedEndTime ? new Date(plannedEndTime) : undefined,
     actualStartTime: record?.actualStartTime,
@@ -51,7 +63,7 @@ export function RecordForm({ record, records = [], onClose, onSave }: RecordForm
       achievement: reviewAchievement as Achievement,
       details: reviewDetails,
     } : undefined,
-  }), [content, tags, images, status, plannedStartTime, plannedEndTime, reviewAchievement, reviewDetails, record]);
+  }), [content, tags, images, status, recordType, recurringConfig, plannedStartTime, plannedEndTime, reviewAchievement, reviewDetails, record]);
 
   // 防抖保存函数（仅用于编辑已有记录）
   const debouncedSave = useCallback(
@@ -74,7 +86,7 @@ export function RecordForm({ record, records = [], onClose, onSave }: RecordForm
   useEffect(() => {
     if (isNewRecord) return; // 新建记录不自动保存
     debouncedSave(buildSaveData());
-  }, [content, tags, images, status, plannedStartTime, plannedEndTime, reviewAchievement, reviewDetails]);
+  }, [content, tags, images, status, recordType, recurringConfig, plannedStartTime, plannedEndTime, reviewAchievement, reviewDetails]);
 
   // 手动保存（新建记录时使用）
   const handleSave = () => {
@@ -263,6 +275,106 @@ export function RecordForm({ record, records = [], onClose, onSave }: RecordForm
             <option value="completed">已完成</option>
           </select>
         </div>
+
+        <div className={styles.formGroup}>
+          <label>事务类型</label>
+          <div className={styles.typeToggle}>
+            <button
+              type="button"
+              className={`${styles.typeBtn} ${recordType === 'normal' ? styles.active : ''}`}
+              onClick={() => setRecordType('normal')}
+            >
+              普通事务
+            </button>
+            <button
+              type="button"
+              className={`${styles.typeBtn} ${recordType === 'recurring' ? styles.active : ''}`}
+              onClick={() => setRecordType('recurring')}
+            >
+              循环事务
+            </button>
+          </div>
+        </div>
+
+        {recordType === 'recurring' && (
+          <>
+            <div className={styles.formGroup}>
+              <label>循环周期</label>
+              <select
+                value={recurringConfig.frequency}
+                onChange={(e) => setRecurringConfig({ ...recurringConfig, frequency: e.target.value as RecurringFrequency })}
+              >
+                <option value="daily">每天</option>
+                <option value="weekly">每周</option>
+                <option value="monthly">每月</option>
+                <option value="interval_days">每几天</option>
+                <option value="interval_hours">每几小时</option>
+              </select>
+            </div>
+
+            {recurringConfig.frequency === 'weekly' && (
+              <div className={styles.formGroup}>
+                <label>选择星期</label>
+                <div className={styles.weekDays}>
+                  {['日', '一', '二', '三', '四', '五', '六'].map((day, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      className={`${styles.dayBtn} ${recurringConfig.daysOfWeek?.includes(idx) ? styles.selected : ''}`}
+                      onClick={() => {
+                        const days = recurringConfig.daysOfWeek || [];
+                        const newDays = days.includes(idx) ? days.filter(d => d !== idx) : [...days, idx];
+                        setRecurringConfig({ ...recurringConfig, daysOfWeek: newDays });
+                      }}
+                    >
+                      {day}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {recurringConfig.frequency === 'monthly' && (
+              <div className={styles.formGroup}>
+                <label>每月几号</label>
+                <select
+                  value={recurringConfig.dayOfMonth}
+                  onChange={(e) => setRecurringConfig({ ...recurringConfig, dayOfMonth: parseInt(e.target.value) })}
+                >
+                  {Array.from({ length: 28 }, (_, i) => i + 1).map(day => (
+                    <option key={day} value={day}>{day}日</option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            {recurringConfig.frequency === 'interval_days' && (
+              <div className={styles.formGroup}>
+                <label>每几天</label>
+                <input
+                  type="number"
+                  min={2}
+                  max={30}
+                  value={recurringConfig.intervalValue}
+                  onChange={(e) => setRecurringConfig({ ...recurringConfig, intervalValue: parseInt(e.target.value) })}
+                />
+              </div>
+            )}
+
+            {recurringConfig.frequency === 'interval_hours' && (
+              <div className={styles.formGroup}>
+                <label>每几小时</label>
+                <input
+                  type="number"
+                  min={2}
+                  max={48}
+                  value={recurringConfig.intervalValue}
+                  onChange={(e) => setRecurringConfig({ ...recurringConfig, intervalValue: parseInt(e.target.value) })}
+                />
+              </div>
+            )}
+          </>
+        )}
 
         <div className={styles.formGroup}>
           <label>计划开始时间</label>
