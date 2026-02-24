@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
 import { RelaxProvider, useRelaxValue, store, recordsState, tagsState, filterState, loadingState } from './store/recordStore';
-import { FilterBar } from './components/filter-bar';
 import { Timeline } from './components/timeline';
 import { Dashboard } from './components/dashboard';
 import { DashboardDetail } from './components/dashboard-detail';
@@ -155,12 +154,6 @@ function AppContent() {
 
       {activeTab === 'records' && (
         <main className="app-main records-main">
-          <FilterBar
-            filter={filter}
-            tags={tags}
-            onFilterChange={handleFilterChange}
-          />
-
           <Timeline
             records={records}
             selectedIndex={selectedIndex}
