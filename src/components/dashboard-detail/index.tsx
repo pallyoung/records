@@ -5,6 +5,7 @@ import styles from './index.module.scss';
 
 interface DashboardDetailProps {
   records: Record[];
+  onBack?: () => void;
 }
 
 type ViewMode = 'week' | 'month';
@@ -304,11 +305,16 @@ function TagAnalysisTab({ records }: { records: Record[] }) {
   );
 }
 
-export function DashboardDetail({ records }: DashboardDetailProps) {
+export function DashboardDetail({ records, onBack }: DashboardDetailProps) {
   const [activeTab, setActiveTab] = useState<TabType>('delay');
 
   return (
     <div className={styles.dashboardDetail}>
+      <header className={styles.detailHeader}>
+        <button onClick={onBack} className={styles.backButton}>← 返回</button>
+        <h2 className={styles.detailTitle}>统计详情</h2>
+      </header>
+
       {/* 延期统计 - 独立展示 */}
       <section className={styles.delaySummary}>
         <h3 className={styles.sectionTitle}>延期统计</h3>

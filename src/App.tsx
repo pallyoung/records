@@ -9,6 +9,8 @@ import { ReviewPage } from './pages/review-page';
 import { TagManagementPage } from './pages/tag-management-page';
 import { HabitsPage } from './pages/habits-page';
 import { SettingsPage } from './pages/settings-page';
+import { ProfileCenterPage } from './pages/profile-center-page';
+import { TabBar, TabType } from './components/tab-bar';
 import { recordActions } from './store/recordStore';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { QuickAdd } from './components/quick-add';
@@ -26,9 +28,9 @@ function AppContent() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showReview, setShowReview] = useState(false);
   const [showTagManagement, setShowTagManagement] = useState(false);
-  const [showHabits, setShowHabits] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [dashboardExpanded, setDashboardExpanded] = useState(false);
+  const [showDashboardDetail, setShowDashboardDetail] = useState(false);
+  const [activeTab, setActiveTab] = useState<TabType>('records');
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   useEffect(() => {
@@ -41,11 +43,14 @@ function AppContent() {
     { key: '/', handler: () => document.getElementById('search-input')?.focus(), description: '搜索' },
     { key: 'j', handler: () => setSelectedIndex((i) => Math.min(i + 1, records.length - 1)), description: '下一条' },
     { key: 'k', handler: () => setSelectedIndex((i) => Math.max(i - 1, 0)), description: '上一条' },
+    { key: '1', handler: () => setActiveTab('habits'), description: '切换到习惯' },
+    { key: '2', handler: () => setActiveTab('records'), description: '切换到事务' },
+    { key: '3', handler: () => setActiveTab('profile'), description: '切换到个人中心' },
     { key: 'Enter', handler: () => records[selectedIndex] && handleEdit(records[selectedIndex].id), description: '编辑' },
-    { key: 'Escape', handler: () => { setShowForm(false); setShowReview(false); setShowTagManagement(false); setShowHabits(false); setShowSettings(false); }, description: '关闭' },
+    { key: 'Escape', handler: () => { setShowForm(false); setShowReview(false); setShowTagManagement(false); setShowSettings(false); setShowDashboardDetail(false); }, description: '关闭' },
   ];
 
-  useKeyboardShortcuts(shortcuts, !showForm && !showReview && !showTagManagement && !showHabits && !showSettings);
+  useKeyboardShortcuts(shortcuts, !showForm && !showReview && !showTagManagement && !showSettings && !showDashboardDetail);
 
   const handleFilterChange = (newFilter: FilterState) => {
     recordActions.setFilter(newFilter);
@@ -54,6 +59,7 @@ function AppContent() {
   const handleEdit = (id: string) => {
     setEditingId(id);
     setShowForm(true);
+    setActiveTab('records');
   };
 
   const handleDelete = async (id: string) => {
@@ -81,8 +87,19 @@ function AppContent() {
     }
   };
 
+  const handleProfileNavigate = (page: string) => {
+    if (page === 'review') {
+      setShowReview(true);
+    } else if (page === 'settings') {
+      setShowSettings(true);
+    } else if (page === 'tags') {
+      setShowTagManagement(true);
+    }
+  };
+
   const editingRecord = editingId ? records.find((r: Record) => r.id === editingId) : undefined;
 
+  // Sub-pages take over full screen
   if (showReview) {
     return (
       <ReviewPage
@@ -101,14 +118,6 @@ function AppContent() {
     );
   }
 
-  if (showHabits) {
-    return (
-      <HabitsPage
-        onBack={() => setShowHabits(false)}
-      />
-    );
-  }
-
   if (showSettings) {
     return (
       <SettingsPage
@@ -117,26 +126,41 @@ function AppContent() {
     );
   }
 
+  if (showDashboardDetail) {
+    return (
+      <div className="app">
+        <DashboardDetail
+          records={records}
+          onBack={() => setShowDashboardDetail(false)}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="app">
-      <header className="app-header">
-        <h1>记录</h1>
-        <div className="header-actions">
-          <button onClick={() => setShowSettings(true)}>设置</button>
-          <button onClick={() => setShowHabits(true)}>习惯</button>
-          <button onClick={() => setShowTagManagement(true)}>标签</button>
-          <button onClick={() => setShowReview(true)}>复盘</button>
-        </div>
-      </header>
+      {/* Dashboard at top */}
+      <Dashboard
+        records={records}
+        onClick={() => setShowDashboardDetail(true)}
+      />
 
-      <main className="app-main">
-        <FilterBar
-          filter={filter}
-          tags={tags}
-          onFilterChange={handleFilterChange}
-        />
+      {/* Tab content */}
+      {activeTab === 'habits' && (
+        <main className="app-main habits-main">
+          <HabitsPage onBack={() => {}} />
+        </main>
+      )}
 
-        <Timeline
+      {activeTab === 'records' && (
+        <main className="app-main records-main">
+          <FilterBar
+            filter={filter}
+            tags={tags}
+            onFilterChange={handleFilterChange}
+          />
+
+          <Timeline
             records={records}
             selectedIndex={selectedIndex}
             loading={loading}
@@ -144,29 +168,22 @@ function AppContent() {
             onDelete={handleDelete}
             onStatusChange={handleStatusChange}
           />
-      </main>
 
-      {/* Dashboard 展开时的半透明遮罩 */}
-      {dashboardExpanded && (
-        <div className="dashboard-expanded-overlay" onClick={() => setDashboardExpanded(false)} />
+          {/* 移动端 FAB 按钮 - only visible on records tab */}
+          <button className="fab-button" onClick={() => setShowForm(true)}>
+            +
+          </button>
+        </main>
       )}
 
-      {/* Dashboard Drawer - 从底部弹出 */}
-      {!loading && (
-        <div className={`dashboard-drawer ${dashboardExpanded ? 'open' : ''}`}>
-          <Dashboard
-            records={records}
-            isExpanded={dashboardExpanded}
-            onExpandChange={setDashboardExpanded}
-          />
-          {dashboardExpanded && <DashboardDetail records={records} />}
-        </div>
+      {activeTab === 'profile' && (
+        <main className="app-main profile-main">
+          <ProfileCenterPage onNavigate={handleProfileNavigate} />
+        </main>
       )}
 
-      {/* 移动端 FAB 按钮 */}
-      <button className="fab-button" onClick={() => setShowForm(true)}>
-        +
-      </button>
+      {/* TabBar at bottom */}
+      <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
 
       {showForm && (
         <RecordForm
@@ -189,6 +206,7 @@ function AppContent() {
             images: [],
             plannedStartTime: data.status !== 'pending' ? new Date() : undefined,
           });
+          setActiveTab('records');
         }}
       />
     </div>
