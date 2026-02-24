@@ -18,8 +18,7 @@ export function Dashboard({ records, onClick }: DashboardProps) {
 
     const delayed = incompleteRecords.filter(r => {
       const plannedStart = r.plannedStartTime || r.createdAt;
-      const plannedEnd = r.plannedEndTime ? new Date(r.plannedEndTime) : new Date(r.createdAt);
-      plannedEnd.setHours(23, 59, 59, 999);
+      const plannedEnd = new Date(r.plannedEndTime ? new Date(r.plannedEndTime) : new Date(r.createdAt)).setHours(23, 59, 59, 999);
 
       if (r.status === 'pending' && now > plannedStart) return true;
       if (r.status === 'in_progress' && now > plannedEnd) return true;
@@ -33,7 +32,19 @@ export function Dashboard({ records, onClick }: DashboardProps) {
   }, [records]);
 
   return (
-    <div className={styles.dashboardBar} onClick={onClick}>
+    <div
+      className={styles.dashboardBar}
+      onClick={onClick}
+      role="button"
+      tabIndex={0}
+      aria-label="查看详情"
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onClick?.();
+        }
+      }}
+    >
       {/* 今日待完成 */}
       <div className={styles.dashboardSection}>
         <span className={styles.sectionLabel}>今日待完成</span>
