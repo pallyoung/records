@@ -1,12 +1,12 @@
-import { db } from './index';
-import type { Habit, HabitLog } from '../types';
+import { db } from "./index";
+import type { Habit, HabitLog } from "../types";
 
 export const habitRepository = {
   async getAll(): Promise<Habit[]> {
     return db.habits.toArray();
   },
 
-  async create(habit: Omit<Habit, 'id' | 'createdAt'>): Promise<string> {
+  async create(habit: Omit<Habit, "id" | "createdAt">): Promise<string> {
     const id = crypto.randomUUID();
     await db.habits.add({
       ...habit,
@@ -22,21 +22,25 @@ export const habitRepository = {
 
   async delete(id: string): Promise<void> {
     await db.habits.delete(id);
-    await db.habitLogs.where('habitId').equals(id).delete();
+    await db.habitLogs.where("habitId").equals(id).delete();
   },
 
-  async getLogs(habitId: string, startDate?: string, endDate?: string): Promise<HabitLog[]> {
-    let collection = db.habitLogs.where('habitId').equals(habitId);
+  async getLogs(
+    habitId: string,
+    startDate?: string,
+    endDate?: string,
+  ): Promise<HabitLog[]> {
+    const collection = db.habitLogs.where("habitId").equals(habitId);
     if (startDate && endDate) {
-      return collection.filter(log => log.date >= startDate && log.date <= endDate).toArray();
+      return collection
+        .filter((log) => log.date >= startDate && log.date <= endDate)
+        .toArray();
     }
     return collection.toArray();
   },
 
   async toggleLog(habitId: string, date: string): Promise<boolean> {
-    const existing = await db.habitLogs
-      .where({ habitId, date })
-      .first();
+    const existing = await db.habitLogs.where({ habitId, date }).first();
 
     if (existing) {
       await db.habitLogs.delete(existing.id);
@@ -53,10 +57,7 @@ export const habitRepository = {
   },
 
   async getStreak(habitId: string): Promise<number> {
-    const logs = await db.habitLogs
-      .where('habitId')
-      .equals(habitId)
-      .toArray();
+    const logs = await db.habitLogs.where("habitId").equals(habitId).toArray();
 
     if (logs.length === 0) return 0;
 
@@ -64,7 +65,7 @@ export const habitRepository = {
     logs.sort((a, b) => b.date.localeCompare(a.date));
 
     let streak = 0;
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toISOString().split("T")[0];
     let checkDate = today;
 
     for (const log of logs) {
@@ -72,7 +73,7 @@ export const habitRepository = {
         streak++;
         const d = new Date(checkDate);
         d.setDate(d.getDate() - 1);
-        checkDate = d.toISOString().split('T')[0];
+        checkDate = d.toISOString().split("T")[0];
       } else if (log.date < checkDate) {
         break;
       }

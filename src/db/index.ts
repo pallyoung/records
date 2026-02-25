@@ -1,5 +1,5 @@
-import Dexie, { type Table } from 'dexie';
-import type { Record, Habit, HabitLog } from '../types';
+import Dexie, { type Table } from "dexie";
+import type { Record, Habit, HabitLog } from "../types";
 
 export class RecordsDatabase extends Dexie {
   records!: Table<Record>;
@@ -7,11 +7,11 @@ export class RecordsDatabase extends Dexie {
   habitLogs!: Table<HabitLog>;
 
   constructor() {
-    super('RecordsDB');
+    super("RecordsDB");
     this.version(2).stores({
-      records: 'id, status, createdAt, *tags',
-      habits: '++id, name, frequency, createdAt',
-      habitLogs: '++id, habitId, date'
+      records: "id, status, createdAt, *tags",
+      habits: "++id, name, frequency, createdAt",
+      habitLogs: "++id, habitId, date",
     });
   }
 }

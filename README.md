@@ -30,6 +30,12 @@ pnpm dev
 
 # 构建
 pnpm build
+
+# Biome 代码检查
+pnpm lint
+
+# Biome 自动格式化
+pnpm format
 ```
 
 ## 主题
@@ -40,3 +46,9 @@ pnpm build
 
 - 业务代码只能从 `src/shared/icons` 导入图标
 - 严禁业务代码直接导入第三方图标库（如 `@phosphor-icons/react`）
+
+## 提交前检查
+
+- 使用 Husky + lint-staged，在 `pre-commit` 只检查暂存文件
+- 提交时会执行 `biome check --write`，自动修复可修复问题并重新暂存
+- 提交时会校验图标导入规则，业务代码若直接导入 `@phosphor-icons/react` 会被阻止

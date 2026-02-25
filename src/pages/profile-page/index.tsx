@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useRelaxValue, recordsState } from "../../store/recordStore";
 import {
   IconExport,
@@ -83,18 +83,21 @@ function ThemeToggle({ currentTheme, onThemeChange }: ThemeToggleProps) {
   return (
     <div className={styles.themeToggle}>
       <button
+        type="button"
         className={`${styles.themeOption} ${currentTheme === "light" ? styles.themeOptionActive : ""}`}
         onClick={() => onThemeChange("light")}
       >
         浅色
       </button>
       <button
+        type="button"
         className={`${styles.themeOption} ${currentTheme === "dark" ? styles.themeOptionActive : ""}`}
         onClick={() => onThemeChange("dark")}
       >
         深色
       </button>
       <button
+        type="button"
         className={`${styles.themeOption} ${currentTheme === "auto" ? styles.themeOptionActive : ""}`}
         onClick={() => onThemeChange("auto")}
       >
@@ -113,8 +116,20 @@ interface SettingsItemProps {
 }
 
 function SettingsItem({ icon, label, right, onClick }: SettingsItemProps) {
+  if (onClick) {
+    return (
+      <button type="button" className={styles.settingsItem} onClick={onClick}>
+        <div className={styles.settingsItemLeft}>
+          <div className={styles.settingsIcon}>{icon}</div>
+          <span className={styles.settingsLabel}>{label}</span>
+        </div>
+        <div className={styles.settingsRight}>{right}</div>
+      </button>
+    );
+  }
+
   return (
-    <div className={styles.settingsItem} onClick={onClick}>
+    <div className={styles.settingsItem}>
       <div className={styles.settingsItemLeft}>
         <div className={styles.settingsIcon}>{icon}</div>
         <span className={styles.settingsLabel}>{label}</span>

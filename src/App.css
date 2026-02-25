@@ -68,7 +68,7 @@
 }
 
 .back-button {
-    padding: 16px 32px;
+  padding: 16px 32px;
 }
 
 /* FAB button - only visible on mobile */
@@ -84,7 +84,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 16px rgba(0,122,255,0.4);
+  box-shadow: 0 4px 16px rgba(0, 122, 255, 0.4);
   cursor: pointer;
   z-index: 100;
   transition: transform 0.2s ease;

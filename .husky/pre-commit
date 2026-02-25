@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+
+pnpm lint-staged
+./.husky/check-icon-imports.sh

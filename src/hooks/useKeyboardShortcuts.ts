@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback } from "react";
 
 export interface KeyboardShortcut {
   key: string;
@@ -6,16 +6,19 @@ export interface KeyboardShortcut {
   description: string;
 }
 
-export function useKeyboardShortcuts(shortcuts: KeyboardShortcut[], enabled = true) {
+export function useKeyboardShortcuts(
+  shortcuts: KeyboardShortcut[],
+  enabled = true,
+) {
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (!enabled) return;
 
       // 忽略在 input/textarea 中的快捷键
       const target = e.target as HTMLElement;
-      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
+      if (target.tagName === "INPUT" || target.tagName === "TEXTAREA") {
         // 只有 Escape 在输入框中也可以触发
-        if (e.key !== 'Escape') return;
+        if (e.key !== "Escape") return;
       }
 
       const shortcut = shortcuts.find((s) => s.key === e.key);
@@ -24,11 +27,11 @@ export function useKeyboardShortcuts(shortcuts: KeyboardShortcut[], enabled = tr
         shortcut.handler();
       }
     },
-    [shortcuts, enabled]
+    [shortcuts, enabled],
   );
 
   useEffect(() => {
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, [handleKeyDown]);
 }

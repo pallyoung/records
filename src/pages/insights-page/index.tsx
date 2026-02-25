@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useRelaxValue, recordsState } from "../../store/recordStore";
-import type { Record as RecordType, RecordStatus } from "../../types";
+import type { Record as RecordType } from "../../types";
 import styles from "./index.module.scss";
 
 // Page props interface
@@ -351,24 +351,28 @@ export function InsightsPage(_props?: PageProps) {
       {/* Filter Pills */}
       <div className={styles.filterPills}>
         <button
+          type="button"
           className={`${styles.filterPill} ${timeFilter === "week" ? styles.filterPillActive : ""}`}
           onClick={() => setTimeFilter("week")}
         >
           本周
         </button>
         <button
+          type="button"
           className={`${styles.filterPill} ${timeFilter === "month" ? styles.filterPillActive : ""}`}
           onClick={() => setTimeFilter("month")}
         >
           本月
         </button>
         <button
+          type="button"
           className={`${styles.filterPill} ${timeFilter === "year" ? styles.filterPillActive : ""}`}
           onClick={() => setTimeFilter("year")}
         >
           本年
         </button>
         <button
+          type="button"
           className={`${styles.filterPill} ${timeFilter === "custom" ? styles.filterPillActive : ""}`}
           onClick={() => {
             // 设置默认自定义范围：最近30天

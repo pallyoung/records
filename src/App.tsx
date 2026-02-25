@@ -7,7 +7,7 @@ import {
   tagsState,
   recordActions,
 } from "./store/recordStore";
-import { TabBar, TabType } from "./components/tab-bar";
+import { TabBar, type TabType } from "./components/tab-bar";
 import { QuickAdd } from "./components/quick-add";
 import { HomePage } from "./pages/home-page";
 import { TasksPage } from "./pages/tasks-page";
@@ -130,6 +130,7 @@ function AppContent() {
       )}
 
       <button
+        type="button"
         className="fab-button"
         aria-label="新建任务"
         onClick={() => setShowQuickAdd(true)}

@@ -9,12 +9,6 @@ import { IconAdd, IconCheck } from "../../shared/icons";
 import type { Record, RecordStatus, FilterState } from "../../types";
 import styles from "./index.module.scss";
 
-// Page props interface
-interface PageProps {
-  records?: Record[];
-  tags?: string[];
-}
-
 // 获取今天的格式化日期
 function getTodayFormatted(): { title: string; date: string } {
   const now = new Date();
@@ -73,7 +67,6 @@ interface CalendarMiniProps {
 
 function CalendarMini({ onDateSelect }: CalendarMiniProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const today = new Date();
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
@@ -98,6 +91,7 @@ function CalendarMini({ onDateSelect }: CalendarMiniProps) {
 
   // 生成日历格子
   const calendarDays = useMemo(() => {
+    const today = new Date();
     const days: { day: number; isToday: boolean; isCurrentMonth: boolean }[] =
       [];
 
@@ -158,10 +152,10 @@ function CalendarMini({ onDateSelect }: CalendarMiniProps) {
           {monthNames[month]} {year}
         </span>
         <div className={styles.calendarNav}>
-          <button onClick={goToPrevMonth} aria-label="上个月">
+          <button type="button" onClick={goToPrevMonth} aria-label="上个月">
             ‹
           </button>
-          <button onClick={goToNextMonth} aria-label="下个月">
+          <button type="button" onClick={goToNextMonth} aria-label="下个月">
             ›
           </button>
         </div>
@@ -290,6 +284,7 @@ function TaskCard({ record, onStatusChange, onClick }: TaskCardProps) {
       </div>
       <div className={styles.taskActions}>
         <button
+          type="button"
           className={`${styles.taskCheckbox} ${record.status === "completed" ? styles.taskCheckboxChecked : ""}`}
           onClick={handleCheckboxClick}
           aria-label={
@@ -384,18 +379,21 @@ export function HomePage({ onOpenQuickAdd, onEditRecord }: HomePageProps) {
       {/* Filter Pills */}
       <div className={styles.filterPills}>
         <button
+          type="button"
           className={`${styles.filterPill} ${activeFilter === "all" ? styles.filterPillActive : ""}`}
           onClick={() => handleFilterChange("all")}
         >
           全部
         </button>
         <button
+          type="button"
           className={`${styles.filterPill} ${activeFilter === "in_progress" ? styles.filterPillActive : ""}`}
           onClick={() => handleFilterChange("in_progress")}
         >
           进行中
         </button>
         <button
+          type="button"
           className={`${styles.filterPill} ${activeFilter === "completed" ? styles.filterPillActive : ""}`}
           onClick={() => handleFilterChange("completed")}
         >

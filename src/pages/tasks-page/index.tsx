@@ -8,12 +8,6 @@ import { IconCheck, IconMore, IconSearch } from "../../shared/icons";
 import type { Record, RecordStatus } from "../../types";
 import styles from "./index.module.scss";
 
-// Page props interface
-interface PageProps {
-  records?: Record[];
-  tags?: string[];
-}
-
 // Filter type
 type FilterType =
   | "all"
@@ -191,6 +185,7 @@ function TaskCard({ record, onStatusChange, onClick }: TaskCardProps) {
       </div>
       <div className={styles.taskActions}>
         <button
+          type="button"
           className={`${styles.taskCheckbox} ${record.status === "completed" ? styles.taskCheckboxChecked : ""}`}
           onClick={handleCheckboxClick}
           aria-label={
@@ -199,7 +194,7 @@ function TaskCard({ record, onStatusChange, onClick }: TaskCardProps) {
         >
           <IconCheck size={16} />
         </button>
-        <button className={styles.taskMenu} aria-label="更多操作">
+        <button type="button" className={styles.taskMenu} aria-label="更多操作">
           <IconMore size={18} />
         </button>
       </div>
@@ -406,36 +401,42 @@ export function TasksPage({ onEditRecord }: TasksPageProps) {
       {/* Filter Pills */}
       <div className={styles.filterPills}>
         <button
+          type="button"
           className={`${styles.filterPill} ${activeFilter === "all" ? styles.filterPillActive : ""}`}
           onClick={() => handleFilterChange("all")}
         >
           全部
         </button>
         <button
+          type="button"
           className={`${styles.filterPill} ${activeFilter === "in_progress" ? styles.filterPillActive : ""}`}
           onClick={() => handleFilterChange("in_progress")}
         >
           进行中
         </button>
         <button
+          type="button"
           className={`${styles.filterPill} ${activeFilter === "completed" ? styles.filterPillActive : ""}`}
           onClick={() => handleFilterChange("completed")}
         >
           已完成
         </button>
         <button
+          type="button"
           className={`${styles.filterPill} ${activeFilter === "overdue" ? styles.filterPillActive : ""}`}
           onClick={() => handleFilterChange("overdue")}
         >
           已延期
         </button>
         <button
+          type="button"
           className={`${styles.filterPill} ${activeFilter === "today" ? styles.filterPillActive : ""}`}
           onClick={() => handleFilterChange("today")}
         >
           今天
         </button>
         <button
+          type="button"
           className={`${styles.filterPill} ${activeFilter === "week" ? styles.filterPillActive : ""}`}
           onClick={() => handleFilterChange("week")}
         >
