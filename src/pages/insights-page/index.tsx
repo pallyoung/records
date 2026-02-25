@@ -6,13 +6,14 @@ import styles from "./index.module.scss";
 // Filter type
 type TimeFilter = "week" | "month" | "year" | "custom";
 
-// 格式化日期为 YYYY-MM-DD
-function formatDateKey(date: Date): string {
-  const year = date.getFullYear();
-  const month = (date.getMonth() + 1).toString().padStart(2, "0");
-  const day = date.getDate().toString().padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
+// 标签颜色映射 (移到组件外部作为常量)
+const tagColorMap: Record<string, string> = {
+  工作: "#007AFF",
+  生活: "#FF9500",
+  学习: "#AF52DE",
+  健康: "#34C759",
+  default: "#8E8E93",
+};
 
 // 获取本周开始日期
 function getWeekStart(): Date {
@@ -206,15 +207,6 @@ export function InsightsPage() {
   const [customStartDate, setCustomStartDate] = useState<Date | null>(null);
   const [customEndDate, setCustomEndDate] = useState<Date | null>(null);
 
-  // 标签颜色映射
-  const tagColorMap: Record<string, string> = {
-    工作: "#007AFF",
-    生活: "#FF9500",
-    学习: "#AF52DE",
-    健康: "#34C759",
-    default: "#8E8E93",
-  };
-
   // 根据时间筛选计算统计数据
   const stats = useMemo(() => {
     let startDate: Date;
@@ -261,8 +253,30 @@ export function InsightsPage() {
     const completionRate =
       totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
 
-    // 计算较上周的变化 (假设上周数据类似)
-    const lastWeekChange = Math.round(Math.random() * 30 - 10); // 模拟数据
+    // 计算较上周的变化
+    const weekStart = getWeekStart();
+    const lastWeekStart = new Date(weekStart);
+    lastWeekStart.setDate(lastWeekStart.getDate() - 7);
+    const lastWeekEnd = new Date(weekStart);
+    lastWeekEnd.setDate(lastWeekEnd.getDate() - 1);
+
+    const lastWeekRecords = records.filter((record) => {
+      const recordDate = new Date(record.createdAt);
+      return isInRange(recordDate, lastWeekStart, lastWeekEnd);
+    });
+    const lastWeekCompletedCount = lastWeekRecords.filter(
+      (r) => r.status === "completed",
+    ).length;
+
+    let lastWeekChange = 0;
+    if (lastWeekCompletedCount > 0) {
+      lastWeekChange = Math.round(
+        ((completedCount - lastWeekCompletedCount) / lastWeekCompletedCount) *
+          100,
+      );
+    } else if (completedCount > 0) {
+      lastWeekChange = 100; // 上周没有完成，本周有完成
+    }
 
     // 标签分布
     const tagCountMap: Record<string, number> = {};
@@ -319,7 +333,7 @@ export function InsightsPage() {
       statusDistribution,
       trendData,
     };
-  }, [records, timeFilter, customStartDate, customEndDate, tagColorMap]);
+  }, [records, timeFilter, customStartDate, customEndDate]);
 
   return (
     <div className={styles.insightsPage}>
