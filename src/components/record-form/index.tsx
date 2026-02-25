@@ -187,96 +187,6 @@ export function RecordForm({ record, records = [], onClose, onSave }: RecordForm
         </div>
 
         <div className={styles.formGroup}>
-          <label>内容</label>
-          <textarea
-            value={content}
-            onChange={e => setContent(e.target.value)}
-            placeholder="记录内容..."
-          />
-        </div>
-
-        <div className={styles.formGroup}>
-          <label>图片</label>
-          <input type="file" accept="image/*" multiple onChange={handleImageUpload} />
-          {images.length > 0 && (
-            <div className={styles.imagePreview}>
-              {images.map((img, i) => (
-                <div key={i} className={styles.previewItem}>
-                  <img src={img} alt="" />
-                  <button onClick={() => setImages(images.filter((_, idx) => idx !== i))}>×</button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        <div className={styles.formGroup}>
-          <label>Tag</label>
-          {/* 已选标签 */}
-          <div className={`${styles.tagList} ${styles.selectedTags}`}>
-            {tags.map(tag => (
-              <span key={tag} className={styles.tag} onClick={() => handleRemoveTag(tag)}>
-                {tag} ×
-              </span>
-            ))}
-          </div>
-          {/* 常用标签 */}
-          <div className={`${styles.tagList} ${styles.frequentTags}`}>
-            {frequentTags.map(tag => (
-              <span
-                key={tag}
-                className={`${styles.tag} ${tags.includes(tag) ? styles.selected : ''}`}
-                onClick={() => toggleTag(tag)}
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-          {/* 更多标签按钮 */}
-          {allTags.length > 8 && (
-            <button
-              type="button"
-              className={styles.moreTagsBtn}
-              onClick={() => setShowAllTags(!showAllTags)}
-            >
-              {showAllTags ? '收起' : '更多标签'}
-            </button>
-          )}
-          {/* 全部标签列表 */}
-          {showAllTags && (
-            <div className={styles.allTagsList}>
-              {allTags.slice(8).map(tag => (
-                <span
-                  key={tag}
-                  className={`${styles.tag} ${tags.includes(tag) ? styles.selected : ''}`}
-                  onClick={() => toggleTag(tag)}
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-          )}
-          {/* 输入新标签 */}
-          <div className={styles.tagInput}>
-            <input
-              value={tagInput}
-              onChange={e => setTagInput(e.target.value)}
-              onKeyDown={handleTagInputKeyDown}
-              placeholder="输入新标签后按回车"
-            />
-          </div>
-        </div>
-
-        <div className={styles.formGroup}>
-          <label>状态</label>
-          <select value={status} onChange={e => handleStatusChange(e.target.value as RecordStatus)}>
-            <option value="pending">未开始</option>
-            <option value="in_progress">进行中</option>
-            <option value="completed">已完成</option>
-          </select>
-        </div>
-
-        <div className={styles.formGroup}>
           <label>事务类型</label>
           <div className={styles.typeToggle}>
             <button
@@ -375,6 +285,96 @@ export function RecordForm({ record, records = [], onClose, onSave }: RecordForm
             )}
           </>
         )}
+
+        <div className={styles.formGroup}>
+          <label>内容</label>
+          <textarea
+            value={content}
+            onChange={e => setContent(e.target.value)}
+            placeholder="记录内容..."
+          />
+        </div>
+
+        <div className={styles.formGroup}>
+          <label>图片</label>
+          <input type="file" accept="image/*" multiple onChange={handleImageUpload} />
+          {images.length > 0 && (
+            <div className={styles.imagePreview}>
+              {images.map((img, i) => (
+                <div key={i} className={styles.previewItem}>
+                  <img src={img} alt="" />
+                  <button onClick={() => setImages(images.filter((_, idx) => idx !== i))}>×</button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className={styles.formGroup}>
+          <label>Tag</label>
+          {/* 已选标签 */}
+          <div className={`${styles.tagList} ${styles.selectedTags}`}>
+            {tags.map(tag => (
+              <span key={tag} className={styles.tag} onClick={() => handleRemoveTag(tag)}>
+                {tag} ×
+              </span>
+            ))}
+          </div>
+          {/* 常用标签 */}
+          <div className={`${styles.tagList} ${styles.frequentTags}`}>
+            {frequentTags.map(tag => (
+              <span
+                key={tag}
+                className={`${styles.tag} ${tags.includes(tag) ? styles.selected : ''}`}
+                onClick={() => toggleTag(tag)}
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+          {/* 更多标签按钮 */}
+          {allTags.length > 8 && (
+            <button
+              type="button"
+              className={styles.moreTagsBtn}
+              onClick={() => setShowAllTags(!showAllTags)}
+            >
+              {showAllTags ? '收起' : '更多标签'}
+            </button>
+          )}
+          {/* 全部标签列表 */}
+          {showAllTags && (
+            <div className={styles.allTagsList}>
+              {allTags.slice(8).map(tag => (
+                <span
+                  key={tag}
+                  className={`${styles.tag} ${tags.includes(tag) ? styles.selected : ''}`}
+                  onClick={() => toggleTag(tag)}
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
+          {/* 输入新标签 */}
+          <div className={styles.tagInput}>
+            <input
+              value={tagInput}
+              onChange={e => setTagInput(e.target.value)}
+              onKeyDown={handleTagInputKeyDown}
+              placeholder="输入新标签后按回车"
+            />
+          </div>
+        </div>
+
+        <div className={styles.formGroup}>
+          <label>状态</label>
+          <select value={status} onChange={e => handleStatusChange(e.target.value as RecordStatus)}>
+            <option value="pending">未开始</option>
+            <option value="in_progress">进行中</option>
+            <option value="completed">已完成</option>
+          </select>
+        </div>
 
         <div className={styles.formGroup}>
           <label>计划开始时间</label>
