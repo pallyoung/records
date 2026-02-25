@@ -150,7 +150,6 @@ interface TaskCardProps {
 
 function TaskCard({ record, onStatusChange, onClick }: TaskCardProps) {
   const dateStr = formatTaskDate(record);
-  const primaryTag = record.tags[0];
 
   const handleCheckboxClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -175,11 +174,11 @@ function TaskCard({ record, onStatusChange, onClick }: TaskCardProps) {
           {record.content}
         </div>
         <div className={styles.taskMeta}>
-          {primaryTag && (
-            <span className={`${styles.taskTag} ${getTagClass(primaryTag)}`}>
-              {primaryTag}
+          {record.tags.map((tag) => (
+            <span key={tag} className={`${styles.taskTag} ${getTagClass(tag)}`}>
+              {tag}
             </span>
-          )}
+          ))}
           {dateStr && <span className={styles.taskDate}>{dateStr}</span>}
         </div>
       </div>
