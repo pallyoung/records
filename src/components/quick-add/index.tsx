@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import styles from "./index.module.scss";
+import { useTags } from "../../hooks/useTags";
+import { useRelaxValue, recordsState } from "../../store/recordStore";
 
 interface QuickAddProps {
   visible: boolean;
@@ -23,13 +25,52 @@ export function QuickAdd({
   const [status, setStatus] = useState<"pending" | "in_progress" | "completed">(
     "pending",
   );
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const records = useRelaxValue(recordsState);
+  const { allTags, getFrequentTags } = useTags();
+  const frequentTags = getFrequentTags(records as { tags: string[] }[], 5);
+
+  const filteredTags = searchQuery.trim()
+    ? allTags.filter((tag) =>
+        tag.toLowerCase().includes(searchQuery.toLowerCase()),
+      )
+    : [];
+
+  const insertTag = (tag: string) => {
+    insertText(`#${tag} `);
+    setSearchQuery("");
+    setShowDropdown(false);
+  };
+
+  // 点击外部关闭下拉框
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setShowDropdown(false);
+      }
+    };
+
+    if (showDropdown) {
+      document.addEventListener("mousedown", handleClickOutside);
+      return () =>
+        document.removeEventListener("mousedown", handleClickOutside);
+    }
+  }, [showDropdown]);
 
   useEffect(() => {
     if (visible) {
       setContent("");
       setTags([]);
       setStatus("pending");
+      setSearchQuery("");
+      setShowDropdown(false);
       setTimeout(() => inputRef.current?.focus(), 100);
     }
   }, [visible]);
@@ -80,19 +121,62 @@ export function QuickAdd({
         <h2 className={styles.sheetTitle}>添加任务</h2>
 
         {/* 输入框 */}
-        <div className={styles.sheetInputWrapper}>
+        <div className={styles.sheetInputWrapper} ref={dropdownRef}>
           <input
             ref={inputRef}
             type="text"
             className={styles.sheetInput}
             value={content}
-            onChange={(e) => setContent(e.target.value)}
+            onChange={(e) => {
+              setContent(e.target.value);
+              // 检测输入中是否有 # 触发搜索
+              const value = e.target.value;
+              const lastHashIndex = value.lastIndexOf("#");
+              // 只有当 # 后没有空格时才触发搜索
+              if (
+                lastHashIndex !== -1 &&
+                !value.slice(lastHashIndex).includes(" ")
+              ) {
+                const query = value.slice(lastHashIndex + 1).trim();
+                if (query.length > 0) {
+                  setSearchQuery(query);
+                  setShowDropdown(true);
+                }
+              } else {
+                setShowDropdown(false);
+              }
+            }}
             onKeyDown={handleKeyDown}
             placeholder="添加任务... (支持: 明天 周五 #标签)"
           />
+
+          {/* 模糊搜索下拉框 */}
+          {showDropdown && searchQuery.trim() && (
+            <div
+              className={styles.dropdown}
+              role="listbox"
+              aria-label="选择分类"
+            >
+              {filteredTags.length > 0 ? (
+                filteredTags.map((tag) => (
+                  <button
+                    key={tag}
+                    type="button"
+                    role="option"
+                    className={styles.dropdownItem}
+                    onClick={() => insertTag(tag)}
+                  >
+                    {tag}
+                  </button>
+                ))
+              ) : (
+                <div className={styles.dropdownEmpty}>没有匹配的分类</div>
+              )}
+            </div>
+          )}
         </div>
 
-        {/* 快捷标签 */}
+        {/* 快捷时间标签 */}
         <div className={styles.quickAddHints}>
           <button
             type="button"
@@ -108,28 +192,26 @@ export function QuickAdd({
           >
             明天
           </button>
-          <button
-            type="button"
-            className={styles.hintTag}
-            onClick={() => insertText("#工作 ")}
-          >
-            #工作
-          </button>
-          <button
-            type="button"
-            className={styles.hintTag}
-            onClick={() => insertText("#生活 ")}
-          >
-            #生活
-          </button>
-          <button
-            type="button"
-            className={styles.hintTag}
-            onClick={() => insertText("#学习 ")}
-          >
-            #学习
-          </button>
         </div>
+
+        {/* 常用分类 */}
+        {frequentTags.length > 0 && (
+          <div className={styles.categorySection}>
+            <div className={styles.categoryLabel}>常用分类</div>
+            <div className={styles.categoryList}>
+              {frequentTags.map((tag) => (
+                <button
+                  key={tag}
+                  type="button"
+                  className={styles.categoryChip}
+                  onClick={() => insertTag(tag)}
+                >
+                  {tag}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* 操作按钮 */}
         <div className={styles.sheetActions}>

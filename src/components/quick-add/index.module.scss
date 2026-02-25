@@ -42,6 +42,7 @@
 /* 输入框 */
 .sheetInputWrapper {
   margin-bottom: var(--space-3);
+  position: relative;
 }
 
 .sheetInput {
@@ -70,7 +71,79 @@
   display: flex;
   gap: var(--space-2);
   flex-wrap: wrap;
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--space-2);
+}
+
+/* 分类区域 */
+.categorySection {
+  margin-bottom: var(--space-3);
+}
+
+.categoryLabel {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: var(--space-2);
+}
+
+.categoryList {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.categoryChip {
+  padding: 8px 16px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--bg-primary);
+  font-size: 14px;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: var(--bg-secondary);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+/* 下拉框 */
+.dropdown {
+  position: absolute;
+  left: 0;
+  right: 0;
+  max-height: 200px;
+  overflow-y: auto;
+  background: white;
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+  margin-top: 4px;
+}
+
+.dropdownItem {
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  background: transparent;
+  text-align: left;
+  font-size: 15px;
+  color: var(--text-primary);
+  cursor: pointer;
+
+  &:hover {
+    background: var(--bg-primary);
+  }
+}
+
+.dropdownEmpty {
+  padding: 12px 16px;
+  font-size: 14px;
+  color: var(--text-muted);
+  text-align: center;
 }
 
 .hintTag {
