@@ -1,20 +1,28 @@
-import { useState, useEffect, useMemo } from 'react';
-import { RelaxProvider, useRelaxValue, store, recordsState, tagsState, filterState, loadingState } from './store/recordStore';
-import { Timeline } from './components/timeline';
-import { Dashboard } from './components/dashboard';
-import { DashboardDetail } from './components/dashboard-detail';
-import { RecordForm } from './components/record-form';
-import { ReviewPage } from './pages/review-page';
-import { TagManagementPage } from './pages/tag-management-page';
-import { SettingsPage } from './pages/settings-page';
-import { ProfileCenterPage } from './pages/profile-center-page';
-import { TabBar, TabType } from './components/tab-bar';
-import { recordActions } from './store/recordStore';
-import { checkAndResetRecurringRecords } from './db/recordRepository';
-import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
-import { QuickAdd } from './components/quick-add';
-import type { Record, FilterState, RecordStatus } from './types';
-import './App.css';
+import { useState, useEffect, useMemo } from "react";
+import {
+  RelaxProvider,
+  useRelaxValue,
+  store,
+  recordsState,
+  tagsState,
+  filterState,
+  loadingState,
+} from "./store/recordStore";
+import { Timeline } from "./components/timeline";
+import { Dashboard } from "./components/dashboard";
+import { DashboardDetail } from "./components/dashboard-detail";
+import { RecordForm } from "./components/record-form";
+import { ReviewPage } from "./pages/review-page";
+import { TagManagementPage } from "./pages/tag-management-page";
+import { SettingsPage } from "./pages/settings-page";
+import { ProfileCenterPage } from "./pages/profile-center-page";
+import { TabBar, TabType } from "./components/tab-bar";
+import { recordActions } from "./store/recordStore";
+import { checkAndResetRecurringRecords } from "./db/recordRepository";
+import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
+import { QuickAdd } from "./components/quick-add";
+import type { Record, FilterState, RecordStatus } from "./types";
+import "./App.css";
 
 function AppContent() {
   const records = useRelaxValue(recordsState);
@@ -29,7 +37,7 @@ function AppContent() {
   const [showTagManagement, setShowTagManagement] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showDashboardDetail, setShowDashboardDetail] = useState(false);
-  const [activeTab, setActiveTab] = useState<TabType>('records');
+  const [activeTab, setActiveTab] = useState<TabType>("home");
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   useEffect(() => {
@@ -40,29 +48,94 @@ function AppContent() {
   const handleEdit = (id: string) => {
     setEditingId(id);
     setShowForm(true);
-    setActiveTab('records');
+    setActiveTab("home");
   };
 
   // 键盘快捷键
-  const shortcuts = useMemo(() => [
-    { key: 'n', handler: () => setShowQuickAdd(true), description: '新建记录' },
-    { key: '/', handler: () => document.getElementById('search-input')?.focus(), description: '搜索' },
-    { key: 'j', handler: () => setSelectedIndex((i) => records.length > 0 ? Math.min(i + 1, records.length - 1) : 0), description: '下一条' },
-    { key: 'k', handler: () => setSelectedIndex((i) => records.length > 0 ? Math.max(i - 1, 0) : 0), description: '上一条' },
-    { key: '1', handler: () => setActiveTab('records'), description: '切换到事务' },
-    { key: '3', handler: () => setActiveTab('profile'), description: '切换到个人中心' },
-    { key: 'Enter', handler: () => records[selectedIndex] && handleEdit(records[selectedIndex].id), description: '编辑' },
-    { key: 'Escape', handler: () => { setShowForm(false); setShowReview(false); setShowTagManagement(false); setShowSettings(false); setShowDashboardDetail(false); }, description: '关闭' },
-  ], [handleEdit, records.length]);
+  const shortcuts = useMemo(
+    () => [
+      {
+        key: "n",
+        handler: () => setShowQuickAdd(true),
+        description: "新建记录",
+      },
+      {
+        key: "/",
+        handler: () => document.getElementById("search-input")?.focus(),
+        description: "搜索",
+      },
+      {
+        key: "j",
+        handler: () =>
+          setSelectedIndex((i) =>
+            records.length > 0 ? Math.min(i + 1, records.length - 1) : 0,
+          ),
+        description: "下一条",
+      },
+      {
+        key: "k",
+        handler: () =>
+          setSelectedIndex((i) =>
+            records.length > 0 ? Math.max(i - 1, 0) : 0,
+          ),
+        description: "上一条",
+      },
+      {
+        key: "1",
+        handler: () => setActiveTab("home"),
+        description: "切换到首页",
+      },
+      {
+        key: "2",
+        handler: () => setActiveTab("tasks"),
+        description: "切换到任务",
+      },
+      {
+        key: "3",
+        handler: () => setActiveTab("insights"),
+        description: "切换到洞察",
+      },
+      {
+        key: "4",
+        handler: () => setActiveTab("profile"),
+        description: "切换到我的",
+      },
+      {
+        key: "Enter",
+        handler: () =>
+          records[selectedIndex] && handleEdit(records[selectedIndex].id),
+        description: "编辑",
+      },
+      {
+        key: "Escape",
+        handler: () => {
+          setShowForm(false);
+          setShowReview(false);
+          setShowTagManagement(false);
+          setShowSettings(false);
+          setShowDashboardDetail(false);
+        },
+        description: "关闭",
+      },
+    ],
+    [handleEdit, records.length],
+  );
 
-  useKeyboardShortcuts(shortcuts, !showForm && !showReview && !showTagManagement && !showSettings && !showDashboardDetail);
+  useKeyboardShortcuts(
+    shortcuts,
+    !showForm &&
+      !showReview &&
+      !showTagManagement &&
+      !showSettings &&
+      !showDashboardDetail,
+  );
 
   const handleFilterChange = (newFilter: FilterState) => {
     recordActions.setFilter(newFilter);
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm('确定删除这条记录吗？')) {
+    if (confirm("确定删除这条记录吗？")) {
       await recordActions.deleteRecord(id);
     }
   };
@@ -76,7 +149,9 @@ function AppContent() {
     setEditingId(null);
   };
 
-  const handleSave = async (data: Omit<Record, 'id' | 'createdAt' | 'updatedAt'>) => {
+  const handleSave = async (
+    data: Omit<Record, "id" | "createdAt" | "updatedAt">,
+  ) => {
     if (editingId) {
       await recordActions.updateRecord(editingId, data);
       handleCloseForm();
@@ -88,16 +163,18 @@ function AppContent() {
   };
 
   const handleProfileNavigate = (page: string) => {
-    if (page === 'review') {
+    if (page === "review") {
       setShowReview(true);
-    } else if (page === 'settings') {
+    } else if (page === "settings") {
       setShowSettings(true);
-    } else if (page === 'tags') {
+    } else if (page === "tags") {
       setShowTagManagement(true);
     }
   };
 
-  const editingRecord = editingId ? records.find((r: Record) => r.id === editingId) : undefined;
+  const editingRecord = editingId
+    ? records.find((r: Record) => r.id === editingId)
+    : undefined;
 
   // Sub-pages take over full screen
   if (showReview) {
@@ -111,19 +188,11 @@ function AppContent() {
   }
 
   if (showTagManagement) {
-    return (
-      <TagManagementPage
-        onBack={() => setShowTagManagement(false)}
-      />
-    );
+    return <TagManagementPage onBack={() => setShowTagManagement(false)} />;
   }
 
   if (showSettings) {
-    return (
-      <SettingsPage
-        onBack={() => setShowSettings(false)}
-      />
-    );
+    return <SettingsPage onBack={() => setShowSettings(false)} />;
   }
 
   if (showDashboardDetail) {
@@ -143,7 +212,15 @@ function AppContent() {
     const year = now.getFullYear();
     const month = now.getMonth() + 1;
     const day = now.getDate();
-    const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+    const weekdays = [
+      "星期日",
+      "星期一",
+      "星期二",
+      "星期三",
+      "星期四",
+      "星期五",
+      "星期六",
+    ];
     const weekday = weekdays[now.getDay()];
     return `${year}年${month}月${day}日 ${weekday}`;
   };
@@ -157,7 +234,7 @@ function AppContent() {
       />
 
       {/* Tab content */}
-      {activeTab === 'records' && (
+      {activeTab === "home" && (
         <main className="app-main records-main">
           {/* 头部问候语 */}
           <div className="records-header">
@@ -175,13 +252,35 @@ function AppContent() {
           />
 
           {/* 移动端 FAB 按钮 - only visible on records tab */}
-          <button className="fab-button" aria-label="新建记录" onClick={() => setShowForm(true)}>
+          <button
+            className="fab-button"
+            aria-label="新建记录"
+            onClick={() => setShowForm(true)}
+          >
             +
           </button>
         </main>
       )}
 
-      {activeTab === 'profile' && (
+      {activeTab === "tasks" && (
+        <main className="app-main tasks-main">
+          <div className="page-placeholder">
+            <h2>任务</h2>
+            <p>任务页面开发中...</p>
+          </div>
+        </main>
+      )}
+
+      {activeTab === "insights" && (
+        <main className="app-main insights-main">
+          <div className="page-placeholder">
+            <h2>洞察</h2>
+            <p>洞察页面开发中...</p>
+          </div>
+        </main>
+      )}
+
+      {activeTab === "profile" && (
         <main className="app-main profile-main">
           <ProfileCenterPage onNavigate={handleProfileNavigate} />
         </main>
@@ -215,9 +314,10 @@ function AppContent() {
           await recordActions.addRecord({
             ...data,
             images: [],
-            plannedStartTime: data.status !== 'pending' ? new Date() : undefined,
+            plannedStartTime:
+              data.status !== "pending" ? new Date() : undefined,
           });
-          setActiveTab('records');
+          setActiveTab("home");
         }}
       />
     </div>
