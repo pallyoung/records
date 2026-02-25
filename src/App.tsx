@@ -18,12 +18,30 @@ import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 import type { Record } from "./types";
 import "./App.css";
 
+type ThemeMode = "light" | "dark" | "auto";
+
 function AppContent() {
   const records = useRelaxValue(recordsState) as Record[];
   const tags = useRelaxValue(tagsState);
 
   const [activeTab, setActiveTab] = useState<TabType>("home");
   const [showQuickAdd, setShowQuickAdd] = useState(false);
+  const [theme, setTheme] = useState<ThemeMode>("auto");
+
+  // 应用主题到 document
+  useEffect(() => {
+    const root = document.documentElement;
+
+    if (theme === "auto") {
+      root.removeAttribute("data-theme");
+    } else {
+      root.setAttribute("data-theme", theme);
+    }
+  }, [theme]);
+
+  const handleThemeChange = (newTheme: ThemeMode) => {
+    setTheme(newTheme);
+  };
 
   useEffect(() => {
     recordActions.loadRecords();
@@ -74,7 +92,14 @@ function AppContent() {
       case "insights":
         return <InsightsPage records={records} tags={tags} />;
       case "profile":
-        return <ProfilePage records={records} tags={tags} />;
+        return (
+          <ProfilePage
+            records={records}
+            tags={tags}
+            currentTheme={theme}
+            onThemeChange={handleThemeChange}
+          />
+        );
       default:
         return <HomePage records={records} tags={tags} />;
     }

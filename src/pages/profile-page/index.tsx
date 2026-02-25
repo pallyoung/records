@@ -7,6 +7,8 @@ import styles from "./index.module.scss";
 interface PageProps {
   records?: Record[];
   tags?: string[];
+  currentTheme?: "light" | "dark" | "auto";
+  onThemeChange?: (theme: "light" | "dark" | "auto") => void;
 }
 
 // 格式化日期为 YYYY-MM-DD
@@ -117,9 +119,10 @@ function SettingsItem({ icon, label, right, onClick }: SettingsItemProps) {
 }
 
 // 主 ProfilePage 组件
-export function ProfilePage(_props?: PageProps) {
+export function ProfilePage(props?: PageProps) {
   const records = useRelaxValue(recordsState) as Record[];
-  const [theme, setTheme] = useState<"light" | "dark" | "auto">("auto");
+  const theme = props?.currentTheme ?? "auto";
+  const onThemeChange = props?.onThemeChange;
 
   // 计算统计数据
   const stats = useMemo(() => {
@@ -137,8 +140,7 @@ export function ProfilePage(_props?: PageProps) {
 
   // 处理主题变化
   const handleThemeChange = (newTheme: "light" | "dark" | "auto") => {
-    setTheme(newTheme);
-    // TODO: 应用主题到 document.documentElement
+    onThemeChange?.(newTheme);
   };
 
   return (

@@ -1,0 +1,1871 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Records v2.0 - Apple Style Prototype</title>
+  <style>
+    /* ========================================
+       Apple Style Design Tokens
+    ======================================== */
+    :root {
+      /* Colors */
+      --bg-primary: #f5f5f7;
+      --bg-card: #ffffff;
+      --bg-dark: #1c1c1e;
+
+      --text-primary: #1d1d1f;
+      --text-secondary: #86868b;
+      --text-tertiary: #a1a1a6;
+
+      --accent: #007aff;
+      --accent-success: #34c759;
+      --accent-info: #007aff;
+      --accent-warning: #ff9500;
+      --accent-danger: #ff3b30;
+      --accent-muted: #8e8e93;
+
+      /* Spacing - Tight */
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+
+      /* Radius - Small */
+      --radius-sm: 6px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+
+      /* Shadows - Subtle */
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+      --shadow-md: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    /* Dark Mode */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-primary: #000000;
+        --bg-card: #1c1c1e;
+        --bg-dark: #2c2c2e;
+
+        --text-primary: #ffffff;
+        --text-secondary: #8e8e93;
+        --text-tertiary: #636366;
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'PingFang SC', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.4;
+      padding: var(--space-3);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Container */
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      padding-bottom: 80px;
+    }
+
+    /* ========================================
+       Header
+    ======================================== */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-2) 0;
+      margin-bottom: var(--space-3);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .header-date {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .header-right {
+      width: 36px;
+      height: 36px;
+      background: var(--bg-card);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .header-right img {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+    }
+
+    /* ========================================
+       Search Bar
+    ======================================== */
+    .search-bar {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-3);
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--space-3);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .search-bar svg {
+      width: 16px;
+      height: 16px;
+      color: var(--text-tertiary);
+      flex-shrink: 0;
+    }
+
+    .search-bar input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-size: 15px;
+      background: transparent;
+      color: var(--text-primary);
+    }
+
+    .search-bar input::placeholder {
+      color: var(--text-tertiary);
+    }
+
+    .search-filter-btn {
+      padding: 4px 10px;
+      background: var(--bg-primary);
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    /* ========================================
+       Filter Pills
+    ======================================== */
+    .filter-pills {
+      display: flex;
+      gap: var(--space-2);
+      overflow-x: auto;
+      padding: var(--space-1) 0;
+      margin-bottom: var(--space-3);
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .filter-pills::-webkit-scrollbar {
+      display: none;
+    }
+
+    .filter-pill {
+      padding: 8px 16px;
+      background: var(--bg-card);
+      border-radius: 20px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .filter-pill.active {
+      background: var(--accent);
+      color: white;
+    }
+
+    /* ========================================
+       Section
+    ======================================== */
+    .section {
+      margin-bottom: var(--space-4);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-2);
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .section-more {
+      font-size: 13px;
+      color: var(--accent);
+      cursor: pointer;
+    }
+
+    /* ========================================
+       Task Card - Compact
+    ======================================== */
+    .task-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .task-card {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-3);
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      min-height: 52px;
+    }
+
+    .task-card:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+
+    /* Status Indicator */
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .status-dot.pending { background: var(--accent-muted); }
+    .status-dot.in-progress { background: var(--accent-info); }
+    .status-dot.completed { background: var(--accent-success); }
+
+    /* Task Content */
+    .task-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .task-title {
+      font-size: 15px;
+      font-weight: 400;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .task-title.completed {
+      text-decoration: line-through;
+      color: var(--text-tertiary);
+    }
+
+    /* Task Meta */
+    .task-meta {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      margin-top: 2px;
+    }
+
+    .task-tag {
+      font-size: 11px;
+      padding: 2px 6px;
+      background: rgba(0,122,255,0.1);
+      color: var(--accent);
+      border-radius: var(--radius-sm);
+    }
+
+    .task-tag.work { background: rgba(0,122,255,0.15); color: var(--accent-info); }
+    .task-tag.life { background: rgba(52,199,89,0.15); color: var(--accent-success); }
+    .task-tag.learn { background: rgba(88,86,214,0.15); color: #5856d6; }
+    .task-tag.health { background: rgba(255,149,0,0.15); color: var(--accent-warning); }
+
+    .task-date {
+      font-size: 12px;
+      color: var(--text-tertiary);
+    }
+
+    .task-date.overdue {
+      color: var(--accent-danger);
+    }
+
+    /* Task Actions */
+    .task-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+    }
+
+    .task-checkbox {
+      width: 22px;
+      height: 22px;
+      border: 2px solid var(--accent-muted);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .task-checkbox:hover {
+      border-color: var(--accent-success);
+    }
+
+    .task-checkbox.checked {
+      background: var(--accent-success);
+      border-color: var(--accent-success);
+    }
+
+    .task-checkbox svg {
+      width: 12px;
+      height: 12px;
+      color: white;
+      opacity: 0;
+      transform: scale(0.5);
+      transition: all 0.2s ease;
+    }
+
+    .task-checkbox.checked svg {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .task-menu {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      opacity: 0.5;
+    }
+
+    .task-menu:hover {
+      background: rgba(0,0,0,0.05);
+      opacity: 1;
+    }
+
+    .task-menu span {
+      display: flex;
+      gap: 3px;
+    }
+
+    .task-menu span::before,
+    .task-menu span::after {
+      content: '';
+      width: 4px;
+      height: 4px;
+      background: var(--text-secondary);
+      border-radius: 50%;
+    }
+
+    /* ========================================
+       Quick Add
+    ======================================== */
+    .quick-add {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-3);
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      margin-top: var(--space-3);
+    }
+
+    .quick-add-plus {
+      width: 28px;
+      height: 28px;
+      background: var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .quick-add-plus svg {
+      width: 16px;
+      height: 16px;
+      color: white;
+    }
+
+    .quick-add-input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-size: 15px;
+      background: transparent;
+      color: var(--text-primary);
+    }
+
+    .quick-add-input::placeholder {
+      color: var(--text-tertiary);
+    }
+
+    .quick-add-btn {
+      padding: 6px 14px;
+      background: var(--accent);
+      color: white;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    /* ========================================
+       FAB
+    ======================================== */
+    .fab {
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      width: 52px;
+      height: 52px;
+      background: var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 16px rgba(0,122,255,0.4);
+      cursor: pointer;
+      transition: transform 0.2s ease;
+      z-index: 100;
+    }
+
+    .fab:hover {
+      transform: scale(1.05);
+    }
+
+    .fab svg {
+      width: 24px;
+      height: 24px;
+      color: white;
+    }
+
+    /* ========================================
+       Insights Cards
+    ======================================== */
+    .insights-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-2);
+    }
+
+    .insight-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      padding: var(--space-3);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .insight-card.full {
+      grid-column: span 2;
+    }
+
+    .insight-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: var(--space-1);
+    }
+
+    .insight-value {
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .insight-trend {
+      font-size: 14px;
+      margin-left: var(--space-1);
+    }
+
+    .insight-trend.up { color: var(--accent-success); }
+    .insight-trend.down { color: var(--accent-danger); }
+
+    /* Donut Chart */
+    .donut-container {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .donut-chart {
+      width: 72px;
+      height: 72px;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .donut-chart svg {
+      transform: rotate(-90deg);
+    }
+
+    .donut-chart circle {
+      fill: none;
+      stroke-width: 8;
+    }
+
+    .donut-bg {
+      stroke: var(--bg-primary);
+    }
+
+    .donut-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    .donut-percent {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .donut-label {
+      font-size: 9px;
+      color: var(--text-secondary);
+    }
+
+    /* Stats List */
+    .stats-list {
+      flex: 1;
+    }
+
+    .stat-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 0;
+    }
+
+    .stat-item-left {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .stat-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .stat-value {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    /* Tag Distribution */
+    .tag-dist {
+      margin-top: var(--space-2);
+    }
+
+    .tag-bar {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      margin-bottom: var(--space-1);
+    }
+
+    .tag-bar-label {
+      width: 36px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .tag-bar-track {
+      flex: 1;
+      height: 8px;
+      background: var(--bg-primary);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .tag-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+
+    .tag-bar-percent {
+      width: 32px;
+      font-size: 11px;
+      color: var(--text-tertiary);
+      text-align: right;
+    }
+
+    /* ========================================
+       Profile Page
+    ======================================== */
+    .profile-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: var(--space-4) 0;
+      margin-bottom: var(--space-3);
+    }
+
+    .profile-avatar {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, #007aff, #5856d6);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      color: white;
+      font-weight: 600;
+      margin-bottom: var(--space-3);
+    }
+
+    .profile-name {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .profile-stats {
+      display: flex;
+      gap: var(--space-6);
+      margin-top: var(--space-2);
+    }
+
+    .profile-stat {
+      text-align: center;
+    }
+
+    .profile-stat-value {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .profile-stat-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    /* Settings List */
+    .settings-list {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+
+    .settings-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-3) var(--space-4);
+      border-bottom: 0.5px solid var(--bg-primary);
+      cursor: pointer;
+    }
+
+    .settings-item:last-child {
+      border-bottom: none;
+    }
+
+    .settings-item-left {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .settings-icon {
+      width: 28px;
+      height: 28px;
+      background: var(--bg-primary);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .settings-icon svg {
+      width: 16px;
+      height: 16px;
+      color: var(--accent);
+    }
+
+    .settings-label {
+      font-size: 15px;
+      color: var(--text-primary);
+    }
+
+    .settings-right {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      color: var(--text-tertiary);
+    }
+
+    .settings-value {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .settings-arrow {
+      width: 16px;
+      height: 16px;
+      color: var(--text-tertiary);
+    }
+
+    /* Theme Toggle */
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .theme-option {
+      padding: 4px 12px;
+      font-size: 12px;
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+      background: var(--bg-primary);
+    }
+
+    .theme-option.active {
+      background: var(--accent);
+      color: white;
+    }
+
+    /* ========================================
+       Tab Bar
+    ======================================== */
+    .tab-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      background: var(--bg-card);
+      border-top: 0.5px solid rgba(0,0,0,0.1);
+      padding: 8px 0;
+      padding-bottom: calc(8px + env(safe-area-inset-bottom, 20px));
+      z-index: 1000;
+    }
+
+    .tab-bar.dark {
+      background: var(--bg-dark);
+      border-top-color: rgba(255,255,255,0.1);
+    }
+
+    .tab-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      padding: 4px 0;
+      cursor: pointer;
+      opacity: 0.5;
+      transition: opacity 0.2s ease;
+    }
+
+    .tab-item.active {
+      opacity: 1;
+    }
+
+    .tab-item svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    .tab-item span {
+      font-size: 10px;
+      font-weight: 500;
+    }
+
+    /* ========================================
+       Pages
+    ======================================== */
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    /* ========================================
+       Modal / Sheet
+    ======================================== */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 500;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .bottom-sheet {
+      width: 100%;
+      max-width: 480px;
+      background: var(--bg-card);
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      padding: var(--space-4);
+      padding-bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 20px));
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(100%);
+      }
+      to {
+        transform: translateY(0);
+      }
+    }
+
+    .sheet-handle {
+      width: 36px;
+      height: 5px;
+      background: var(--text-tertiary);
+      border-radius: 3px;
+      margin: 0 auto var(--space-3);
+    }
+
+    .sheet-title {
+      font-size: 17px;
+      font-weight: 600;
+      margin-bottom: var(--space-3);
+    }
+
+    /* Quick Add Sheet */
+    .quick-add-sheet .sheet-input {
+      width: 100%;
+      padding: var(--space-3);
+      background: var(--bg-primary);
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 17px;
+      color: var(--text-primary);
+      outline: none;
+      margin-bottom: var(--space-3);
+    }
+
+    .quick-add-sheet .sheet-input::placeholder {
+      color: var(--text-tertiary);
+    }
+
+    .quick-add-hints {
+      display: flex;
+      gap: var(--space-2);
+      flex-wrap: wrap;
+      margin-bottom: var(--space-3);
+    }
+
+    .hint-tag {
+      padding: 6px 12px;
+      background: var(--bg-primary);
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+
+    .sheet-actions {
+      display: flex;
+      gap: var(--space-2);
+    }
+
+    .sheet-btn {
+      flex: 1;
+      padding: var(--space-3);
+      border-radius: var(--radius-md);
+      font-size: 15px;
+      font-weight: 500;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .sheet-btn.secondary {
+      background: var(--bg-primary);
+      color: var(--text-secondary);
+    }
+
+    .sheet-btn.primary {
+      background: var(--accent);
+      color: white;
+    }
+
+    /* ========================================
+       Timeline View
+    ======================================== */
+    .timeline-group {
+      margin-bottom: var(--space-4);
+    }
+
+    .timeline-date {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: var(--space-2);
+      padding-left: var(--space-1);
+    }
+
+    /* ========================================
+       Calendar Mini
+    ======================================== */
+    .calendar-mini {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      padding: var(--space-3);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: var(--space-3);
+    }
+
+    .calendar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-2);
+    }
+
+    .calendar-month {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .calendar-nav {
+      display: flex;
+      gap: var(--space-2);
+    }
+
+    .calendar-nav button {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .calendar-nav button:hover {
+      background: var(--bg-primary);
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 2px;
+    }
+
+    .calendar-weekday {
+      font-size: 10px;
+      color: var(--text-tertiary);
+      text-align: center;
+      padding: 4px 0;
+    }
+
+    .calendar-day {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .calendar-day:hover {
+      background: var(--bg-primary);
+    }
+
+    .calendar-day.today {
+      background: var(--accent);
+      color: white;
+    }
+
+    .calendar-day.has-task::after {
+      content: '';
+      width: 4px;
+      height: 4px;
+      background: var(--accent);
+      border-radius: 50%;
+      position: absolute;
+      bottom: 2px;
+    }
+
+    .calendar-day.other-month {
+      color: var(--text-tertiary);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- ================= HOME PAGE ================= -->
+    <div class="page active" id="page-home">
+      <!-- Header -->
+      <div class="header">
+        <div class="header-left">
+          <h1>今天</h1>
+          <div class="header-date">2 月 25 日 周三</div>
+        </div>
+        <div class="header-right">
+          <div style="font-size: 18px;">👤</div>
+        </div>
+      </div>
+
+      <!-- Calendar Mini -->
+      <div class="calendar-mini">
+        <div class="calendar-header">
+          <span class="calendar-month">二月 2026</span>
+          <div class="calendar-nav">
+            <button>‹</button>
+            <button>›</button>
+          </div>
+        </div>
+        <div class="calendar-grid">
+          <div class="calendar-weekday">日</div>
+          <div class="calendar-weekday">一</div>
+          <div class="calendar-weekday">二</div>
+          <div class="calendar-weekday">三</div>
+          <div class="calendar-weekday">四</div>
+          <div class="calendar-weekday">五</div>
+          <div class="calendar-weekday">六</div>
+          <div class="calendar-day other-month">1</div>
+          <div class="calendar-day other-month">2</div>
+          <div class="calendar-day">3</div>
+          <div class="calendar-day">4</div>
+          <div class="calendar-day">5</div>
+          <div class="calendar-day">6</div>
+          <div class="calendar-day">7</div>
+          <div class="calendar-day">8</div>
+          <div class="calendar-day">9</div>
+          <div class="calendar-day">10</div>
+          <div class="calendar-day">11</div>
+          <div class="calendar-day">12</div>
+          <div class="calendar-day">13</div>
+          <div class="calendar-day">14</div>
+          <div class="calendar-day">15</div>
+          <div class="calendar-day">16</div>
+          <div class="calendar-day">17</div>
+          <div class="calendar-day">18</div>
+          <div class="calendar-day">19</div>
+          <div class="calendar-day">20</div>
+          <div class="calendar-day">21</div>
+          <div class="calendar-day">22</div>
+          <div class="calendar-day">23</div>
+          <div class="calendar-day">24</div>
+          <div class="calendar-day today">25</div>
+          <div class="calendar-day">26</div>
+          <div class="calendar-day">27</div>
+          <div class="calendar-day">28</div>
+        </div>
+      </div>
+
+      <!-- Filter Pills -->
+      <div class="filter-pills">
+        <div class="filter-pill active">全部</div>
+        <div class="filter-pill">进行中</div>
+        <div class="filter-pill">已完成</div>
+      </div>
+
+      <!-- Today's Tasks -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-title">今日待办 · 5</div>
+          <div class="section-more">查看全部</div>
+        </div>
+        <div class="task-list">
+          <div class="task-card">
+            <div class="status-dot in-progress"></div>
+            <div class="task-content">
+              <div class="task-title">代码审查 PR #123</div>
+              <div class="task-meta">
+                <span class="task-tag work">工作</span>
+                <span class="task-date">今天 14:00</span>
+              </div>
+            </div>
+            <div class="task-actions">
+              <div class="task-checkbox" onclick="toggleTask(this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="task-card">
+            <div class="status-dot pending"></div>
+            <div class="task-content">
+              <div class="task-title">完成项目计划文档</div>
+              <div class="task-meta">
+                <span class="task-tag work">工作</span>
+                <span class="task-date">明天</span>
+              </div>
+            </div>
+            <div class="task-actions">
+              <div class="task-checkbox" onclick="toggleTask(this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="task-card">
+            <div class="status-dot pending"></div>
+            <div class="task-content">
+              <div class="task-title">购买生活用品</div>
+              <div class="task-meta">
+                <span class="task-tag life">生活</span>
+                <span class="task-date">今天</span>
+              </div>
+            </div>
+            <div class="task-actions">
+              <div class="task-checkbox" onclick="toggleTask(this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="task-card">
+            <div class="status-dot pending"></div>
+            <div class="task-content">
+              <div class="task-title">健身 30 分钟</div>
+              <div class="task-meta">
+                <span class="task-tag health">健康</span>
+                <span class="task-date">今天 20:00</span>
+              </div>
+            </div>
+            <div class="task-actions">
+              <div class="task-checkbox" onclick="toggleTask(this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="task-card">
+            <div class="status-dot pending"></div>
+            <div class="task-content">
+              <div class="task-title">阅读《深度工作》</div>
+              <div class="task-meta">
+                <span class="task-tag learn">学习</span>
+                <span class="task-date">明天</span>
+              </div>
+            </div>
+            <div class="task-actions">
+              <div class="task-checkbox" onclick="toggleTask(this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Add -->
+        <div class="quick-add" onclick="openQuickAdd()">
+          <div class="quick-add-plus">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </div>
+          <input type="text" class="quick-add-input" placeholder="添加任务... (支持自然语言)" readonly>
+        </div>
+      </div>
+
+      <!-- Insights Preview -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-title">本月洞察</div>
+          <div class="section-more">详情</div>
+        </div>
+        <div class="insights-grid">
+          <div class="insight-card">
+            <div class="donut-container">
+              <div class="donut-chart">
+                <svg width="72" height="72" viewBox="0 0 72 72">
+                  <circle class="donut-bg" cx="36" cy="36" r="28"></circle>
+                  <circle cx="36" cy="36" r="28" stroke="#34c759" stroke-dasharray="131.9" stroke-dashoffset="29"></circle>
+                </svg>
+                <div class="donut-center">
+                  <div class="donut-percent">78%</div>
+                </div>
+              </div>
+              <div class="stats-list">
+                <div class="stat-item">
+                  <div class="stat-item-left">
+                    <div class="stat-dot" style="background: #34c759"></div>
+                    <span class="stat-label">已完成</span>
+                  </div>
+                  <span class="stat-value">32</span>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-item-left">
+                    <div class="stat-dot" style="background: #007aff"></div>
+                    <span class="stat-label">进行中</span>
+                  </div>
+                  <span class="stat-value">5</span>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-item-left">
+                    <div class="stat-dot" style="background: #8e8e93"></div>
+                    <span class="stat-label">未开始</span>
+                  </div>
+                  <span class="stat-value">8</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="insight-card">
+            <div class="insight-label">较上周</div>
+            <div class="insight-value">+12%<span class="insight-trend up">↑</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= TASKS PAGE ================= -->
+    <div class="page" id="page-tasks">
+      <!-- Header -->
+      <div class="header">
+        <h1>任务</h1>
+      </div>
+
+      <!-- Search Bar -->
+      <div class="search-bar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" placeholder="搜索任务...">
+        <span class="search-filter-btn">筛选</span>
+      </div>
+
+      <!-- Filter Pills -->
+      <div class="filter-pills">
+        <div class="filter-pill active">全部</div>
+        <div class="filter-pill">进行中</div>
+        <div class="filter-pill">已完成</div>
+        <div class="filter-pill">已延期</div>
+        <div class="filter-pill">今天</div>
+        <div class="filter-pill">本周</div>
+      </div>
+
+      <!-- Timeline Groups -->
+      <div class="timeline-group">
+        <div class="timeline-date">今天</div>
+        <div class="task-list">
+          <div class="task-card">
+            <div class="status-dot in-progress"></div>
+            <div class="task-content">
+              <div class="task-title">代码审查 PR #123</div>
+              <div class="task-meta">
+                <span class="task-tag work">工作</span>
+                <span class="task-date">14:00</span>
+              </div>
+            </div>
+            <div class="task-actions">
+              <div class="task-checkbox" onclick="toggleTask(this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <div class="task-menu"></div>
+            </div>
+          </div>
+
+          <div class="task-card">
+            <div class="status-dot pending"></div>
+            <div class="task-content">
+              <div class="task-title">购买生活用品</div>
+              <div class="task-meta">
+                <span class="task-tag life">生活</span>
+              </div>
+            </div>
+            <div class="task-actions">
+              <div class="task-checkbox" onclick="toggleTask(this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <div class="task-menu"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-group">
+        <div class="timeline-date">明天</div>
+        <div class="task-list">
+          <div class="task-card">
+            <div class="status-dot pending"></div>
+            <div class="task-content">
+              <div class="task-title">完成项目计划文档</div>
+              <div class="task-meta">
+                <span class="task-tag work">工作</span>
+              </div>
+            </div>
+            <div class="task-actions">
+              <div class="task-checkbox" onclick="toggleTask(this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <div class="task-menu"></div>
+            </div>
+          </div>
+
+          <div class="task-card">
+            <div class="status-dot pending"></div>
+            <div class="task-content">
+              <div class="task-title">阅读《深度工作》</div>
+              <div class="task-meta">
+                <span class="task-tag learn">学习</span>
+              </div>
+            </div>
+            <div class="task-actions">
+              <div class="task-checkbox" onclick="toggleTask(this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <div class="task-menu"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-group">
+        <div class="timeline-date">本周</div>
+        <div class="task-list">
+          <div class="task-card">
+            <div class="status-dot pending"></div>
+            <div class="task-content">
+              <div class="task-title">周报总结</div>
+              <div class="task-meta">
+                <span class="task-tag work">工作</span>
+                <span class="task-date">周五</span>
+              </div>
+            </div>
+            <div class="task-actions">
+              <div class="task-checkbox" onclick="toggleTask(this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <div class="task-menu"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= INSIGHTS PAGE ================= -->
+    <div class="page" id="page-insights">
+      <!-- Header -->
+      <div class="header">
+        <h1>洞察</h1>
+      </div>
+
+      <!-- Time Range -->
+      <div class="filter-pills">
+        <div class="filter-pill">本周</div>
+        <div class="filter-pill active">本月</div>
+        <div class="filter-pill">本年</div>
+        <div class="filter-pill">自定义</div>
+      </div>
+
+      <!-- Overview -->
+      <div class="section">
+        <div class="insight-card" style="margin-bottom: var(--space-2);">
+          <div class="donut-container" style="justify-content: center;">
+            <div class="donut-chart" style="width: 120px; height: 120px;">
+              <svg width="120" height="120" viewBox="0 0 120 120">
+                <circle cx="60" cy="60" r="48" stroke="#f5f5f7" stroke-width="12"></circle>
+                <circle cx="60" cy="60" r="48" stroke="#34c759" stroke-width="12"
+                  stroke-dasharray="226.2" stroke-dashoffset="49.8"></circle>
+              </svg>
+              <div class="donut-center">
+                <div class="donut-percent" style="font-size: 28px;">78%</div>
+                <div class="donut-label">完成率</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="insights-grid">
+          <div class="insight-card">
+            <div class="insight-label">完成任务</div>
+            <div class="insight-value">32</div>
+          </div>
+          <div class="insight-card">
+            <div class="insight-label">较上周</div>
+            <div class="insight-value">+12%<span class="insight-trend up">↑</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Status Breakdown -->
+      <div class="section">
+        <div class="section-title" style="margin-bottom: var(--space-2);">状态分布</div>
+        <div class="insight-card" style="margin-bottom: var(--space-2);">
+          <div class="stats-list">
+            <div class="stat-item">
+              <div class="stat-item-left">
+                <div class="stat-dot" style="background: #34c759"></div>
+                <span class="stat-label">已完成</span>
+              </div>
+              <span class="stat-value">32</span>
+            </div>
+            <div style="height: 8px; background: #f5f5f7; border-radius: 4px; margin: 8px 0;">
+              <div style="width: 71%; height: 100%; background: #34c759; border-radius: 4px;"></div>
+            </div>
+
+            <div class="stat-item">
+              <div class="stat-item-left">
+                <div class="stat-dot" style="background: #007aff"></div>
+                <span class="stat-label">进行中</span>
+              </div>
+              <span class="stat-value">5</span>
+            </div>
+            <div style="height: 8px; background: #f5f5f7; border-radius: 4px; margin: 8px 0;">
+              <div style="width: 11%; height: 100%; background: #007aff; border-radius: 4px;"></div>
+            </div>
+
+            <div class="stat-item">
+              <div class="stat-item-left">
+                <div class="stat-dot" style="background: #8e8e93"></div>
+                <span class="stat-label">未开始</span>
+              </div>
+              <span class="stat-value">8</span>
+            </div>
+            <div style="height: 8px; background: #f5f5f7; border-radius: 4px; margin: 8px 0;">
+              <div style="width: 18%; height: 100%; background: #8e8e93; border-radius: 4px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tag Distribution -->
+      <div class="section">
+        <div class="section-title" style="margin-bottom: var(--space-2);">标签分布</div>
+        <div class="insight-card">
+          <div class="tag-dist">
+            <div class="tag-bar">
+              <span class="tag-bar-label">工作</span>
+              <div class="tag-bar-track">
+                <div class="tag-bar-fill" style="width: 45%; background: #007aff;"></div>
+              </div>
+              <span class="tag-bar-percent">45%</span>
+            </div>
+            <div class="tag-bar">
+              <span class="tag-bar-label">学习</span>
+              <div class="tag-bar-track">
+                <div class="tag-bar-fill" style="width: 25%; background: #5856d6;"></div>
+              </div>
+              <span class="tag-bar-percent">25%</span>
+            </div>
+            <div class="tag-bar">
+              <span class="tag-bar-label">生活</span>
+              <div class="tag-bar-track">
+                <div class="tag-bar-fill" style="width: 20%; background: #34c759;"></div>
+              </div>
+              <span class="tag-bar-percent">20%</span>
+            </div>
+            <div class="tag-bar">
+              <span class="tag-bar-label">健康</span>
+              <div class="tag-bar-track">
+                <div class="tag-bar-fill" style="width: 10%; background: #ff9500;"></div>
+              </div>
+              <span class="tag-bar-percent">10%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Productivity Trend -->
+      <div class="section">
+        <div class="section-title" style="margin-bottom: var(--space-2);">完成趋势</div>
+        <div class="insight-card">
+          <div style="display: flex; align-items: flex-end; gap: 8px; height: 100px; padding: 10px 0;">
+            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;">
+              <div style="width: 100%; background: #007aff; border-radius: 2px; height: 40%;"></div>
+              <span style="font-size: 10px; color: var(--text-tertiary);">周一</span>
+            </div>
+            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;">
+              <div style="width: 100%; background: #007aff; border-radius: 2px; height: 60%;"></div>
+              <span style="font-size: 10px; color: var(--text-tertiary);">周二</span>
+            </div>
+            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;">
+              <div style="width: 100%; background: #34c759; border-radius: 2px; height: 80%;"></div>
+              <span style="font-size: 10px; color: var(--text-tertiary);">周三</span>
+            </div>
+            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;">
+              <div style="width: 100%; background: #34c759; border-radius: 2px; height: 100%;"></div>
+              <span style="font-size: 10px; color: var(--text-tertiary);">周四</span>
+            </div>
+            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;">
+              <div style="width: 100%; background: #007aff; border-radius: 2px; height: 50%;"></div>
+              <span style="font-size: 10px; color: var(--text-tertiary);">周五</span>
+            </div>
+            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;">
+              <div style="width: 100%; background: #8e8e93; border-radius: 2px; height: 20%;"></div>
+              <span style="font-size: 10px; color: var(--text-tertiary);">周六</span>
+            </div>
+            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;">
+              <div style="width: 100%; background: #8e8e93; border-radius: 2px; height: 10%;"></div>
+              <span style="font-size: 10px; color: var(--text-tertiary);">周日</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= PROFILE PAGE ================= -->
+    <div class="page" id="page-profile">
+      <!-- Header -->
+      <div class="header">
+        <h1>我的</h1>
+      </div>
+
+      <!-- Profile Header -->
+      <div class="profile-header">
+        <div class="profile-avatar">W</div>
+        <div class="profile-name">用户</div>
+        <div class="profile-stats">
+          <div class="profile-stat">
+            <div class="profile-stat-value">156</div>
+            <div class="profile-stat-label">总任务</div>
+          </div>
+          <div class="profile-stat">
+            <div class="profile-stat-value">89%</div>
+            <div class="profile-stat-label">完成率</div>
+          </div>
+          <div class="profile-stat">
+            <div class="profile-stat-value">12</div>
+            <div class="profile-stat-label">连续天数</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings -->
+      <div class="section">
+        <div class="section-title" style="margin-bottom: var(--space-2);">设置</div>
+        <div class="settings-list">
+          <div class="settings-item">
+            <div class="settings-item-left">
+              <div class="settings-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="5"></circle>
+                  <line x1="12" y1="1" x2="12" y2="3"></line>
+                  <line x1="12" y1="21" x2="12" y2="23"></line>
+                  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                  <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                  <line x1="1" y1="12" x2="3" y2="12"></line>
+                  <line x1="21" y1="12" x2="23" y2="12"></line>
+                  <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                  <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+              </div>
+              <span class="settings-label">外观</span>
+            </div>
+            <div class="settings-right">
+              <div class="theme-toggle">
+                <span class="theme-option">浅色</span>
+                <span class="theme-option active">深色</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-item">
+            <div class="settings-item-left">
+              <div class="settings-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                  <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                </svg>
+              </div>
+              <span class="settings-label">标签管理</span>
+            </div>
+            <div class="settings-right">
+              <span class="settings-arrow">›</span>
+            </div>
+          </div>
+
+          <div class="settings-item">
+            <div class="settings-item-left">
+              <div class="settings-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+              </div>
+              <span class="settings-label">数据导出</span>
+            </div>
+            <div class="settings-right">
+              <span class="settings-arrow">›</span>
+            </div>
+          </div>
+
+          <div class="settings-item">
+            <div class="settings-item-left">
+              <div class="settings-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+              </div>
+              <span class="settings-label">锁定应用</span>
+            </div>
+            <div class="settings-right">
+              <span class="settings-arrow">›</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- About -->
+      <div class="section">
+        <div class="settings-list">
+          <div class="settings-item">
+            <div class="settings-item-left">
+              <div class="settings-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="16" x2="12" y2="12"></line>
+                  <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                </svg>
+              </div>
+              <span class="settings-label">关于</span>
+            </div>
+            <div class="settings-right">
+              <span class="settings-value">v2.0</span>
+              <span class="settings-arrow">›</span>
+            </div>
+          </div>
+
+          <div class="settings-item">
+            <div class="settings-item-left">
+              <div class="settings-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                  <polyline points="22,6 12,13 2,6"></polyline>
+                </svg>
+              </div>
+              <span class="settings-label">反馈</span>
+            </div>
+            <div class="settings-right">
+              <span class="settings-arrow">›</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FAB -->
+  <div class="fab" onclick="openQuickAdd()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <line x1="12" y1="5" x2="12" y2="19"></line>
+      <line x1="5" y1="12" x2="19" y2="12"></line>
+    </svg>
+  </div>
+
+  <!-- Quick Add Modal -->
+  <div class="modal-overlay" id="quickAddModal">
+    <div class="bottom-sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">添加任务</div>
+      <div class="quick-add-sheet">
+        <input type="text" class="sheet-input" id="taskInput" placeholder="添加任务... (支持: 明天 周五 #标签)" autofocus>
+        <div class="quick-add-hints">
+          <div class="hint-tag" onclick="insertHint('今天 ')">今天</div>
+          <div class="hint-tag" onclick="insertHint('明天 ')">明天</div>
+          <div class="hint-tag" onclick="insertHint('#工作 ')">#工作</div>
+          <div class="hint-tag" onclick="insertHint('#生活 ')">#生活</div>
+          <div class="hint-tag" onclick="insertHint('#学习 ')">#学习</div>
+        </div>
+        <div class="sheet-actions">
+          <div class="sheet-btn secondary" onclick="closeQuickAdd()">取消</div>
+          <div class="sheet-btn primary" onclick="saveTask()">保存</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Bar -->
+  <div class="tab-bar">
+    <div class="tab-item active" onclick="switchTab('home', this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+      </svg>
+      <span>首页</span>
+    </div>
+    <div class="tab-item" onclick="switchTab('tasks', this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+        <line x1="9" y1="9" x2="15" y2="9"></line>
+        <line x1="9" y1="13" x2="15" y2="13"></line>
+      </svg>
+      <span>任务</span>
+    </div>
+    <div class="tab-item" onclick="switchTab('insights', this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="20" x2="18" y2="10"></line>
+        <line x1="12" y1="20" x2="12" y2="4"></line>
+        <line x1="6" y1="20" x2="6" y2="14"></line>
+      </svg>
+      <span>洞察</span>
+    </div>
+    <div class="tab-item" onclick="switchTab('profile', this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+        <circle cx="12" cy="7" r="4"></circle>
+      </svg>
+      <span>我的</span>
+    </div>
+  </div>
+
+  <script>
+    // Switch tabs
+    function switchTab(pageName, tabElement) {
+      // Update tabs
+      document.querySelectorAll('.tab-item').forEach(tab => tab.classList.remove('active'));
+      tabElement.classList.add('active');
+
+      // Update pages
+      document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+      document.getElementById('page-' + pageName).classList.add('active');
+
+      // Update FAB visibility
+      const fab = document.querySelector('.fab');
+      if (pageName === 'profile') {
+        fab.style.display = 'none';
+      } else {
+        fab.style.display = 'flex';
+      }
+    }
+
+    // Toggle task checkbox
+    function toggleTask(checkbox) {
+      checkbox.classList.toggle('checked');
+      const card = checkbox.closest('.task-card');
+      const title = card.querySelector('.task-title');
+      const dot = card.querySelector('.status-dot');
+
+      if (checkbox.classList.contains('checked')) {
+        title.classList.add('completed');
+        dot.className = 'status-dot completed';
+      } else {
+        title.classList.remove('completed');
+        dot.className = 'status-dot pending';
+      }
+    }
+
+    // Filter pills
+    document.querySelectorAll('.filter-pill').forEach(pill => {
+      pill.addEventListener('click', function() {
+        const parent = this.parentElement;
+        parent.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // Quick Add Modal
+    function openQuickAdd() {
+      document.getElementById('quickAddModal').classList.add('active');
+      setTimeout(() => {
+        document.getElementById('taskInput').focus();
+      }, 100);
+    }
+
+    function closeQuickAdd() {
+      document.getElementById('quickAddModal').classList.remove('active');
+      document.getElementById('taskInput').value = '';
+    }
+
+    function insertHint(text) {
+      const input = document.getElementById('taskInput');
+      input.value += text;
+      input.focus();
+    }
+
+    function saveTask() {
+      const input = document.getElementById('taskInput');
+      if (input.value.trim()) {
+        // In real app, save to database
+        console.log('Task saved:', input.value);
+      }
+      closeQuickAdd();
+    }
+
+    // Close modal on overlay click
+    document.getElementById('quickAddModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeQuickAdd();
+      }
+    });
+
+    // Theme toggle
+    document.querySelectorAll('.theme-option').forEach(option => {
+      option.addEventListener('click', function() {
+        document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
