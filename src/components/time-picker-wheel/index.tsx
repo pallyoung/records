@@ -10,9 +10,12 @@ export function TimePickerWheel({ value, onChange }: TimePickerWheelProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [hours, setHours] = useState(value?.getHours() ?? 9);
   const [minutes, setMinutes] = useState(value?.getMinutes() ?? 0);
+  const [originalHours, setOriginalHours] = useState(hours);
+  const [originalMinutes, setOriginalMinutes] = useState(minutes);
   const containerRef = useRef<HTMLDivElement>(null);
   const hoursRef = useRef<HTMLDivElement>(null);
   const minutesRef = useRef<HTMLDivElement>(null);
+  const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const hourOptions = Array.from({ length: 24 }, (_, i) => i);
   const minuteOptions = Array.from({ length: 60 }, (_, i) => i);
@@ -25,6 +28,16 @@ export function TimePickerWheel({ value, onChange }: TimePickerWheelProps) {
     }
   }, [value]);
 
+  // Set initial scroll position when popup opens
+  useEffect(() => {
+    if (isOpen && hoursRef.current) {
+      hoursRef.current.scrollTop = hours * 40;
+    }
+    if (isOpen && minutesRef.current) {
+      minutesRef.current.scrollTop = minutes * 40;
+    }
+  }, [isOpen, hours, minutes]);
+
   // Close popup when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -32,6 +45,8 @@ export function TimePickerWheel({ value, onChange }: TimePickerWheelProps) {
         containerRef.current &&
         !containerRef.current.contains(event.target as Node)
       ) {
+        setHours(originalHours);
+        setMinutes(originalMinutes);
         setIsOpen(false);
       }
     };
@@ -43,7 +58,7 @@ export function TimePickerWheel({ value, onChange }: TimePickerWheelProps) {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isOpen]);
+  }, [isOpen, originalHours, originalMinutes]);
 
   const handleConfirm = () => {
     const newDate = value ? new Date(value) : new Date();
@@ -51,6 +66,18 @@ export function TimePickerWheel({ value, onChange }: TimePickerWheelProps) {
     newDate.setMinutes(minutes);
     onChange?.(newDate);
     setIsOpen(false);
+  };
+
+  const handleCancel = () => {
+    setHours(originalHours);
+    setMinutes(originalMinutes);
+    setIsOpen(false);
+  };
+
+  const handleOpen = () => {
+    setOriginalHours(value?.getHours() ?? 9);
+    setOriginalMinutes(value?.getMinutes() ?? 0);
+    setIsOpen(true);
   };
 
   const formatDisplayTime = (date: Date | null) => {
@@ -65,20 +92,24 @@ export function TimePickerWheel({ value, onChange }: TimePickerWheelProps) {
     options: number[],
     setter: (val: number) => void,
   ) => {
-    const target = e.currentTarget;
-    const scrollTop = target.scrollTop;
-    const itemHeight = 40;
-    const index = Math.round(scrollTop / itemHeight);
-    setter(options[Math.min(index, options.length - 1)]);
+    // Clear any pending scroll update
+    if (scrollTimeoutRef.current) {
+      clearTimeout(scrollTimeoutRef.current);
+    }
+
+    // Throttle state updates
+    scrollTimeoutRef.current = setTimeout(() => {
+      const target = e.currentTarget;
+      const scrollTop = target.scrollTop;
+      const itemHeight = 40;
+      const index = Math.round(scrollTop / itemHeight);
+      setter(options[Math.min(index, options.length - 1)]);
+    }, 16);
   };
 
   return (
     <div className={styles.timePicker} ref={containerRef}>
-      <button
-        type="button"
-        className={styles.trigger}
-        onClick={() => setIsOpen(!isOpen)}
-      >
+      <button type="button" className={styles.trigger} onClick={handleOpen}>
         {formatDisplayTime(value ?? null)}
       </button>
       {isOpen && (
@@ -115,7 +146,7 @@ export function TimePickerWheel({ value, onChange }: TimePickerWheelProps) {
             </div>
           </div>
           <div className={styles.actions}>
-            <button type="button" onClick={() => setIsOpen(false)}>
+            <button type="button" onClick={handleCancel}>
               取消
             </button>
             <button
