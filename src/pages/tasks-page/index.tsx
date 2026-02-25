@@ -7,6 +7,12 @@ import {
 import type { Record, RecordStatus } from "../../types";
 import styles from "./index.module.scss";
 
+// Page props interface
+interface PageProps {
+  records?: Record[];
+  tags?: string[];
+}
+
 // Filter type
 type FilterType =
   | "all"
@@ -212,7 +218,9 @@ function TaskCard({ record, onStatusChange, onClick }: TaskCardProps) {
 
 // 主 TasksPage 组件
 interface TasksPageProps {
-  onEditRecord: (id: string) => void;
+  records?: Record[];
+  tags?: string[];
+  onEditRecord?: (id: string) => void;
 }
 
 export function TasksPage({ onEditRecord }: TasksPageProps) {
@@ -284,7 +292,11 @@ export function TasksPage({ onEditRecord }: TasksPageProps) {
       const targetDate =
         record.plannedEndTime || record.plannedStartTime || record.createdAt;
       const date = new Date(targetDate);
-      const dateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      const dateOnly = new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate(),
+      );
 
       if (dateOnly.getTime() === today.getTime()) {
         todayRecords.push(record);
@@ -295,11 +307,8 @@ export function TasksPage({ onEditRecord }: TasksPageProps) {
       } else {
         // 按日期排序放入其他
         const existingIndex = otherRecords.findIndex((r) => {
-          const rDate =
-            r.plannedEndTime || r.plannedStartTime || r.createdAt;
-          return (
-            new Date(rDate).getTime() === dateOnly.getTime()
-          );
+          const rDate = r.plannedEndTime || r.plannedStartTime || r.createdAt;
+          return new Date(rDate).getTime() === dateOnly.getTime();
         });
         if (existingIndex === -1) {
           otherRecords.push(record);
@@ -377,7 +386,7 @@ export function TasksPage({ onEditRecord }: TasksPageProps) {
 
   // 处理任务点击
   const handleTaskClick = (id: string) => {
-    onEditRecord(id);
+    onEditRecord?.(id);
   };
 
   return (

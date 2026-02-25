@@ -3,6 +3,12 @@ import { useRelaxValue, recordsState } from "../../store/recordStore";
 import type { Record as RecordType, RecordStatus } from "../../types";
 import styles from "./index.module.scss";
 
+// Page props interface
+interface PageProps {
+  records?: RecordType[];
+  tags?: string[];
+}
+
 // Filter type
 type TimeFilter = "week" | "month" | "year" | "custom";
 
@@ -201,7 +207,7 @@ function TrendChart({ data }: TrendChartProps) {
 }
 
 // 主 InsightsPage 组件
-export function InsightsPage() {
+export function InsightsPage(_props?: PageProps) {
   const records = useRelaxValue(recordsState) as RecordType[];
   const [timeFilter, setTimeFilter] = useState<TimeFilter>("week");
   const [customStartDate, setCustomStartDate] = useState<Date | null>(null);

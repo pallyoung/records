@@ -8,6 +8,12 @@ import {
 import type { Record, RecordStatus, FilterState } from "../../types";
 import styles from "./index.module.scss";
 
+// Page props interface
+interface PageProps {
+  records?: Record[];
+  tags?: string[];
+}
+
 // 获取今天的格式化日期
 function getTodayFormatted(): { title: string; date: string } {
   const now = new Date();
@@ -304,8 +310,10 @@ function TaskCard({ record, onStatusChange, onClick }: TaskCardProps) {
 
 // 主 HomePage 组件
 interface HomePageProps {
-  onOpenQuickAdd: () => void;
-  onEditRecord: (id: string) => void;
+  records?: Record[];
+  tags?: string[];
+  onOpenQuickAdd?: () => void;
+  onEditRecord?: (id: string) => void;
 }
 
 export function HomePage({ onOpenQuickAdd, onEditRecord }: HomePageProps) {
@@ -359,7 +367,7 @@ export function HomePage({ onOpenQuickAdd, onEditRecord }: HomePageProps) {
 
   // 处理任务点击
   const handleTaskClick = (id: string) => {
-    onEditRecord(id);
+    onEditRecord?.(id);
   };
 
   return (

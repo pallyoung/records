@@ -3,6 +3,12 @@ import { useRelaxValue, recordsState } from "../../store/recordStore";
 import type { Record } from "../../types";
 import styles from "./index.module.scss";
 
+// Page props interface
+interface PageProps {
+  records?: Record[];
+  tags?: string[];
+}
+
 // 格式化日期为 YYYY-MM-DD
 function formatDateKey(date: Date): string {
   const year = date.getFullYear();
@@ -111,7 +117,7 @@ function SettingsItem({ icon, label, right, onClick }: SettingsItemProps) {
 }
 
 // 主 ProfilePage 组件
-export function ProfilePage() {
+export function ProfilePage(_props?: PageProps) {
   const records = useRelaxValue(recordsState) as Record[];
   const [theme, setTheme] = useState<"light" | "dark" | "auto">("auto");
 
@@ -119,7 +125,8 @@ export function ProfilePage() {
   const stats = useMemo(() => {
     const total = records.length;
     const completed = records.filter((r) => r.status === "completed").length;
-    const completionRate = total > 0 ? Math.round((completed / total) * 100) : 0;
+    const completionRate =
+      total > 0 ? Math.round((completed / total) * 100) : 0;
     const streakDays = calculateStreakDays(records);
 
     return { total, completed, completionRate, streakDays };
@@ -151,7 +158,9 @@ export function ProfilePage() {
             <div className={styles.profileStatLabel}>总任务</div>
           </div>
           <div className={styles.profileStat}>
-            <div className={styles.profileStatValue}>{stats.completionRate}%</div>
+            <div className={styles.profileStatValue}>
+              {stats.completionRate}%
+            </div>
             <div className={styles.profileStatLabel}>完成率</div>
           </div>
           <div className={styles.profileStat}>
@@ -186,7 +195,12 @@ export function ProfilePage() {
               </svg>
             }
             label="外观"
-            right={<ThemeToggle currentTheme={theme} onThemeChange={handleThemeChange} />}
+            right={
+              <ThemeToggle
+                currentTheme={theme}
+                onThemeChange={handleThemeChange}
+              />
+            }
           />
 
           {/* 提醒设置 */}
