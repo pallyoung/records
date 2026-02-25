@@ -34,14 +34,6 @@ export function TaskDetail({ recordId, visible, onClose }: TaskDetailProps) {
     }
   }, [record]);
 
-  // 弹窗显示时重置搜索状态
-  useEffect(() => {
-    if (visible) {
-      setSearchQuery("");
-      setShowDropdown(false);
-    }
-  }, [visible]);
-
   const addTag = (tag: string) => {
     if (!tags.includes(tag)) {
       setTags([...tags, tag]);
