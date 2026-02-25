@@ -5,7 +5,6 @@ import {
   store,
   recordsState,
   tagsState,
-  loadingState,
   recordActions,
 } from "./store/recordStore";
 import { TabBar, TabType } from "./components/tab-bar";
@@ -22,14 +21,13 @@ import "./App.css";
 function AppContent() {
   const records = useRelaxValue(recordsState) as Record[];
   const tags = useRelaxValue(tagsState);
-  const loading = useRelaxValue(loadingState);
 
   const [activeTab, setActiveTab] = useState<TabType>("home");
   const [showQuickAdd, setShowQuickAdd] = useState(false);
 
   useEffect(() => {
     recordActions.loadRecords();
-    checkAndResetRecurringRecords();
+    checkAndResetRecurringRecords().catch(console.error);
   }, []);
 
   // 键盘快捷键
