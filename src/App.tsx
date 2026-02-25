@@ -9,7 +9,6 @@ import {
 } from "./store/recordStore";
 import { TabBar, type TabType } from "./components/tab-bar";
 import { TaskForm } from "./components/task-form";
-import { TaskDetail } from "./components/task-detail";
 import { HomePage } from "./pages/home-page";
 import { TasksPage } from "./pages/tasks-page";
 import { InsightsPage } from "./pages/insights-page";
@@ -160,12 +159,51 @@ function AppContent() {
       )}
 
       {showTaskDetail && (
-        <TaskDetail
-          recordId={selectedTaskId}
+        <TaskForm
+          mode="detail"
           visible={showTaskDetail}
+          record={records.find((r) => r.id === selectedTaskId) || null}
+          existingTags={tags}
           onClose={() => {
             setShowTaskDetail(false);
             setSelectedTaskId(null);
+          }}
+          onSave={async (data) => {
+            if (!selectedTaskId) return;
+            await recordActions.updateRecord(selectedTaskId, data);
+            setShowTaskDetail(false);
+            setSelectedTaskId(null);
+          }}
+          onDelete={() => {
+            if (!selectedTaskId) return;
+            if (confirm("确定要删除这个任务吗？")) {
+              recordActions.deleteRecord(selectedTaskId);
+              setShowTaskDetail(false);
+              setSelectedTaskId(null);
+            }
+          }}
+          onStatusChange={(newStatus) => {
+            if (!selectedTaskId) return;
+            const record = records.find((r) => r.id === selectedTaskId);
+            if (!record) return;
+
+            // If starting in progress, set actualStartTime
+            if (newStatus === "in_progress" && record.status === "pending") {
+              recordActions.updateRecord(selectedTaskId, {
+                status: newStatus,
+                actualStartTime: new Date(),
+              });
+            }
+            // If completed, set actualEndTime
+            else if (
+              newStatus === "completed" &&
+              record.status !== "completed"
+            ) {
+              recordActions.updateRecord(selectedTaskId, {
+                status: newStatus,
+                actualEndTime: new Date(),
+              });
+            }
           }}
         />
       )}

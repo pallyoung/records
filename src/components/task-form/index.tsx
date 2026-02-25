@@ -25,8 +25,11 @@ export interface TaskFormProps {
     status: "pending" | "in_progress" | "completed";
     plannedStartTime?: Date;
     plannedEndTime?: Date;
+    actualStartTime?: Date;
+    actualEndTime?: Date;
   }) => void;
   onDelete?: () => void;
+  onStatusChange?: (newStatus: RecordStatus) => void;
 }
 
 export function TaskForm({
@@ -37,6 +40,7 @@ export function TaskForm({
   onClose,
   onSave,
   onDelete,
+  onStatusChange,
 }: TaskFormProps) {
   const isQuickAdd = mode === "quick-add";
 
@@ -169,7 +173,10 @@ export function TaskForm({
 
   const handleStatusChange = (newStatus: RecordStatus) => {
     setStatus(newStatus);
-    // If starting in progress, the actualStartTime will be set by the parent component
+    // Call the onStatusChange callback if provided (for actualStartTime/actualEndTime handling)
+    if (onStatusChange) {
+      onStatusChange(newStatus);
+    }
   };
 
   const insertText = (text: string) => {
