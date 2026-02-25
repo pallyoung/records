@@ -6,7 +6,6 @@ import { DashboardDetail } from './components/dashboard-detail';
 import { RecordForm } from './components/record-form';
 import { ReviewPage } from './pages/review-page';
 import { TagManagementPage } from './pages/tag-management-page';
-import { HabitsPage } from './pages/habits-page';
 import { SettingsPage } from './pages/settings-page';
 import { ProfileCenterPage } from './pages/profile-center-page';
 import { TabBar, TabType } from './components/tab-bar';
@@ -50,8 +49,7 @@ function AppContent() {
     { key: '/', handler: () => document.getElementById('search-input')?.focus(), description: '搜索' },
     { key: 'j', handler: () => setSelectedIndex((i) => records.length > 0 ? Math.min(i + 1, records.length - 1) : 0), description: '下一条' },
     { key: 'k', handler: () => setSelectedIndex((i) => records.length > 0 ? Math.max(i - 1, 0) : 0), description: '上一条' },
-    { key: '1', handler: () => setActiveTab('habits'), description: '切换到习惯' },
-    { key: '2', handler: () => setActiveTab('records'), description: '切换到事务' },
+    { key: '1', handler: () => setActiveTab('records'), description: '切换到事务' },
     { key: '3', handler: () => setActiveTab('profile'), description: '切换到个人中心' },
     { key: 'Enter', handler: () => records[selectedIndex] && handleEdit(records[selectedIndex].id), description: '编辑' },
     { key: 'Escape', handler: () => { setShowForm(false); setShowReview(false); setShowTagManagement(false); setShowSettings(false); setShowDashboardDetail(false); }, description: '关闭' },
@@ -148,12 +146,6 @@ function AppContent() {
       />
 
       {/* Tab content */}
-      {activeTab === 'habits' && (
-        <main className="app-main habits-main">
-          <HabitsPage onBack={() => {}} />
-        </main>
-      )}
-
       {activeTab === 'records' && (
         <main className="app-main records-main">
           <Timeline
