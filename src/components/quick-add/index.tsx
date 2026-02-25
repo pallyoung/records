@@ -21,7 +21,6 @@ export function QuickAdd({
   onSave,
 }: QuickAddProps) {
   const [content, setContent] = useState("");
-  const [tags, setTags] = useState<string[]>([]);
   const [status, setStatus] = useState<"pending" | "in_progress" | "completed">(
     "pending",
   );
@@ -154,7 +153,7 @@ export function QuickAdd({
               }
             }}
             onKeyDown={handleKeyDown}
-            placeholder="添加任务... (支持: 明天 周五 #标签)"
+            placeholder="添加任务... (支持: #标签)"
           />
 
           {/* 模糊搜索下拉框 */}
@@ -181,24 +180,6 @@ export function QuickAdd({
               )}
             </div>
           )}
-        </div>
-
-        {/* 快捷时间标签 */}
-        <div className={styles.quickAddHints}>
-          <button
-            type="button"
-            className={styles.hintTag}
-            onClick={() => insertText("今天 ")}
-          >
-            今天
-          </button>
-          <button
-            type="button"
-            className={styles.hintTag}
-            onClick={() => insertText("明天 ")}
-          >
-            明天
-          </button>
         </div>
 
         {/* 常用分类 */}
