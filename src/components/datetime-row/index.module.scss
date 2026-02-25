@@ -1,0 +1,19 @@
+.dateTimeRow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.label {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.pickers {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.picker {
+  flex: 1;
+}
