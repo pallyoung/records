@@ -21,17 +21,9 @@ export function TaskDetail({ recordId, visible, onClose }: TaskDetailProps) {
   const [content, setContent] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [status, setStatus] = useState<RecordStatus>("pending");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [showDropdown, setShowDropdown] = useState(false);
 
-  const { allTags, getFrequentTags } = useTags();
+  const { getFrequentTags } = useTags();
   const frequentTags = getFrequentTags(records, 5);
-
-  const filteredTags = searchQuery.trim()
-    ? allTags.filter((tag) =>
-        tag.toLowerCase().includes(searchQuery.toLowerCase()),
-      )
-    : [];
 
   // 当 record 变化时初始化表单
   useEffect(() => {
@@ -50,11 +42,10 @@ export function TaskDetail({ recordId, visible, onClose }: TaskDetailProps) {
     }
   }, [visible]);
 
-  const insertTag = (tag: string) => {
-    const newTags = tags.includes(tag) ? tags : [...tags, tag];
-    setTags(newTags);
-    setSearchQuery("");
-    setShowDropdown(false);
+  const addTag = (tag: string) => {
+    if (!tags.includes(tag)) {
+      setTags([...tags, tag]);
+    }
   };
 
   const removeTag = (tagToRemove: string) => {
@@ -159,14 +150,11 @@ export function TaskDetail({ recordId, visible, onClose }: TaskDetailProps) {
           />
         </div>
 
-        {/* 标签选择 */}
+        {/* 标签展示 */}
         <div className={styles.inputSection}>
-          <label htmlFor="task-tags" className={styles.inputLabel}>
-            标签
-          </label>
+          <span className={styles.inputLabel}>标签</span>
           <div className={styles.tagsWrapper}>
-            {/* 已选标签 */}
-            {tags.length > 0 && (
+            {tags.length > 0 ? (
               <div className={styles.selectedTags}>
                 {tags.map((tag) => (
                   <span key={tag} className={styles.tagChip}>
@@ -181,51 +169,15 @@ export function TaskDetail({ recordId, visible, onClose }: TaskDetailProps) {
                   </span>
                 ))}
               </div>
-            )}
-            {/* 搜索输入 */}
-            <input
-              id="task-tags"
-              type="text"
-              className={styles.tagInput}
-              value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value);
-                if (e.target.value.trim()) {
-                  setShowDropdown(true);
-                }
-              }}
-              onFocus={() => {
-                if (searchQuery.trim()) {
-                  setShowDropdown(true);
-                }
-              }}
-              placeholder="添加标签..."
-            />
-            {/* 标签下拉框 */}
-            {showDropdown && searchQuery.trim() && (
-              <div className={styles.dropdown}>
-                {filteredTags.length > 0 ? (
-                  filteredTags.map((tag) => (
-                    <button
-                      key={tag}
-                      type="button"
-                      className={styles.dropdownItem}
-                      onClick={() => insertTag(tag)}
-                    >
-                      {tag}
-                    </button>
-                  ))
-                ) : (
-                  <div className={styles.dropdownEmpty}>没有匹配的分类</div>
-                )}
-              </div>
+            ) : (
+              <span className={styles.noTags}>暂无标签</span>
             )}
           </div>
 
-          {/* 常用分类 */}
+          {/* 常用标签 */}
           {frequentTags.length > 0 && (
             <div className={styles.categorySection}>
-              <div className={styles.categoryLabel}>常用分类</div>
+              <div className={styles.categoryLabel}>常用标签</div>
               <div className={styles.categoryList}>
                 {frequentTags
                   .filter((tag) => !tags.includes(tag))
@@ -234,7 +186,7 @@ export function TaskDetail({ recordId, visible, onClose }: TaskDetailProps) {
                       key={tag}
                       type="button"
                       className={styles.categoryChip}
-                      onClick={() => insertTag(tag)}
+                      onClick={() => addTag(tag)}
                     >
                       {tag}
                     </button>
