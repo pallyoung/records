@@ -1,5 +1,11 @@
 import { useMemo, useState } from "react";
 import { useRelaxValue, recordsState } from "../../store/recordStore";
+import {
+  IconExport,
+  IconInfo,
+  IconNotification,
+  IconTheme,
+} from "../../shared/icons";
 import type { Record } from "../../types";
 import styles from "./index.module.scss";
 
@@ -178,24 +184,7 @@ export function ProfilePage(props?: PageProps) {
         <div className={styles.settingsList}>
           {/* 主题设置 */}
           <SettingsItem
-            icon={
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <circle cx="12" cy="12" r="5" />
-                <line x1="12" y1="1" x2="12" y2="3" />
-                <line x1="12" y1="21" x2="12" y2="23" />
-                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-                <line x1="1" y1="12" x2="3" y2="12" />
-                <line x1="21" y1="12" x2="23" y2="12" />
-                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-              </svg>
-            }
+            icon={<IconTheme size={20} />}
             label="外观"
             right={
               <ThemeToggle
@@ -207,53 +196,21 @@ export function ProfilePage(props?: PageProps) {
 
           {/* 提醒设置 */}
           <SettingsItem
-            icon={
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-              </svg>
-            }
+            icon={<IconNotification size={20} />}
             label="提醒"
             right={<span className={styles.settingsArrow}>&#8250;</span>}
           />
 
           {/* 数据管理 */}
           <SettingsItem
-            icon={
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                <polyline points="7 10 12 15 17 10" />
-                <line x1="12" y1="15" x2="12" y2="3" />
-              </svg>
-            }
+            icon={<IconExport size={20} />}
             label="数据导出"
             right={<span className={styles.settingsArrow}>&#8250;</span>}
           />
 
           {/* 关于 */}
           <SettingsItem
-            icon={
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <circle cx="12" cy="12" r="10" />
-                <line x1="12" y1="16" x2="12" y2="12" />
-                <line x1="12" y1="8" x2="12.01" y2="8" />
-              </svg>
-            }
+            icon={<IconInfo size={20} />}
             label="关于"
             right={<span className={styles.settingsArrow}>&#8250;</span>}
           />

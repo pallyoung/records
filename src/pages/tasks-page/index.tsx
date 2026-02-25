@@ -4,6 +4,7 @@ import {
   recordActions,
   recordsState,
 } from "../../store/recordStore";
+import { IconCheck, IconMore, IconSearch } from "../../shared/icons";
 import type { Record, RecordStatus } from "../../types";
 import styles from "./index.module.scss";
 
@@ -196,20 +197,10 @@ function TaskCard({ record, onStatusChange, onClick }: TaskCardProps) {
             record.status === "completed" ? "标记为未完成" : "标记为完成"
           }
         >
-          <svg viewBox="0 0 20 20" fill="currentColor">
-            <path
-              fillRule="evenodd"
-              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-              clipRule="evenodd"
-            />
-          </svg>
+          <IconCheck size={16} />
         </button>
         <button className={styles.taskMenu} aria-label="更多操作">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <circle cx="12" cy="6" r="2" />
-            <circle cx="12" cy="12" r="2" />
-            <circle cx="12" cy="18" r="2" />
-          </svg>
+          <IconMore size={18} />
         </button>
       </div>
     </div>
@@ -401,16 +392,7 @@ export function TasksPage({ onEditRecord }: TasksPageProps) {
 
       {/* Search Bar */}
       <div className={styles.searchBar}>
-        <svg
-          className={styles.searchIcon}
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-        >
-          <circle cx="11" cy="11" r="8" />
-          <line x1="21" y1="21" x2="16.65" y2="16.65" />
-        </svg>
+        <IconSearch className={styles.searchIcon} size={18} />
         <input
           type="text"
           className={styles.searchInput}

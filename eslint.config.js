@@ -19,5 +19,32 @@ export default defineConfig([
       ecmaVersion: 2020,
       globals: globals.browser,
     },
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: '@phosphor-icons/react',
+              message:
+                'Import icons from src/shared/icons only. Direct third-party icon imports are forbidden in business code.',
+            },
+          ],
+          patterns: [
+            {
+              group: ['@phosphor-icons/react/*'],
+              message:
+                'Import icons from src/shared/icons only. Direct third-party icon imports are forbidden in business code.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ['src/shared/icons/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': 'off',
+    },
   },
 ])
