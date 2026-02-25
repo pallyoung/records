@@ -9,6 +9,7 @@ import {
 } from "./store/recordStore";
 import { TabBar, type TabType } from "./components/tab-bar";
 import { QuickAdd } from "./components/quick-add";
+import { TaskDetail } from "./components/task-detail";
 import { HomePage } from "./pages/home-page";
 import { TasksPage } from "./pages/tasks-page";
 import { InsightsPage } from "./pages/insights-page";
@@ -27,6 +28,8 @@ function AppContent() {
 
   const [activeTab, setActiveTab] = useState<TabType>("home");
   const [showQuickAdd, setShowQuickAdd] = useState(false);
+  const [showTaskDetail, setShowTaskDetail] = useState(false);
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [theme, setTheme] = useState<ThemeMode>("auto");
 
   // 应用主题到 document
@@ -83,13 +86,31 @@ function AppContent() {
 
   useKeyboardShortcuts(shortcuts, !showQuickAdd);
 
+  // 处理任务点击，打开详情弹窗
+  const handleEditRecord = (id: string) => {
+    setSelectedTaskId(id);
+    setShowTaskDetail(true);
+  };
+
   // 渲染对应页面
   const renderPage = () => {
     switch (activeTab) {
       case "home":
-        return <HomePage records={records} tags={tags} />;
+        return (
+          <HomePage
+            records={records}
+            tags={tags}
+            onEditRecord={handleEditRecord}
+          />
+        );
       case "tasks":
-        return <TasksPage records={records} tags={tags} />;
+        return (
+          <TasksPage
+            records={records}
+            tags={tags}
+            onEditRecord={handleEditRecord}
+          />
+        );
       case "insights":
         return <InsightsPage records={records} tags={tags} />;
       case "profile":
@@ -102,7 +123,13 @@ function AppContent() {
           />
         );
       default:
-        return <HomePage records={records} tags={tags} />;
+        return (
+          <HomePage
+            records={records}
+            tags={tags}
+            onEditRecord={handleEditRecord}
+          />
+        );
     }
   };
 
@@ -125,6 +152,17 @@ function AppContent() {
                 data.status !== "pending" ? new Date() : undefined,
             });
             setShowQuickAdd(false);
+          }}
+        />
+      )}
+
+      {showTaskDetail && (
+        <TaskDetail
+          recordId={selectedTaskId}
+          visible={showTaskDetail}
+          onClose={() => {
+            setShowTaskDetail(false);
+            setSelectedTaskId(null);
           }}
         />
       )}
