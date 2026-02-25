@@ -5,7 +5,8 @@ import {
   recordsState,
   filterState,
 } from "../../store/recordStore";
-import { IconAdd, IconCheck } from "../../shared/icons";
+import { IconAdd } from "../../shared/icons";
+import { TaskCard } from "../../components/task-card";
 import type { Record, RecordStatus, FilterState } from "../../types";
 import styles from "./index.module.scss";
 
@@ -175,123 +176,6 @@ function CalendarMini({ onDateSelect }: CalendarMiniProps) {
             {dayInfo.day}
           </div>
         ))}
-      </div>
-    </div>
-  );
-}
-
-// 标签样式映射
-function getTagClass(tag: string): string {
-  const tagLower = tag.toLowerCase();
-  if (tagLower.includes("工作") || tagLower === "work") return styles.tagWork;
-  if (tagLower.includes("生活") || tagLower === "life") return styles.tagLife;
-  if (tagLower.includes("学习") || tagLower === "learn") return styles.tagLearn;
-  if (tagLower.includes("健康") || tagLower === "health")
-    return styles.tagHealth;
-  return styles.tagDefault;
-}
-
-// 格式化任务日期
-function formatTaskDate(record: Record): string {
-  const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const tomorrow = new Date(today);
-  tomorrow.setDate(tomorrow.getDate() + 1);
-
-  if (!record.plannedEndTime) {
-    if (record.plannedStartTime) {
-      const start = new Date(record.plannedStartTime);
-      const startDate = new Date(
-        start.getFullYear(),
-        start.getMonth(),
-        start.getDate(),
-      );
-      if (startDate.getTime() === today.getTime()) return "今天";
-      if (startDate.getTime() === tomorrow.getTime()) return "明天";
-      return `${start.getMonth() + 1}/${start.getDate()}`;
-    }
-    return "";
-  }
-
-  const end = new Date(record.plannedEndTime);
-  const endDate = new Date(end.getFullYear(), end.getMonth(), end.getDate());
-
-  if (endDate.getTime() === today.getTime()) {
-    const hours = end.getHours().toString().padStart(2, "0");
-    const minutes = end.getMinutes().toString().padStart(2, "0");
-    return `今天 ${hours}:${minutes}`;
-  }
-
-  if (endDate.getTime() === tomorrow.getTime()) return "明天";
-  return `${end.getMonth() + 1}/${end.getDate()}`;
-}
-
-// 状态类名映射
-function getStatusClass(status: RecordStatus): string {
-  switch (status) {
-    case "pending":
-      return styles.statusPending;
-    case "in_progress":
-      return styles.statusInProgress;
-    case "completed":
-      return styles.statusCompleted;
-    default:
-      return styles.statusPending;
-  }
-}
-
-// 任务卡片组件
-interface TaskCardProps {
-  record: Record;
-  onStatusChange: (id: string, status: RecordStatus) => void;
-  onClick: (id: string) => void;
-}
-
-function TaskCard({ record, onStatusChange, onClick }: TaskCardProps) {
-  const dateStr = formatTaskDate(record);
-
-  const handleCheckboxClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const nextStatus: RecordStatus =
-      record.status === "pending"
-        ? "in_progress"
-        : record.status === "in_progress"
-          ? "completed"
-          : "pending";
-    if (nextStatus) {
-      onStatusChange(record.id, nextStatus);
-    }
-  };
-
-  return (
-    <div className={styles.taskCard} onClick={() => onClick(record.id)}>
-      <div className={`${styles.statusDot} ${getStatusClass(record.status)}`} />
-      <div className={styles.taskContent}>
-        <div
-          className={`${styles.taskTitle} ${record.status === "completed" ? styles.taskTitleCompleted : ""}`}
-        >
-          {record.content}
-        </div>
-        <div className={styles.taskMeta}>
-          {record.tags.map((tag) => (
-            <span key={tag} className={`${styles.taskTag} ${getTagClass(tag)}`}>
-              {tag}
-            </span>
-          ))}
-          {dateStr && <span className={styles.taskDate}>{dateStr}</span>}
-        </div>
-      </div>
-      <div className={styles.taskActions}>
-        <button
-          type="button"
-          className={`${styles.taskCheckbox} ${record.status === "completed" ? styles.taskCheckboxChecked : ""}`}
-          onClick={handleCheckboxClick}
-          aria-label={
-            record.status === "completed" ? "标记为未完成" : "标记为完成"
-          }
-        >
-          <IconCheck size={16} />
-        </button>
       </div>
     </div>
   );

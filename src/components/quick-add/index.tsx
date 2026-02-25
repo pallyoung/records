@@ -79,16 +79,11 @@ export function QuickAdd({
     return tagMatches ? tagMatches.map((tag) => tag.slice(1)) : [];
   };
 
-  // 从内容中移除所有标签
-  const removeTagsFromContent = (content: string): string => {
-    return content.replace(/#\S+/g, "").replace(/\s+/g, " ").trim();
-  };
-
   const handleSave = () => {
     if (!content.trim()) return;
     const tags = parseTagsFromContent(content);
-    const cleanContent = removeTagsFromContent(content);
-    onSave({ content: cleanContent, tags, status });
+    // 保留原始内容，包括 #标签
+    onSave({ content: content.trim(), tags, status });
     setContent("");
     onClose();
   };

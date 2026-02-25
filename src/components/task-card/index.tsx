@@ -1,0 +1,133 @@
+import type React from "react";
+import { IconCheck, IconMore } from "../../shared/icons";
+import type { Record, RecordStatus } from "../../types";
+import styles from "./index.module.scss";
+
+interface TaskCardProps {
+  record: Record;
+  onStatusChange: (id: string, status: RecordStatus) => void;
+  onClick: (id: string) => void;
+  showMenu?: boolean;
+}
+
+// 格式化任务日期
+function formatTaskDate(record: Record): string {
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  if (!record.plannedEndTime) {
+    if (record.plannedStartTime) {
+      const start = new Date(record.plannedStartTime);
+      const startDate = new Date(
+        start.getFullYear(),
+        start.getMonth(),
+        start.getDate(),
+      );
+      if (startDate.getTime() === today.getTime()) return "今天";
+      if (startDate.getTime() === tomorrow.getTime()) return "明天";
+    }
+    return "";
+  }
+
+  const end = new Date(record.plannedEndTime);
+  const endDate = new Date(end.getFullYear(), end.getMonth(), end.getDate());
+
+  if (endDate.getTime() === today.getTime()) return "今天";
+  if (endDate.getTime() === tomorrow.getTime()) return "明天";
+
+  return "";
+}
+
+// 状态样式映射
+function getStatusClass(status: RecordStatus): string {
+  switch (status) {
+    case "pending":
+      return styles.statusPending;
+    case "in_progress":
+      return styles.statusInProgress;
+    case "completed":
+      return styles.statusCompleted;
+    default:
+      return styles.statusPending;
+  }
+}
+
+// 渲染内容，将 #标签 转换为带样式的 span
+function renderContentWithTags(content: string): React.ReactNode {
+  // 按 # 分隔，# 后面的内容作为标签
+  const parts = content.split(/(#\S+)/g);
+
+  return parts.map((part, index) => {
+    if (part.startsWith("#")) {
+      // 去掉 # 前缀获取标签名
+      const tag = part.slice(1);
+      return (
+        <span key={index} className={styles.inlineTag}>
+          {tag}
+        </span>
+      );
+    }
+    return part;
+  });
+}
+
+export function TaskCard({
+  record,
+  onStatusChange,
+  onClick,
+  showMenu = false,
+}: TaskCardProps) {
+  const dateStr = formatTaskDate(record);
+
+  const handleCheckboxClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const nextStatus: RecordStatus =
+      record.status === "pending"
+        ? "in_progress"
+        : record.status === "in_progress"
+          ? "completed"
+          : "pending";
+    if (nextStatus) {
+      onStatusChange(record.id, nextStatus);
+    }
+  };
+
+  return (
+    <div className={styles.taskCard} onClick={() => onClick(record.id)}>
+      <div className={`${styles.statusDot} ${getStatusClass(record.status)}`} />
+      <div className={styles.taskContent}>
+        <div
+          className={`${styles.taskTitle} ${record.status === "completed" ? styles.taskTitleCompleted : ""}`}
+        >
+          {renderContentWithTags(record.content)}
+        </div>
+        <div className={styles.taskMeta}>
+          {dateStr && <span className={styles.taskDate}>{dateStr}</span>}
+        </div>
+      </div>
+      <div className={styles.taskActions}>
+        <button
+          type="button"
+          className={`${styles.taskCheckbox} ${record.status === "completed" ? styles.taskCheckboxChecked : ""}`}
+          onClick={handleCheckboxClick}
+          aria-label={
+            record.status === "completed" ? "标记为未完成" : "标记为完成"
+          }
+        >
+          <IconCheck size={16} />
+        </button>
+        {showMenu && (
+          <button
+            type="button"
+            className={styles.taskMenu}
+            aria-label="更多操作"
+          >
+            <IconMore size={18} />
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
