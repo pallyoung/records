@@ -7,9 +7,11 @@ interface MenuItem {
 }
 
 const MENU_ITEMS: MenuItem[] = [
-  { id: 'review', icon: '📊', label: '复盘' },
+  { id: 'guide', icon: '🎁', label: '新手引导' },
+  { id: 'welfare', icon: '🎀', label: '福利中心' },
   { id: 'settings', icon: '⚙️', label: '设置' },
   { id: 'tags', icon: '🏷️', label: '标签管理' },
+  { id: 'review', icon: '📊', label: '复盘' },
 ];
 
 interface ProfileCenterPageProps {
@@ -19,18 +21,49 @@ interface ProfileCenterPageProps {
 export function ProfileCenterPage({ onNavigate }: ProfileCenterPageProps) {
   return (
     <div className={styles.profileCenter}>
-      <h1 className={styles.title}>个人中心</h1>
+      {/* 头部区域 - 头像和用户信息 */}
+      <div className={styles.header}>
+        <div className={styles.avatar}>
+          <span>👤</span>
+        </div>
+        <div className={styles.userInfo}>
+          <span className={styles.username}>Steve</span>
+          <span className={styles.level}>注册会员 Lv.3</span>
+        </div>
+      </div>
 
-      <div className={styles.grid}>
+      {/* 统计栏 - 4列 */}
+      <div className={styles.statsBar}>
+        <div className={styles.statItem}>
+          <span className={styles.statValue}>0</span>
+          <span className={styles.statLabel}>收藏</span>
+        </div>
+        <div className={styles.statItem}>
+          <span className={styles.statValue}>0</span>
+          <span className={styles.statLabel}>足迹</span>
+        </div>
+        <div className={styles.statItem}>
+          <span className={styles.statValue}>0</span>
+          <span className={styles.statLabel}>下载</span>
+        </div>
+        <div className={styles.statItem}>
+          <span className={styles.statValue}>0</span>
+          <span className={styles.statLabel}>已购</span>
+        </div>
+      </div>
+
+      {/* 功能卡片列表 */}
+      <div className={styles.menuList}>
         {MENU_ITEMS.map(item => (
           <button
             key={item.id}
-            className={styles.card}
+            className={styles.menuItem}
             aria-label={item.label}
             onClick={() => onNavigate(item.id)}
           >
-            <span className={styles.cardIcon}>{item.icon}</span>
-            <span className={styles.cardLabel}>{item.label}</span>
+            <span className={styles.menuIcon}>{item.icon}</span>
+            <span className={styles.menuLabel}>{item.label}</span>
+            <span className={styles.menuArrow}>›</span>
           </button>
         ))}
       </div>

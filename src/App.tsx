@@ -137,6 +137,17 @@ function AppContent() {
     );
   }
 
+  // 获取当前日期
+  const getCurrentDate = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth() + 1;
+    const day = now.getDate();
+    const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+    const weekday = weekdays[now.getDay()];
+    return `${year}年${month}月${day}日 ${weekday}`;
+  };
+
   return (
     <div className="app">
       {/* Dashboard at top */}
@@ -148,6 +159,12 @@ function AppContent() {
       {/* Tab content */}
       {activeTab === 'records' && (
         <main className="app-main records-main">
+          {/* 头部问候语 */}
+          <div className="records-header">
+            <h2 className="greeting">Hey, Steve</h2>
+            <p className="date">{getCurrentDate()}</p>
+          </div>
+
           <Timeline
             records={records}
             selectedIndex={selectedIndex}

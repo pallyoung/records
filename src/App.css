@@ -123,3 +123,32 @@
   margin-bottom: 8px;
   color: var(--text-secondary);
 }
+
+/* Records page header */
+.records-header {
+  padding: 16px 0;
+  margin-bottom: 16px;
+}
+
+.greeting {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 4px 0;
+}
+
+.date {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+@media (min-width: 1025px) {
+  .records-header {
+    padding: 24px 0;
+  }
+
+  .greeting {
+    font-size: 28px;
+  }
+}
