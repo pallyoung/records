@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import type { Record, RecordStatus, RecurringConfig } from '../../types';
 import styles from './index.module.scss';
 
@@ -10,42 +10,39 @@ interface RecordCardProps {
   onStatusChange?: (id: string, status: RecordStatus) => void;
 }
 
-function getDaysUntil(date?: Date): number | null {
-  if (!date) return null;
-  const now = new Date();
-  const diff = date.getTime() - now.getTime();
-  return Math.ceil(diff / (1000 * 60 * 60 * 24));
+// 根据状态获取颜色
+function getStatusColor(status: RecordStatus): string {
+  switch (status) {
+    case 'pending': return 'purple';
+    case 'in_progress': return 'coral';
+    case 'completed': return 'teal';
+    default: return 'purple';
+  }
 }
 
-function getStatusText(record: Record): string {
-  const daysUntilStart = getDaysUntil(record.plannedStartTime);
-  const daysUntilEnd = getDaysUntil(record.plannedEndTime);
-
-  if (record.status === 'pending') {
-    if (daysUntilStart !== null && daysUntilStart < 0) {
-      return '已超期';
-    }
-    return daysUntilStart !== null ? `${daysUntilStart}天后开始` : '未开始';
+// 格式化时间范围
+function formatTimeRange(record: Record): string {
+  if (!record.plannedStartTime && !record.plannedEndTime) {
+    return '';
   }
 
-  if (record.status === 'in_progress') {
-    if (daysUntilEnd !== null && daysUntilEnd < 0) {
-      return '已超期';
-    }
-    return daysUntilEnd !== null ? `${daysUntilEnd}天后结束` : '进行中';
-  }
+  const formatDate = (date: Date) => {
+    const d = new Date(date);
+    const month = d.getMonth() + 1;
+    const day = d.getDate();
+    const hours = d.getHours().toString().padStart(2, '0');
+    const minutes = d.getMinutes().toString().padStart(2, '0');
+    return `${month}/${day} ${hours}:${minutes}`;
+  };
 
-  return '已完成';
-}
-
-function isOverdue(record: Record): boolean {
-  if (record.status === 'pending' && record.plannedStartTime) {
-    return new Date() > record.plannedStartTime;
+  if (record.plannedStartTime && record.plannedEndTime) {
+    return `${formatDate(record.plannedStartTime)} - ${formatDate(record.plannedEndTime)}`;
+  } else if (record.plannedStartTime) {
+    return `开始: ${formatDate(record.plannedStartTime)}`;
+  } else if (record.plannedEndTime) {
+    return `截止: ${formatDate(record.plannedEndTime)}`;
   }
-  if (record.status === 'in_progress' && record.plannedEndTime) {
-    return new Date() > record.plannedEndTime;
-  }
-  return false;
+  return '';
 }
 
 // 获取下一个状态
@@ -55,34 +52,32 @@ function getNextStatus(current: RecordStatus): RecordStatus | null {
   return null;
 }
 
-// 获取状态按钮文本
-function getStatusButtonText(current: RecordStatus): string {
-  if (current === 'pending') return '开始';
-  if (current === 'in_progress') return '完成';
-  return '';
-}
-
-// 获取循环事务标签文本
-const getRecurringLabel = (config: RecurringConfig) => {
-  switch (config.frequency) {
-    case 'daily': return '每日';
-    case 'weekly': return '每周';
-    case 'monthly': return '每月';
-    case 'interval_days': return `每${config.intervalValue}天`;
-    case 'interval_hours': return `每${config.intervalValue}小时`;
-    default: return '循环';
-  }
-};
-
 export function RecordCard({ record, isSelected = false, onEdit, onDelete, onStatusChange }: RecordCardProps) {
-  const statusText = getStatusText(record);
-  const overdue = isOverdue(record);
+  const [showMenu, setShowMenu] = useState(false);
   const [isSwiping, setIsSwiping] = useState(false);
   const [swipeX, setSwipeX] = useState(0);
   const cardRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
   const startXRef = useRef(0);
 
-  // 处理滑动删除
+  const statusColor = getStatusColor(record.status);
+  const timeRange = formatTimeRange(record);
+  const nextStatus = getNextStatus(record.status);
+
+  // 点击外部关闭菜单
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setShowMenu(false);
+      }
+    };
+    if (showMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showMenu]);
+
+  // 处理滑动
   const handleTouchStart = (e: React.TouchEvent) => {
     startXRef.current = e.touches[0].clientX;
     setIsSwiping(true);
@@ -92,7 +87,6 @@ export function RecordCard({ record, isSelected = false, onEdit, onDelete, onSta
     if (!isSwiping) return;
     const currentX = e.touches[0].clientX;
     const diff = currentX - startXRef.current;
-    // 只允许左滑显示删除
     if (diff < 0) {
       setSwipeX(Math.max(diff, -80));
     }
@@ -100,28 +94,38 @@ export function RecordCard({ record, isSelected = false, onEdit, onDelete, onSta
 
   const handleTouchEnd = () => {
     if (swipeX < -50) {
-      // 左滑超过50px，触发删除
       onDelete(record.id);
     }
     setSwipeX(0);
     setIsSwiping(false);
   };
 
-  // 处理状态快速切换
+  // 处理状态切换
   const handleStatusToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const nextStatus = getNextStatus(record.status);
     if (nextStatus && onStatusChange) {
       onStatusChange(record.id, nextStatus);
     }
+    setShowMenu(false);
   };
 
-  const nextStatus = getNextStatus(record.status);
-  const canToggleStatus = nextStatus !== null;
+  // 处理编辑
+  const handleEditClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onEdit(record.id);
+    setShowMenu(false);
+  };
+
+  // 处理删除
+  const handleDeleteClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onDelete(record.id);
+    setShowMenu(false);
+  };
 
   return (
-    <div className={styles.recordCardWrapper}>
-      {/* 删除按钮（滑动时显示） */}
+    <div className={styles.cardWrapper}>
+      {/* 删除按钮 */}
       <button
         className={styles.swipeDelete}
         onClick={() => onDelete(record.id)}
@@ -135,54 +139,102 @@ export function RecordCard({ record, isSelected = false, onEdit, onDelete, onSta
       {/* 卡片主体 */}
       <div
         ref={cardRef}
-        className={`${styles.recordCard} ${overdue ? styles.overdue : ''} ${isSwiping ? styles.swiping : ''} ${isSelected ? styles.selected : ''}`}
+        className={`${styles.card} ${isSelected ? styles.selected : ''}`}
         style={{ transform: `translateX(${swipeX}px)` }}
         onClick={() => onEdit(record.id)}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        <div className={styles.recordHeader}>
-          <div className={styles.recordHeaderLeft}>
-            <span className={`${styles.statusBadge} ${styles[record.status]}`}>{statusText}</span>
-            {record.type === 'recurring' && record.recurringConfig && (
-              <div className={styles.recurringBadge}>
-                <span className={styles.recurringIcon}>🔄</span>
-                <span>{getRecurringLabel(record.recurringConfig)}</span>
-                {record.recurringConfig.totalCompletions > 0 && (
-                  <span className={styles.completionCount}>
-                    累计{record.recurringConfig.totalCompletions}次
-                  </span>
+        {/* 顶部彩色条 */}
+        <div className={`${styles.colorBar} ${styles[statusColor]}`} />
+
+        {/* 卡片内容 */}
+        <div className={styles.cardContent}>
+          {/* 标题行：标题 + 复选框 + 菜单 */}
+          <div className={styles.titleRow}>
+            {/* 标题 */}
+            <h3 className={styles.title}>{record.content}</h3>
+
+            {/* 右侧：复选框 + 菜单 */}
+            <div className={styles.titleRight}>
+              {/* 空心复选框 */}
+              <button
+                className={`${styles.checkbox} ${record.status === 'completed' ? styles.checked : ''}`}
+                onClick={handleStatusToggle}
+              >
+                {record.status === 'completed' && (
+                  <svg viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                )}
+              </button>
+
+              {/* 三点菜单 */}
+              <div className={styles.menuContainer} ref={menuRef}>
+                <button
+                  className={styles.menuButton}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowMenu(!showMenu);
+                  }}
+                >
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </button>
+
+                {showMenu && (
+                  <div className={styles.menu}>
+                    <button onClick={handleEditClick}>
+                      <svg viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                      </svg>
+                      编辑
+                    </button>
+                    {nextStatus && (
+                      <button onClick={handleStatusToggle}>
+                        <svg viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                        </svg>
+                        {nextStatus === 'in_progress' ? '开始' : '完成'}
+                      </button>
+                    )}
+                    <button className={styles.deleteBtn} onClick={handleDeleteClick}>
+                      <svg viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                      </svg>
+                      删除
+                    </button>
+                  </div>
                 )}
               </div>
-            )}
-            {/* 状态切换按钮 */}
-            {canToggleStatus && (
-              <button
-                className={styles.statusToggleBtn}
-                onClick={handleStatusToggle}
-                title={`切换到${getStatusButtonText(record.status)}`}
-              >
-                <svg viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
+            </div>
+          </div>
+
+          {/* 底部信息行 - 时间 */}
+          <div className={styles.infoRow}>
+            {/* 时间和图标 */}
+            {timeRange && (
+              <div className={styles.timeInfo}>
+                <svg className={styles.timeIcon} viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
                 </svg>
-                {getStatusButtonText(record.status)}
-              </button>
+                <span className={styles.timeText}>{timeRange}</span>
+              </div>
             )}
+            {/* 占位保持布局 */}
+            {!timeRange && <div />}
           </div>
-        </div>
-        <div className={styles.recordContent}>{record.content}</div>
-        {record.images.length > 0 && (
-          <div className={styles.recordImages}>
-            {record.images.map((img, i) => (
-              <img key={i} src={img} alt="" />
-            ))}
-          </div>
-        )}
-        <div className={styles.recordTags}>
-          {record.tags.map(tag => (
-            <span key={tag} className={styles.tag}>{tag}</span>
-          ))}
+
+          {/* 标签 */}
+          {record.tags.length > 0 && (
+            <div className={styles.tags}>
+              {record.tags.map(tag => (
+                <span key={tag} className={styles.tag}>{tag}</span>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -2,26 +2,11 @@
 
 .timeline {
   padding: 8px;
+  padding-bottom: 100px;
 }
 
 .timelineGroup {
-  margin-bottom: 32px;
-  position: relative;
-}
-
-/* 时间线连接线 */
-.timelineGroup::before {
-  content: '';
-  position: absolute;
-  left: -1px;
-  top: 24px;
-  bottom: -16px;
-  width: 2px;
-  background: linear-gradient(to bottom, var(--accent-tertiary), transparent);
-}
-
-.timelineGroup:last-child::before {
-  display: none;
+  margin-bottom: 24px;
 }
 
 .timelineHeader {
