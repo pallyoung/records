@@ -1,0 +1,248 @@
+import { useMemo, useState } from "react";
+import { useRelaxValue, recordsState } from "../../store/recordStore";
+import type { Record } from "../../types";
+import styles from "./index.module.scss";
+
+// 格式化日期为 YYYY-MM-DD
+function formatDateKey(date: Date): string {
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const day = date.getDate().toString().padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+// 计算连续完成天数
+function calculateStreakDays(records: Record[]): number {
+  // 获取已完成的任务
+  const completedRecords = records.filter((r) => r.status === "completed");
+
+  if (completedRecords.length === 0) return 0;
+
+  // 提取所有完成日期（去重）
+  const completedDates = new Set<string>();
+  completedRecords.forEach((record) => {
+    const date = record.actualEndTime || record.updatedAt;
+    completedDates.add(formatDateKey(new Date(date)));
+  });
+
+  // 排序日期
+  const sortedDates = Array.from(completedDates).sort().reverse();
+
+  if (sortedDates.length === 0) return 0;
+
+  // 从今天/昨天开始计算连续天数
+  const today = formatDateKey(new Date());
+  const yesterday = formatDateKey(
+    new Date(new Date().setDate(new Date().getDate() - 1)),
+  );
+
+  // 必须从今天或昨天开始才算连续
+  if (sortedDates[0] !== today && sortedDates[0] !== yesterday) {
+    return 0;
+  }
+
+  let streak = 1;
+  let currentDate = new Date(sortedDates[0]);
+
+  for (let i = 1; i < sortedDates.length; i++) {
+    const prevDate = new Date(currentDate);
+    prevDate.setDate(prevDate.getDate() - 1);
+
+    if (formatDateKey(prevDate) === sortedDates[i]) {
+      streak++;
+      currentDate = prevDate;
+    } else {
+      break;
+    }
+  }
+
+  return streak;
+}
+
+// ThemeToggle 组件
+interface ThemeToggleProps {
+  currentTheme: "light" | "dark" | "auto";
+  onThemeChange: (theme: "light" | "dark" | "auto") => void;
+}
+
+function ThemeToggle({ currentTheme, onThemeChange }: ThemeToggleProps) {
+  return (
+    <div className={styles.themeToggle}>
+      <button
+        className={`${styles.themeOption} ${currentTheme === "light" ? styles.themeOptionActive : ""}`}
+        onClick={() => onThemeChange("light")}
+      >
+        浅色
+      </button>
+      <button
+        className={`${styles.themeOption} ${currentTheme === "dark" ? styles.themeOptionActive : ""}`}
+        onClick={() => onThemeChange("dark")}
+      >
+        深色
+      </button>
+      <button
+        className={`${styles.themeOption} ${currentTheme === "auto" ? styles.themeOptionActive : ""}`}
+        onClick={() => onThemeChange("auto")}
+      >
+        自动
+      </button>
+    </div>
+  );
+}
+
+// SettingsItem 组件
+interface SettingsItemProps {
+  icon: React.ReactNode;
+  label: string;
+  right?: React.ReactNode;
+  onClick?: () => void;
+}
+
+function SettingsItem({ icon, label, right, onClick }: SettingsItemProps) {
+  return (
+    <div className={styles.settingsItem} onClick={onClick}>
+      <div className={styles.settingsItemLeft}>
+        <div className={styles.settingsIcon}>{icon}</div>
+        <span className={styles.settingsLabel}>{label}</span>
+      </div>
+      <div className={styles.settingsRight}>{right}</div>
+    </div>
+  );
+}
+
+// 主 ProfilePage 组件
+export function ProfilePage() {
+  const records = useRelaxValue(recordsState) as Record[];
+  const [theme, setTheme] = useState<"light" | "dark" | "auto">("auto");
+
+  // 计算统计数据
+  const stats = useMemo(() => {
+    const total = records.length;
+    const completed = records.filter((r) => r.status === "completed").length;
+    const completionRate = total > 0 ? Math.round((completed / total) * 100) : 0;
+    const streakDays = calculateStreakDays(records);
+
+    return { total, completed, completionRate, streakDays };
+  }, [records]);
+
+  // 获取用户名首字母
+  const userInitial = "W"; // 默认用户名首字母
+
+  // 处理主题变化
+  const handleThemeChange = (newTheme: "light" | "dark" | "auto") => {
+    setTheme(newTheme);
+    // TODO: 应用主题到 document.documentElement
+  };
+
+  return (
+    <div className={styles.profilePage}>
+      {/* Header */}
+      <div className={styles.header}>
+        <h1 className={styles.headerTitle}>我的</h1>
+      </div>
+
+      {/* Profile Header */}
+      <div className={styles.profileHeader}>
+        <div className={styles.profileAvatar}>{userInitial}</div>
+        <div className={styles.profileName}>用户</div>
+        <div className={styles.profileStats}>
+          <div className={styles.profileStat}>
+            <div className={styles.profileStatValue}>{stats.total}</div>
+            <div className={styles.profileStatLabel}>总任务</div>
+          </div>
+          <div className={styles.profileStat}>
+            <div className={styles.profileStatValue}>{stats.completionRate}%</div>
+            <div className={styles.profileStatLabel}>完成率</div>
+          </div>
+          <div className={styles.profileStat}>
+            <div className={styles.profileStatValue}>{stats.streakDays}</div>
+            <div className={styles.profileStatLabel}>连续天数</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Settings Section */}
+      <div className={styles.section}>
+        <div className={styles.sectionTitle}>设置</div>
+        <div className={styles.settingsList}>
+          {/* 主题设置 */}
+          <SettingsItem
+            icon={
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <circle cx="12" cy="12" r="5" />
+                <line x1="12" y1="1" x2="12" y2="3" />
+                <line x1="12" y1="21" x2="12" y2="23" />
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                <line x1="1" y1="12" x2="3" y2="12" />
+                <line x1="21" y1="12" x2="23" y2="12" />
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+              </svg>
+            }
+            label="外观"
+            right={<ThemeToggle currentTheme={theme} onThemeChange={handleThemeChange} />}
+          />
+
+          {/* 提醒设置 */}
+          <SettingsItem
+            icon={
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+              </svg>
+            }
+            label="提醒"
+            right={<span className={styles.settingsArrow}>&#8250;</span>}
+          />
+
+          {/* 数据管理 */}
+          <SettingsItem
+            icon={
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" y1="15" x2="12" y2="3" />
+              </svg>
+            }
+            label="数据导出"
+            right={<span className={styles.settingsArrow}>&#8250;</span>}
+          />
+
+          {/* 关于 */}
+          <SettingsItem
+            icon={
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="16" x2="12" y2="12" />
+                <line x1="12" y1="8" x2="12.01" y2="8" />
+              </svg>
+            }
+            label="关于"
+            right={<span className={styles.settingsArrow}>&#8250;</span>}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
