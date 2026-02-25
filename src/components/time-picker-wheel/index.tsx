@@ -28,6 +28,15 @@ export function TimePickerWheel({ value, onChange }: TimePickerWheelProps) {
     }
   }, [value]);
 
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+    };
+  }, []);
+
   // Set initial scroll position when popup opens
   useEffect(() => {
     if (isOpen && hoursRef.current) {
@@ -65,6 +74,8 @@ export function TimePickerWheel({ value, onChange }: TimePickerWheelProps) {
     newDate.setHours(hours);
     newDate.setMinutes(minutes);
     onChange?.(newDate);
+    setOriginalHours(hours); // Update original to current
+    setOriginalMinutes(minutes);
     setIsOpen(false);
   };
 
@@ -75,8 +86,12 @@ export function TimePickerWheel({ value, onChange }: TimePickerWheelProps) {
   };
 
   const handleOpen = () => {
-    setOriginalHours(value?.getHours() ?? 9);
-    setOriginalMinutes(value?.getMinutes() ?? 0);
+    const newHours = value?.getHours() ?? 9;
+    const newMinutes = value?.getMinutes() ?? 0;
+    setOriginalHours(newHours);
+    setOriginalMinutes(newMinutes);
+    setHours(newHours); // Ensure display matches value
+    setMinutes(newMinutes);
     setIsOpen(true);
   };
 
