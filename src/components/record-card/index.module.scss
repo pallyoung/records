@@ -1,27 +1,276 @@
-/* 事务卡片样式 - 参考图片风格 */
+/* Compact Task Card - Apple Style */
 
-/* 卡片容器 */
 .cardWrapper {
   position: relative;
-  margin-bottom: 12px;
+  margin-bottom: var(--space-2);
 }
 
-/* 滑动删除按钮 */
+/* Compact Card Layout */
+.card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  min-height: 52px;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.card:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.card.selected {
+  box-shadow: 0 0 0 2px var(--accent-primary);
+}
+
+/* Status Dot */
+.statusDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.statusDot.pending {
+  background: var(--accent-muted);
+}
+
+.statusDot.inProgress {
+  background: var(--accent-info);
+}
+
+.statusDot.completed {
+  background: var(--accent-success);
+}
+
+/* Card Content */
+.cardContent {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Title */
+.title {
+  font-size: var(--text-base);
+  font-weight: 400;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.title.completed {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+/* Meta Row */
+.meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Compact Tag */
+.tag {
+  font-size: 11px;
+  padding: 2px 6px;
+  background: rgba(0, 122, 255, 0.1);
+  color: var(--accent-primary);
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+}
+
+.tag.work {
+  background: rgba(0, 122, 255, 0.15);
+  color: var(--accent-info);
+}
+
+.tag.life {
+  background: rgba(52, 199, 89, 0.15);
+  color: var(--accent-success);
+}
+
+.tag.learn {
+  background: rgba(88, 86, 214, 0.15);
+  color: var(--accent-tertiary);
+}
+
+.tag.health {
+  background: rgba(255, 149, 0, 0.15);
+  color: var(--accent-warning);
+}
+
+/* Date */
+.date {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.date.overdue {
+  color: var(--accent-danger);
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  flex-shrink: 0;
+}
+
+/* Compact Checkbox */
+.checkbox {
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--accent-muted);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: transparent;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.checkbox:hover {
+  border-color: var(--accent-success);
+}
+
+.checkbox.checked {
+  background: var(--accent-success);
+  border-color: var(--accent-success);
+}
+
+.checkbox svg {
+  width: 12px;
+  height: 12px;
+  color: white;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: all 0.2s ease;
+}
+
+.checkbox.checked svg {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Menu Button */
+.menuButton {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
+  background: transparent;
+  border: none;
+}
+
+.menuButton:hover {
+  opacity: 1;
+}
+
+.menuDot {
+  display: flex;
+  gap: 3px;
+}
+
+.menuDot::before,
+.menuDot::after {
+  content: '';
+  width: 4px;
+  height: 4px;
+  background: var(--text-secondary);
+  border-radius: 50%;
+}
+
+/* Dropdown Menu */
+.menuContainer {
+  position: relative;
+}
+
+.menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: var(--bg-card);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  min-width: 140px;
+  z-index: 100;
+  box-shadow: var(--shadow-lg);
+}
+
+.menu button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition: background 0.2s ease;
+  text-align: left;
+}
+
+.menu button:hover {
+  background: rgba(0, 122, 255, 0.1);
+}
+
+.menu button svg {
+  width: 16px;
+  height: 16px;
+  color: var(--text-secondary);
+}
+
+.menu .deleteBtn {
+  color: var(--accent-danger);
+}
+
+.menu .deleteBtn svg {
+  color: var(--accent-danger);
+}
+
+.menu .deleteBtn:hover {
+  background: rgba(255, 59, 48, 0.1);
+}
+
+/* Swipe to Delete */
 .swipeDelete {
   position: absolute;
   right: 0;
   top: 0;
   bottom: 0;
   width: 80px;
-  background: #fb7185;
+  background: var(--accent-danger);
   border: none;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: white;
   cursor: pointer;
-  transition: opacity 0.2s ease;
   z-index: 1;
 }
 
@@ -30,259 +279,13 @@
   height: 24px;
 }
 
-/* 卡片主体 */
-.card {
-  background: #232338;
-  border-radius: 12px;
-  overflow: hidden;
-  cursor: pointer;
-  position: relative;
-  z-index: 2;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-}
-
-.card.swiping {
-  transition: none;
-}
-
-/* 选中状态 */
-.card.selected {
-  box-shadow: 0 0 0 2px #a78bfa;
-}
-
-/* 顶部彩色条 */
-.colorBar {
-  height: 4px;
-  width: 100%;
-}
-
-.colorBar.purple {
-  background: linear-gradient(90deg, #a78bfa 0%, #c4a4fc 100%);
-}
-
-.colorBar.coral {
-  background: linear-gradient(90deg, #fb7185 0%, #fda4af 100%);
-}
-
-.colorBar.teal {
-  background: linear-gradient(90deg, #22d3d3 0%, #5eead4 100%);
-}
-
-/* 卡片内容区域 */
-.cardContent {
-  padding: 16px;
-}
-
-/* 标题行 - 包含标题、复选框和菜单 */
-.titleRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 16px;
-}
-
-/* 标题 */
-.title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #ffffff;
-  margin: 0;
-  line-height: 1.4;
-  flex: 1;
-  padding-right: 12px;
-}
-
-/* 标题右侧：复选框 + 菜单 */
-.titleRight {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
-}
-
-/* 菜单容器 */
-.menuContainer {
-  position: relative;
-  flex-shrink: 0;
-}
-
-/* 三点菜单按钮 */
-.menuButton {
-  width: 32px;
-  height: 32px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 3px;
-  border-radius: 8px;
-  transition: background 0.2s ease;
-}
-
-.menuButton:hover {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.menuButton span {
-  width: 4px;
-  height: 4px;
-  background: #6b6b8d;
-  border-radius: 50%;
-}
-
-/* 下拉菜单 */
-.menu {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  background: #2a2a44;
-  border: 1px solid #3d3d5c;
-  border-radius: 8px;
-  overflow: hidden;
-  min-width: 120px;
-  z-index: 100;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-}
-
-.menu button {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 16px;
-  background: transparent;
-  border: none;
-  color: #ffffff;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background 0.2s ease;
-  text-align: left;
-}
-
-.menu button:hover {
-  background: rgba(167, 139, 250, 0.2);
-}
-
-.menu button svg {
-  width: 16px;
-  height: 16px;
-  color: #a0a0a0;
-}
-
-.menu .deleteBtn {
-  color: #fb7185;
-}
-
-.menu .deleteBtn svg {
-  color: #fb7185;
-}
-
-.menu .deleteBtn:hover {
-  background: rgba(251, 113, 133, 0.2);
-}
-
-/* 信息行 */
-.infoRow {
-  display: flex;
-  align-items: center;
-  min-height: 20px;
-}
-
-/* 时间信息 */
-.timeInfo {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.timeIcon {
-  width: 14px;
-  height: 14px;
-  color: #6b6b8d;
-  flex-shrink: 0;
-}
-
-.timeText {
-  font-size: 12px;
-  color: #6b6b8d;
-}
-
-/* 空心复选框 */
-.checkbox {
-  width: 22px;
-  height: 22px;
-  border: 2px solid #6b6b8d;
-  border-radius: 4px;
-  background: transparent;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-  padding: 0;
-  flex-shrink: 0;
-}
-
-.checkbox:hover {
-  border-color: #a78bfa;
-}
-
-.checkbox.checked {
-  background: #22d3d3;
-  border-color: #22d3d3;
-}
-
-.checkbox svg {
-  width: 14px;
-  height: 14px;
-  color: #ffffff;
-}
-
-/* 标签 */
-.tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 12px;
-}
-
-.tag {
-  padding: 4px 10px;
-  background: rgba(167, 139, 250, 0.15);
-  color: #a78bfa;
-  border-radius: 4px;
-  font-size: 11px;
-}
-
-/* 桌面端 */
-@media (min-width: 1025px) {
-  .cardContent {
-    padding: 20px;
+/* Desktop */
+@media (min-width: 768px) {
+  .card {
+    padding: var(--space-3) var(--space-4);
   }
 
   .title {
-    font-size: 17px;
-  }
-
-  .menuButton {
-    width: 36px;
-    height: 36px;
-  }
-
-  .checkbox {
-    width: 24px;
-    height: 24px;
-  }
-
-  .checkbox svg {
-    width: 16px;
-    height: 16px;
+    font-size: var(--text-lg);
   }
 }
