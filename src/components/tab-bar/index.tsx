@@ -1,6 +1,6 @@
 import styles from './index.module.scss';
 
-export type TabType = 'habits' | 'records' | 'profile';
+export type TabType = 'records' | 'profile';
 
 export interface TabBarProps {
   activeTab: TabType;
@@ -13,7 +13,6 @@ interface TabItem {
 }
 
 const TABS: TabItem[] = [
-  { id: 'habits', label: '习惯' },
   { id: 'records', label: '事务' },
   { id: 'profile', label: '个人中心' },
 ];
