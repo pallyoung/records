@@ -73,16 +73,22 @@ export function QuickAdd({
     }
   }, [visible]);
 
-  // 从输入框解析第一个标签作为分类（单选）
-  const parseTagFromContent = (content: string): string[] => {
-    const tagMatch = content.match(/#(\S+)/);
-    return tagMatch ? [tagMatch[1]] : [];
+  // 从输入框解析所有标签
+  const parseTagsFromContent = (content: string): string[] => {
+    const tagMatches = content.match(/#(\S+)/g);
+    return tagMatches ? tagMatches.map((tag) => tag.slice(1)) : [];
+  };
+
+  // 从内容中移除所有标签
+  const removeTagsFromContent = (content: string): string => {
+    return content.replace(/#\S+/g, "").replace(/\s+/g, " ").trim();
   };
 
   const handleSave = () => {
     if (!content.trim()) return;
-    const tags = parseTagFromContent(content); // 只取第一个标签
-    onSave({ content: content.trim(), tags, status });
+    const tags = parseTagsFromContent(content);
+    const cleanContent = removeTagsFromContent(content);
+    onSave({ content: cleanContent, tags, status });
     setContent("");
     onClose();
   };
@@ -181,10 +187,10 @@ export function QuickAdd({
           )}
         </div>
 
-        {/* 常用分类 */}
+        {/* 常用标签 */}
         {frequentTags.length > 0 && (
           <div className={styles.categorySection}>
-            <div className={styles.categoryLabel}>常用分类</div>
+            <div className={styles.categoryLabel}>常用标签</div>
             <div className={styles.categoryList}>
               {frequentTags.map((tag) => (
                 <button
