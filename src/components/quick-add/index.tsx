@@ -75,8 +75,15 @@ export function QuickAdd({
     }
   }, [visible]);
 
+  // 从输入框解析第一个标签作为分类（单选）
+  const parseTagFromContent = (content: string): string[] => {
+    const tagMatch = content.match(/#(\S+)/);
+    return tagMatch ? [tagMatch[1]] : [];
+  };
+
   const handleSave = () => {
     if (!content.trim()) return;
+    const tags = parseTagFromContent(content); // 只取第一个标签
     onSave({ content: content.trim(), tags, status });
     setContent("");
     onClose();
