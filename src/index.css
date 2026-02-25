@@ -1,138 +1,58 @@
-/* 颜色系统 - 深紫色主题 */
-
 :root {
-  /* 背景色 */
-  --bg-primary: #1a1a2e;      /* 深紫色主背景 */
-  --bg-secondary: #252540;    /* 卡片背景 */
-  --bg-card: #252540;         /* 卡片背景 */
+  /* Colors */
+  --bg-primary: #f5f5f7;
+  --bg-card: #ffffff;
+  --bg-dark: #1c1c1e;
 
-  /* 文字颜色 */
-  --text-primary: #ffffff;
-  --text-secondary: #a0a0a0;
-  --text-muted: #6b6b6b;
+  --text-primary: #1d1d1f;
+  --text-secondary: #86868b;
+  --text-tertiary: #a1a1a6;
 
-  /* 强调色 - 粉彩色系 */
-  --accent-primary: #a78bfa;   /* 淡紫色 */
-  --accent-secondary: #22d3d3; /* 青绿色 */
-  --accent-tertiary: #3d3d5c; /* 灰色边框 */
+  --accent: #007aff;
+  --accent-success: #34c759;
+  --accent-info: #007aff;
+  --accent-warning: #ff9500;
+  --accent-danger: #ff3b30;
+  --accent-muted: #8e8e93;
 
-  /* 功能色 */
-  --accent-success: #22d3d3;  /* 青绿色 - 完成 */
-  --accent-warning: #fb923c;  /* 橙色 - 进行中 */
-  --accent-danger: #fb7185;   /* 珊瑚色 - 危险/删除 */
+  /* Spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
 
-  /* 状态背景色 */
-  --accent-primary-bg: rgba(167, 139, 250, 0.2);
-  --accent-success-bg: rgba(34, 211, 211, 0.2);
-  --accent-warning-bg: rgba(251, 146, 60, 0.2);
-  --accent-danger-bg: rgba(251, 113, 133, 0.2);
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
 
-  /* 圆角 */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-
-  /* 阴影 */
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-body {
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-primary: #000000;
+    --bg-card: #1c1c1e;
+    --bg-dark: #2c2c2e;
+    --text-primary: #ffffff;
+    --text-secondary: #8e8e93;
+    --text-tertiary: #636366;
+  }
 }
 
-/* 重置样式 */
-*,
-*::before,
-*::after {
+* {
   box-sizing: border-box;
-}
-
-html {
-  font-size: 16px;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  padding: 0;
 }
 
 body {
-  margin: 0;
-  padding: 0;
-  font-family: var(--font-body);
-  background-color: var(--bg-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'PingFang SC', sans-serif;
+  background: var(--bg-primary);
   color: var(--text-primary);
-  line-height: 1.6;
-  min-height: 100vh;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: var(--font-heading);
-  font-weight: 600;
-  margin: 0;
-  color: var(--text-primary);
-}
-
-h1 {
-  font-size: var(--text-2xl);
-}
-
-h2 {
-  font-size: var(--text-xl);
-}
-
-h3 {
-  font-size: var(--text-lg);
-}
-
-p {
-  margin: 0;
-}
-
-button {
-  font-family: var(--font-body);
-  cursor: pointer;
-  border: none;
-  background: none;
-  padding: 0;
-}
-
-input,
-textarea,
-select {
-  font-family: var(--font-body);
-  font-size: var(--text-base);
-}
-
-/* 滚动条样式 */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--bg-secondary);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--accent-tertiary);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-primary);
-}
-
-/* 链接样式 */
-a {
-  color: var(--accent-primary);
-  text-decoration: none;
-}
-
-a:hover {
-  color: var(--accent-hover);
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
 }
