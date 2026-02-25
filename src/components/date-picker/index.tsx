@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import styles from "./index.module.scss";
 
 export interface DatePickerProps {
@@ -9,8 +9,36 @@ export interface DatePickerProps {
 export function DatePicker({ value, onChange }: DatePickerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [viewDate, setViewDate] = useState(value || new Date());
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  // 获取某月的天数
+  // Sync viewDate with external value changes
+  useEffect(() => {
+    if (value) {
+      setViewDate(value);
+    }
+  }, [value]);
+
+  // Close popup when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
+
+  // Get number of days in a month
   const getDaysInMonth = (year: number, month: number) => {
     return new Date(year, month + 1, 0).getDate();
   };
@@ -51,15 +79,23 @@ export function DatePicker({ value, onChange }: DatePickerProps) {
 
   const formatDisplayDate = (date: Date | null) => {
     if (!date) return "选择日期";
-    const weekDays = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
+    const weekDayNames = [
+      "周日",
+      "周一",
+      "周二",
+      "周三",
+      "周四",
+      "周五",
+      "周六",
+    ];
     const month = date.getMonth() + 1;
     const day = date.getDate();
-    const weekDay = weekDays[date.getDay()];
+    const weekDay = weekDayNames[date.getDay()];
     return `${month}/${day} ${weekDay}`;
   };
 
   return (
-    <div className={styles.datePicker}>
+    <div className={styles.datePicker} ref={containerRef}>
       <button
         type="button"
         className={styles.trigger}
