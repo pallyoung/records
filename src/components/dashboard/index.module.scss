@@ -4,11 +4,11 @@
   align-items: center;
   padding: 8px 12px;
   background: var(--bg-card);
-  border-bottom: 1px solid var(--accent-tertiary);
+  border-radius: 16px;
+  border: 1px solid var(--accent-tertiary);
   margin-bottom: 12px;
   cursor: pointer;
   transition: background 0.2s ease;
-  border-radius: var(--radius-md);
 }
 
 .dashboardBar:hover {

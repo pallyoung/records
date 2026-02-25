@@ -33,15 +33,14 @@
 /* 记录卡片 */
 .recordCard {
   background: var(--bg-card);
-  border-radius: var(--radius-md);
+  border-radius: 16px;
   padding: 12px;
+  border: 1px solid var(--accent-tertiary);
   box-shadow: var(--shadow-sm);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  border: 1px solid transparent;
   cursor: pointer;
   position: relative;
   z-index: 2;
-  background-color: var(--bg-card);
 }
 
 .recordCard:hover {
@@ -120,18 +119,18 @@
 }
 
 .statusBadge.pending {
-  background: var(--status-pending-bg);
-  color: var(--status-pending-text);
+  background: var(--accent-primary-bg);
+  color: var(--accent-primary);
 }
 
 .statusBadge.in_progress {
-  background: var(--status-in-progress-bg);
-  color: var(--status-in-progress-text);
+  background: var(--accent-warning-bg);
+  color: var(--accent-warning);
 }
 
 .statusBadge.completed {
-  background: var(--status-completed-bg);
-  color: var(--status-completed-text);
+  background: var(--accent-success-bg);
+  color: var(--accent-success);
 }
 
 /* 超期状态 */
