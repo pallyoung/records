@@ -66,7 +66,6 @@ export function QuickAdd({
   useEffect(() => {
     if (visible) {
       setContent("");
-      setTags([]);
       setStatus("pending");
       setSearchQuery("");
       setShowDropdown(false);
