@@ -1,0 +1,439 @@
+/* Home Page Styles - Apple Style */
+
+.homePage {
+  padding: var(--space-4);
+  max-width: 600px;
+  margin: 0 auto;
+  padding-bottom: 100px;
+}
+
+/* ==================== Header ==================== */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-4);
+}
+
+.headerLeft {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.headerTitle {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.headerDate {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--bg-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* ==================== Calendar Mini ==================== */
+.calendarMini {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: var(--space-3);
+  margin-bottom: var(--space-4);
+  box-shadow: var(--shadow-sm);
+}
+
+.calendarHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-3);
+}
+
+.calendarMonth {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.calendarNav {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.calendarNav button {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  color: var(--accent);
+  font-size: 18px;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+
+.calendarNav button:hover {
+  background: rgba(0, 122, 255, 0.1);
+}
+
+.calendarGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.calendarWeekday {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  padding: var(--space-1) 0;
+}
+
+.calendarDay {
+  text-align: center;
+  font-size: 13px;
+  padding: var(--space-2) 0;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  color: var(--text-primary);
+  transition: background 0.2s ease;
+}
+
+.calendarDay:hover {
+  background: rgba(0, 122, 255, 0.1);
+}
+
+.calendarDay.today {
+  background: var(--accent);
+  color: white;
+  font-weight: 600;
+}
+
+.calendarDay.today:hover {
+  background: var(--accent);
+}
+
+.calendarDay.otherMonth {
+  color: var(--text-tertiary);
+}
+
+/* ==================== Filter Pills ==================== */
+.filterPills {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.filterPill {
+  padding: var(--space-2) var(--space-3);
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filterPill:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.filterPillActive {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+.filterPillActive:hover {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+/* ==================== Section ==================== */
+.section {
+  margin-bottom: var(--space-4);
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-3);
+}
+
+.sectionTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.sectionMore {
+  font-size: 13px;
+  color: var(--accent);
+  cursor: pointer;
+}
+
+/* ==================== Task List ==================== */
+.taskList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+/* ==================== Task Card ==================== */
+.taskCard {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.taskCard:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.statusDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.statusPending {
+  background: var(--accent-muted);
+}
+
+.statusInProgress {
+  background: var(--accent-info);
+}
+
+.statusCompleted {
+  background: var(--accent-success);
+}
+
+.taskContent {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.taskTitle {
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.taskTitleCompleted {
+  text-decoration: line-through;
+  color: var(--text-tertiary);
+}
+
+.taskMeta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.taskTag {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+}
+
+.tagDefault {
+  background: rgba(0, 122, 255, 0.1);
+  color: var(--accent);
+}
+
+.tagWork {
+  background: rgba(0, 122, 255, 0.15);
+  color: var(--accent-info);
+}
+
+.tagLife {
+  background: rgba(52, 199, 89, 0.15);
+  color: var(--accent-success);
+}
+
+.tagLearn {
+  background: rgba(88, 86, 214, 0.15);
+  color: #5856d6;
+}
+
+.tagHealth {
+  background: rgba(255, 149, 0, 0.15);
+  color: var(--accent-warning);
+}
+
+.taskDate {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+.taskActions {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.taskCheckbox {
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--accent-muted);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: transparent;
+  padding: 0;
+}
+
+.taskCheckbox:hover {
+  border-color: var(--accent-success);
+}
+
+.taskCheckboxChecked {
+  background: var(--accent-success);
+  border-color: var(--accent-success);
+}
+
+.taskCheckbox svg {
+  width: 12px;
+  height: 12px;
+  color: white;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: all 0.2s ease;
+}
+
+.taskCheckboxChecked svg {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ==================== Quick Add ==================== */
+.quickAdd {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  margin-top: var(--space-3);
+  cursor: pointer;
+  transition: box-shadow 0.2s ease;
+}
+
+.quickAdd:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.quickAddPlus {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.quickAddPlus svg {
+  width: 18px;
+  height: 18px;
+  color: var(--accent);
+}
+
+.quickAddInput {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 15px;
+  color: var(--text-primary);
+  outline: none;
+  cursor: pointer;
+}
+
+.quickAddInput::placeholder {
+  color: var(--text-tertiary);
+}
+
+/* ==================== Empty State ==================== */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4) var(--space-3);
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.emptyIcon {
+  font-size: 32px;
+  margin-bottom: var(--space-2);
+}
+
+.emptyText {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+/* ==================== Responsive ==================== */
+@media (min-width: 768px) {
+  .homePage {
+    padding: var(--space-4) var(--space-4) 120px;
+  }
+
+  .headerTitle {
+    font-size: 34px;
+  }
+
+  .taskTitle {
+    font-size: 16px;
+  }
+}
