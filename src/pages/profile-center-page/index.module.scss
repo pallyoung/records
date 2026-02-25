@@ -15,7 +15,7 @@
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);  // 4 columns
+  grid-template-columns: repeat(2, 1fr);  /* 2列布局 */
   gap: 12px;
 }
 
@@ -27,16 +27,16 @@
   padding: 20px 12px;
   background: var(--bg-card);
   border: 1px solid var(--accent-tertiary);
-  border-radius: 16px;  // Large rounded corners
+  border-radius: 16px;
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);  // Soft shadow
 }
 
 .card:hover {
+  border-color: var(--accent-primary);
   background: var(--bg-secondary);
   transform: translateY(-2px);
-  border-color: var(--accent-primary);  // Terracotta accent
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
@@ -46,7 +46,7 @@
 }
 
 .cardIcon {
-  font-size: 28px;
+  font-size: 24px;
   margin-bottom: 8px;
 }
 
