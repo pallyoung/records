@@ -1,0 +1,409 @@
+/* Task Form - Shared component styles */
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 200ms ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.bottomSheet {
+  width: 100%;
+  max-width: 480px;
+  background: white;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  padding: var(--space-4);
+  padding-bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
+  animation: slideUp 300ms ease-out;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+/* Handle */
+.sheetHandle {
+  width: 36px;
+  height: 5px;
+  background: var(--text-muted);
+  border-radius: 3px;
+  margin: 0 auto var(--space-3);
+}
+
+/* Header */
+.sheetHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-3);
+}
+
+.sheetTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.deleteBtn {
+  background: none;
+  border: none;
+  color: #ff4d4f;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+
+  &:hover {
+    background: rgba(255, 77, 79, 0.1);
+  }
+}
+
+/* Status section */
+.statusSection {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.statusBtn {
+  flex: 1;
+  padding: 10px 16px;
+  border: 1px solid var(--border);
+  background: var(--bg-primary);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--text-secondary);
+
+  &:hover {
+    background: var(--bg-secondary);
+  }
+}
+
+.statusBtnActive {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+/* Input sections */
+.inputSection {
+  margin-bottom: var(--space-3);
+}
+
+.inputLabel {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-2);
+}
+
+/* Quick-add specific input */
+.sheetInputWrapper {
+  position: relative;
+}
+
+.sheetInput {
+  width: 100%;
+  min-height: 80px;
+  padding: 12px;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 17px;
+  background: var(--bg-primary);
+  resize: none;
+  font-family: inherit;
+  color: var(--text-primary);
+
+  &::placeholder {
+    color: var(--text-muted);
+  }
+
+  &:focus {
+    outline: none;
+  }
+}
+
+/* Detail textarea */
+.textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 16px;
+  resize: none;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+
+  &:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+}
+
+/* Dropdown */
+.dropdown {
+  position: absolute;
+  left: 0;
+  right: 0;
+  max-height: 200px;
+  overflow-y: auto;
+  background: white;
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+  margin-top: 4px;
+}
+
+.dropdownItem {
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  background: transparent;
+  text-align: left;
+  font-size: 15px;
+  color: var(--text-primary);
+  cursor: pointer;
+
+  &:hover {
+    background: var(--bg-primary);
+  }
+}
+
+.dropdownEmpty {
+  padding: 12px 16px;
+  font-size: 14px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* Tags */
+.tagsWrapper {
+  position: relative;
+}
+
+.selectedTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.tagChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: var(--accent);
+  color: white;
+  border-radius: 16px;
+  font-size: 13px;
+}
+
+.tagRemove {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 0;
+  font-size: 16px;
+  line-height: 1;
+  opacity: 0.8;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.noTags {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* Category section */
+.categorySection {
+  margin-top: var(--space-3);
+}
+
+.categoryLabel {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: var(--space-2);
+}
+
+.categoryList {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.categoryChip {
+  padding: 8px 16px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--bg-primary);
+  font-size: 14px;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: var(--bg-secondary);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+/* Time info */
+.timeInfo {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.timeItem {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  padding: 4px 0;
+}
+
+.timeLabel {
+  color: var(--text-secondary);
+}
+
+.timeValue {
+  color: var(--text-primary);
+}
+
+/* Time section */
+.timeSection {
+  margin-bottom: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border);
+}
+
+/* Progress section */
+.progressSection {
+  margin-bottom: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border);
+}
+
+.progressHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-2);
+}
+
+.progressLabel {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.progressValue {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.progressBarLarge {
+  width: 100%;
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s ease-out;
+}
+
+.progressNormal {
+  background: #3b82f6;
+}
+
+.progressCompleted {
+  background: #10b981;
+}
+
+.progressOverdue {
+  background: #ef4444;
+}
+
+.overdueInfo,
+.delayInfo {
+  margin-top: var(--space-2);
+  font-size: 13px;
+  color: #ef4444;
+}
+
+/* Action buttons */
+.sheetActions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.sheetBtnSecondary,
+.sheetBtnPrimary {
+  flex: 1;
+  padding: 14px;
+  border-radius: var(--radius-md);
+  font-size: 17px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: none;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.sheetBtnSecondary {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+
+  &:hover:not(:disabled) {
+    background: var(--bg-secondary);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+}
+
+.sheetBtnPrimary {
+  background: var(--accent);
+  color: white;
+
+  &:hover:not(:disabled) {
+    opacity: 0.9;
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+}

@@ -8,7 +8,7 @@ import {
   recordActions,
 } from "./store/recordStore";
 import { TabBar, type TabType } from "./components/tab-bar";
-import { QuickAdd } from "./components/quick-add";
+import { TaskForm } from "./components/task-form";
 import { TaskDetail } from "./components/task-detail";
 import { HomePage } from "./pages/home-page";
 import { TasksPage } from "./pages/tasks-page";
@@ -140,7 +140,8 @@ function AppContent() {
       <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
 
       {showQuickAdd && (
-        <QuickAdd
+        <TaskForm
+          mode="quick-add"
           visible={showQuickAdd}
           existingTags={tags}
           onClose={() => setShowQuickAdd(false)}
