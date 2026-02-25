@@ -62,7 +62,11 @@ interface DonutChartProps {
   strokeWidth?: number;
 }
 
-function DonutChart({ percentage, size = 72, strokeWidth = 8 }: DonutChartProps) {
+function DonutChart({
+  percentage,
+  size = 72,
+  strokeWidth = 8,
+}: DonutChartProps) {
   const radius = (size - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
   const offset = circumference - (percentage / 100) * circumference;
@@ -113,7 +117,10 @@ function StatsList({ items }: StatsListProps) {
     <div className={styles.statsList}>
       {items.map((item) => (
         <div key={item.label} className={styles.statItem}>
-          <span className={styles.statDot} style={{ backgroundColor: item.color }} />
+          <span
+            className={styles.statDot}
+            style={{ backgroundColor: item.color }}
+          />
           <span className={styles.statLabel}>{item.label}</span>
           <span className={styles.statCount}>{item.count}</span>
           <span className={styles.statPercent}>
@@ -196,6 +203,8 @@ function TrendChart({ data }: TrendChartProps) {
 export function InsightsPage() {
   const records = useRelaxValue(recordsState) as RecordType[];
   const [timeFilter, setTimeFilter] = useState<TimeFilter>("week");
+  const [customStartDate, setCustomStartDate] = useState<Date | null>(null);
+  const [customEndDate, setCustomEndDate] = useState<Date | null>(null);
 
   // 标签颜色映射
   const tagColorMap: Record<string, string> = {
@@ -221,6 +230,9 @@ export function InsightsPage() {
       case "year":
         startDate = getYearStart();
         break;
+      case "custom":
+        startDate = customStartDate || getWeekStart();
+        break;
       default:
         startDate = getWeekStart();
     }
@@ -228,7 +240,9 @@ export function InsightsPage() {
     // 筛选时间范围内的记录
     const filteredRecords = records.filter((record) => {
       const recordDate = record.createdAt;
-      return isInRange(new Date(recordDate), startDate, now);
+      const endDate =
+        timeFilter === "custom" && customEndDate ? customEndDate : now;
+      return isInRange(new Date(recordDate), startDate, endDate);
     });
 
     // 计算统计数据
@@ -244,9 +258,8 @@ export function InsightsPage() {
     const totalCount = filteredRecords.length;
 
     // 计算完成率
-    const completionRate = totalCount > 0
-      ? Math.round((completedCount / totalCount) * 100)
-      : 0;
+    const completionRate =
+      totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
 
     // 计算较上周的变化 (假设上周数据类似)
     const lastWeekChange = Math.round(Math.random() * 30 - 10); // 模拟数据
@@ -306,7 +319,7 @@ export function InsightsPage() {
       statusDistribution,
       trendData,
     };
-  }, [records, timeFilter, tagColorMap]);
+  }, [records, timeFilter, customStartDate, customEndDate, tagColorMap]);
 
   return (
     <div className={styles.insightsPage}>
@@ -334,6 +347,20 @@ export function InsightsPage() {
           onClick={() => setTimeFilter("year")}
         >
           本年
+        </button>
+        <button
+          className={`${styles.filterPill} ${timeFilter === "custom" ? styles.filterPillActive : ""}`}
+          onClick={() => {
+            // 设置默认自定义范围：最近30天
+            const endDate = new Date();
+            const startDate = new Date();
+            startDate.setDate(startDate.getDate() - 30);
+            setCustomStartDate(startDate);
+            setCustomEndDate(endDate);
+            setTimeFilter("custom");
+          }}
+        >
+          自定义
         </button>
       </div>
 
