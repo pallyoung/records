@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>首页原型</title>
+  <style>
+    :root {
+      --bg-primary: #f5f5f7;
+      --bg-card: #ffffff;
+      --accent: #007aff;
+      --accent-success: #34c759;
+      --accent-warning: #ff9500;
+      --accent-danger: #ff3b30;
+      --text-primary: #1d1d1f;
+      --text-secondary: #86868b;
+      --text-tertiary: #aeaeb2;
+      --radius-lg: 12px;
+      --radius-md: 10px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg-primary);
+      min-height: 100vh;
+      padding: 16px;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      background: var(--bg-primary);
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+
+    .header-left h1 {
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .header-left .date {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #1d1d1f;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    /* Stats Cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      padding: 16px 12px;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .stat-number {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .stat-number.danger {
+      color: var(--accent-danger);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    /* Section */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .section-more {
+      font-size: 13px;
+      color: var(--accent);
+      cursor: pointer;
+    }
+
+    /* Task List */
+    .task-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .task-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .checkbox {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid #d1d1d6;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .checkbox.checked {
+      background: var(--accent-success);
+      border-color: var(--accent-success);
+    }
+
+    .checkbox.checked::after {
+      content: '✓';
+      color: white;
+      font-size: 12px;
+    }
+
+    .task-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .task-title {
+      font-size: 15px;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .task-title.completed {
+      text-decoration: line-through;
+      color: var(--text-tertiary);
+    }
+
+    .task-tag {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: rgba(0,122,255,0.1);
+      color: var(--accent);
+      margin-left: 8px;
+    }
+
+    /* Quick Add */
+    .quick-add {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+    }
+
+    .quick-add:hover {
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    .quick-add-icon {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+      font-size: 20px;
+    }
+
+    .quick-add-input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-size: 15px;
+      color: var(--text-tertiary);
+      outline: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <div class="header-left">
+        <h1>今天</h1>
+        <div class="date">2月 26 日 周三</div>
+      </div>
+      <div class="avatar">👤</div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number">5</div>
+        <div class="stat-label">今日任务</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">3</div>
+        <div class="stat-label">已完成</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number danger">1</div>
+        <div class="stat-label">紧急任务</div>
+      </div>
+    </div>
+
+    <!-- Task Section -->
+    <div class="section-header">
+      <div class="section-title">今日待办 · 5</div>
+      <div class="section-more">全部</div>
+    </div>
+
+    <div class="task-list">
+      <div class="task-item">
+        <div class="checkbox"></div>
+        <div class="task-content">
+          <span class="task-title">完成项目提案文档</span>
+          <span class="task-tag">工作</span>
+        </div>
+      </div>
+      <div class="task-item">
+        <div class="checkbox checked"></div>
+        <div class="task-content">
+          <span class="task-title completed">Code Review</span>
+          <span class="task-tag">工作</span>
+        </div>
+      </div>
+      <div class="task-item">
+        <div class="checkbox"></div>
+        <div class="task-content">
+          <span class="task-title">回复团队邮件</span>
+          <span class="task-tag">工作</span>
+        </div>
+      </div>
+      <div class="task-item">
+        <div class="checkbox checked"></div>
+        <div class="task-content">
+          <span class="task-title completed">健身锻炼 30 分钟</span>
+          <span class="task-tag">生活</span>
+        </div>
+      </div>
+      <div class="task-item">
+        <div class="checkbox"></div>
+        <div class="task-content">
+          <span class="task-title">购买生活用品</span>
+          <span class="task-tag">生活</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Add -->
+    <div class="quick-add">
+      <div class="quick-add-icon">+</div>
+      <input type="text" class="quick-add-input" placeholder="添加任务... (支持自然语言)" readonly>
+    </div>
+  </div>
+</body>
+</html>

@@ -3,12 +3,6 @@ import styles from "./index.module.scss";
 import { useTags } from "../../hooks/useTags";
 import { useRelaxValue, recordsState } from "../../store/recordStore";
 import { TimeRangePicker } from "../time-range-picker";
-import {
-  calculateProgress,
-  isOverdue,
-  getOverdueDays,
-  getStartDelayDays,
-} from "../../utils/progress";
 import type { Record, RecordStatus } from "../../types";
 
 export type TaskFormMode = "quick-add" | "detail";
@@ -361,50 +355,6 @@ export function TaskForm({
           )}
         </div>
 
-        {/* Time info - only in detail mode */}
-        {!isQuickAdd && record && (
-          <div className={styles.timeInfo}>
-            {record.plannedStartTime && (
-              <div className={styles.timeItem}>
-                <span className={styles.timeLabel}>计划开始：</span>
-                <span className={styles.timeValue}>
-                  {new Date(record.plannedStartTime).toLocaleString("zh-CN")}
-                </span>
-              </div>
-            )}
-            {record.plannedEndTime && (
-              <div className={styles.timeItem}>
-                <span className={styles.timeLabel}>计划结束：</span>
-                <span className={styles.timeValue}>
-                  {new Date(record.plannedEndTime).toLocaleString("zh-CN")}
-                </span>
-              </div>
-            )}
-            {record.actualStartTime && (
-              <div className={styles.timeItem}>
-                <span className={styles.timeLabel}>实际开始：</span>
-                <span className={styles.timeValue}>
-                  {new Date(record.actualStartTime).toLocaleString("zh-CN")}
-                </span>
-              </div>
-            )}
-            {record.actualEndTime && (
-              <div className={styles.timeItem}>
-                <span className={styles.timeLabel}>实际结束：</span>
-                <span className={styles.timeValue}>
-                  {new Date(record.actualEndTime).toLocaleString("zh-CN")}
-                </span>
-              </div>
-            )}
-            <div className={styles.timeItem}>
-              <span className={styles.timeLabel}>创建时间：</span>
-              <span className={styles.timeValue}>
-                {new Date(record.createdAt).toLocaleString("zh-CN")}
-              </span>
-            </div>
-          </div>
-        )}
-
         {/* Time picker */}
         <div className={styles.timeSection}>
           <TimeRangePicker
@@ -414,44 +364,6 @@ export function TaskForm({
             onEndTimeChange={setPlannedEndTime}
           />
         </div>
-
-        {/* Progress display - only in detail mode */}
-        {!isQuickAdd && record && (
-          <div className={styles.progressSection}>
-            <div className={styles.progressHeader}>
-              <span className={styles.progressLabel}>进度</span>
-              <span className={styles.progressValue}>
-                {calculateProgress(record)}%
-              </span>
-            </div>
-            <div className={styles.progressBarLarge}>
-              <div
-                className={`${styles.progressFill} ${
-                  record.status === "completed"
-                    ? styles.progressCompleted
-                    : isOverdue(record)
-                      ? styles.progressOverdue
-                      : styles.progressNormal
-                }`}
-                style={{ width: `${calculateProgress(record)}%` }}
-              />
-            </div>
-
-            {/* Overdue info */}
-            {isOverdue(record) && (
-              <div className={styles.overdueInfo}>
-                已延期 {getOverdueDays(record)} 天
-              </div>
-            )}
-
-            {/* Start delay info */}
-            {getStartDelayDays(record) > 0 && (
-              <div className={styles.delayInfo}>
-                开始延期 {getStartDelayDays(record)} 天
-              </div>
-            )}
-          </div>
-        )}
 
         {/* Action buttons */}
         <div className={styles.sheetActions}>
