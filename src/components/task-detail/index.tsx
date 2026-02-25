@@ -7,6 +7,13 @@ import {
 } from "../../store/recordStore";
 import { useTags } from "../../hooks/useTags";
 import type { Record, RecordStatus } from "../../types";
+import { TimeRangePicker } from "../time-range-picker";
+import {
+  calculateProgress,
+  isOverdue,
+  getOverdueDays,
+  getStartDelayDays,
+} from "../../utils/progress";
 
 interface TaskDetailProps {
   recordId: string | null;
@@ -21,6 +28,8 @@ export function TaskDetail({ recordId, visible, onClose }: TaskDetailProps) {
   const [content, setContent] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [status, setStatus] = useState<RecordStatus>("pending");
+  const [plannedStartTime, setPlannedStartTime] = useState<Date | null>(null);
+  const [plannedEndTime, setPlannedEndTime] = useState<Date | null>(null);
 
   const { getFrequentTags } = useTags();
   const frequentTags = getFrequentTags(records, 5);
@@ -31,6 +40,8 @@ export function TaskDetail({ recordId, visible, onClose }: TaskDetailProps) {
       setContent(record.content);
       setTags(record.tags);
       setStatus(record.status);
+      setPlannedStartTime(record.plannedStartTime || null);
+      setPlannedEndTime(record.plannedEndTime || null);
     }
   }, [record]);
 
@@ -50,6 +61,8 @@ export function TaskDetail({ recordId, visible, onClose }: TaskDetailProps) {
       content: content.trim(),
       tags,
       status,
+      plannedStartTime: plannedStartTime || undefined,
+      plannedEndTime: plannedEndTime || undefined,
     });
     onClose();
   };
@@ -228,6 +241,52 @@ export function TaskDetail({ recordId, visible, onClose }: TaskDetailProps) {
               {new Date(record.createdAt).toLocaleString("zh-CN")}
             </span>
           </div>
+        </div>
+
+        {/* 时间选择器 */}
+        <div className={styles.timeSection}>
+          <TimeRangePicker
+            startTime={plannedStartTime}
+            endTime={plannedEndTime}
+            onStartTimeChange={setPlannedStartTime}
+            onEndTimeChange={setPlannedEndTime}
+          />
+        </div>
+
+        {/* 进度显示 */}
+        <div className={styles.progressSection}>
+          <div className={styles.progressHeader}>
+            <span className={styles.progressLabel}>进度</span>
+            <span className={styles.progressValue}>
+              {calculateProgress(record)}%
+            </span>
+          </div>
+          <div className={styles.progressBarLarge}>
+            <div
+              className={`${styles.progressFill} ${
+                record.status === "completed"
+                  ? styles.progressCompleted
+                  : isOverdue(record)
+                    ? styles.progressOverdue
+                    : styles.progressNormal
+              }`}
+              style={{ width: `${calculateProgress(record)}%` }}
+            />
+          </div>
+
+          {/* 延期信息 */}
+          {isOverdue(record) && (
+            <div className={styles.overdueInfo}>
+              已延期 {getOverdueDays(record)} 天
+            </div>
+          )}
+
+          {/* 开始延期信息 */}
+          {getStartDelayDays(record) > 0 && (
+            <div className={styles.delayInfo}>
+              开始延期 {getStartDelayDays(record)} 天
+            </div>
+          )}
         </div>
 
         {/* 操作按钮 */}

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import styles from "./index.module.scss";
 import { useTags } from "../../hooks/useTags";
 import { useRelaxValue, recordsState } from "../../store/recordStore";
+import { TimeRangePicker } from "../time-range-picker";
 
 interface QuickAddProps {
   visible: boolean;
@@ -11,6 +12,8 @@ interface QuickAddProps {
     content: string;
     tags: string[];
     status: "pending" | "in_progress" | "completed";
+    plannedStartTime?: Date;
+    plannedEndTime?: Date;
   }) => void;
 }
 
@@ -24,6 +27,8 @@ export function QuickAdd({
   const [status, setStatus] = useState<"pending" | "in_progress" | "completed">(
     "pending",
   );
+  const [plannedStartTime, setPlannedStartTime] = useState<Date | null>(null);
+  const [plannedEndTime, setPlannedEndTime] = useState<Date | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -67,6 +72,8 @@ export function QuickAdd({
     if (visible) {
       setContent("");
       setStatus("pending");
+      setPlannedStartTime(null);
+      setPlannedEndTime(null);
       setSearchQuery("");
       setShowDropdown(false);
       setTimeout(() => inputRef.current?.focus(), 100);
@@ -83,8 +90,16 @@ export function QuickAdd({
     if (!content.trim()) return;
     const tags = parseTagsFromContent(content);
     // 保留原始内容，包括 #标签
-    onSave({ content: content.trim(), tags, status });
+    onSave({
+      content: content.trim(),
+      tags,
+      status,
+      plannedStartTime: plannedStartTime || undefined,
+      plannedEndTime: plannedEndTime || undefined,
+    });
     setContent("");
+    setPlannedStartTime(null);
+    setPlannedEndTime(null);
     onClose();
   };
 
@@ -200,6 +215,16 @@ export function QuickAdd({
             </div>
           </div>
         )}
+
+        {/* 时间选择器 */}
+        <div className={styles.timeSection}>
+          <TimeRangePicker
+            startTime={plannedStartTime}
+            endTime={plannedEndTime}
+            onStartTimeChange={setPlannedStartTime}
+            onEndTimeChange={setPlannedEndTime}
+          />
+        </div>
 
         {/* 操作按钮 */}
         <div className={styles.sheetActions}>

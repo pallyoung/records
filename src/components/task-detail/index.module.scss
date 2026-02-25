@@ -315,3 +315,66 @@
   background: var(--border-color, #e0e0e0);
   cursor: not-allowed;
 }
+
+.timeSection {
+  margin-bottom: var(--space-4);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border-color, #e0e0e0);
+}
+
+.progressSection {
+  margin-bottom: var(--space-4);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border-color, #e0e0e0);
+}
+
+.progressHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-2);
+}
+
+.progressLabel {
+  font-size: 14px;
+  color: var(--text-secondary, #666);
+}
+
+.progressValue {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary, #1a1a1a);
+}
+
+.progressBarLarge {
+  width: 100%;
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s ease-out;
+}
+
+.progressNormal {
+  background: #3b82f6;
+}
+
+.progressCompleted {
+  background: #10b981;
+}
+
+.progressOverdue {
+  background: #ef4444;
+}
+
+.overdueInfo,
+.delayInfo {
+  margin-top: var(--space-2);
+  font-size: 13px;
+  color: #ef4444;
+}

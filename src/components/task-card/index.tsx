@@ -2,6 +2,11 @@ import type React from "react";
 import { IconCheck, IconMore } from "../../shared/icons";
 import type { Record, RecordStatus } from "../../types";
 import styles from "./index.module.scss";
+import {
+  calculateProgress,
+  isOverdue,
+  getOverdueDays,
+} from "../../utils/progress";
 
 interface TaskCardProps {
   record: Record;
@@ -80,6 +85,16 @@ export function TaskCard({
   showMenu = false,
 }: TaskCardProps) {
   const dateStr = formatTaskDate(record);
+  const progress = calculateProgress(record);
+  const overdue = isOverdue(record);
+  const overdueDays = getOverdueDays(record);
+
+  let progressClass = styles.progressNormal;
+  if (record.status === "completed") {
+    progressClass = styles.progressCompleted;
+  } else if (overdue) {
+    progressClass = styles.progressOverdue;
+  }
 
   const handleCheckboxClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -106,6 +121,17 @@ export function TaskCard({
         <div className={styles.taskMeta}>
           {dateStr && <span className={styles.taskDate}>{dateStr}</span>}
         </div>
+        {/* Progress bar */}
+        <div className={styles.progressBar}>
+          <div
+            className={`${styles.progressFill} ${progressClass}`}
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+        {/* Overdue badge */}
+        {overdue && overdueDays > 0 && (
+          <span className={styles.overdueBadge}>已延期 {overdueDays} 天</span>
+        )}
       </div>
       <div className={styles.taskActions}>
         <button

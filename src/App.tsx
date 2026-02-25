@@ -148,8 +148,10 @@ function AppContent() {
             await recordActions.addRecord({
               ...data,
               images: [],
+              // If user provided plannedStartTime, use it; otherwise if status is not pending, set to now
               plannedStartTime:
-                data.status !== "pending" ? new Date() : undefined,
+                data.plannedStartTime ||
+                (data.status !== "pending" ? new Date() : undefined),
             });
             setShowQuickAdd(false);
           }}
