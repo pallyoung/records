@@ -1,0 +1,23 @@
+.statsCard {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 16px 12px;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.statsNumber {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.statsNumber.danger {
+  color: var(--accent-danger);
+}
+
+.statsLabel {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
