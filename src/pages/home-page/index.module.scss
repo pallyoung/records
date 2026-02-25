@@ -51,94 +51,6 @@
   cursor: pointer;
 }
 
-/* ==================== Calendar Mini ==================== */
-.calendarMini {
-  background: var(--bg-card);
-  border-radius: var(--radius-lg);
-  padding: var(--space-3);
-  margin-bottom: var(--space-4);
-  box-shadow: var(--shadow-sm);
-}
-
-.calendarHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--space-3);
-}
-
-.calendarMonth {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.calendarNav {
-  display: flex;
-  gap: var(--space-1);
-}
-
-.calendarNav button {
-  width: 28px;
-  height: 28px;
-  border: none;
-  background: transparent;
-  color: var(--accent);
-  font-size: 18px;
-  cursor: pointer;
-  border-radius: var(--radius-sm);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s ease;
-}
-
-.calendarNav button:hover {
-  background: rgba(0, 122, 255, 0.1);
-}
-
-.calendarGrid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 2px;
-}
-
-.calendarWeekday {
-  text-align: center;
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--text-tertiary);
-  padding: var(--space-1) 0;
-}
-
-.calendarDay {
-  text-align: center;
-  font-size: 13px;
-  padding: var(--space-2) 0;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  color: var(--text-primary);
-  transition: background 0.2s ease;
-}
-
-.calendarDay:hover {
-  background: rgba(0, 122, 255, 0.1);
-}
-
-.calendarDay.today {
-  background: var(--accent);
-  color: white;
-  font-weight: 600;
-}
-
-.calendarDay.today:hover {
-  background: var(--accent);
-}
-
-.calendarDay.otherMonth {
-  color: var(--text-tertiary);
-}
-
 /* ==================== Filter Pills ==================== */
 .filterPills {
   display: flex;
@@ -436,4 +348,12 @@
   .taskTitle {
     font-size: 16px;
   }
+}
+
+/* ==================== Stats Grid ==================== */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: var(--space-4);
 }

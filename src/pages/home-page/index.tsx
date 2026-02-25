@@ -7,6 +7,7 @@ import {
 } from "../../store/recordStore";
 import { IconAdd } from "../../shared/icons";
 import { TaskCard } from "../../components/task-card";
+import { StatsCard } from "../../components/stats-card";
 import type { Record, RecordStatus, FilterState } from "../../types";
 import styles from "./index.module.scss";
 
@@ -34,16 +35,6 @@ function getTodayFormatted(): { title: string; date: string } {
   return { title: "今天", date: `${month} ${day} 日 ${weekday}` };
 }
 
-// 获取某月的天数
-function getDaysInMonth(year: number, month: number): number {
-  return new Date(year, month + 1, 0).getDate();
-}
-
-// 获取某月的第一天是星期几
-function getFirstDayOfMonth(year: number, month: number): number {
-  return new Date(year, month, 1).getDay();
-}
-
 // 格式化日期为 YYYY-MM-DD
 function formatDateKey(date: Date): string {
   const year = date.getFullYear();
@@ -58,126 +49,6 @@ function isSameDay(date1: Date, date2: Date): boolean {
     date1.getFullYear() === date2.getFullYear() &&
     date1.getMonth() === date2.getMonth() &&
     date1.getDate() === date2.getDate()
-  );
-}
-
-// CalendarMini 组件
-interface CalendarMiniProps {
-  onDateSelect?: (date: Date) => void;
-}
-
-function CalendarMini({ onDateSelect }: CalendarMiniProps) {
-  const [currentDate, setCurrentDate] = useState(new Date());
-
-  const year = currentDate.getFullYear();
-  const month = currentDate.getMonth();
-  const daysInMonth = getDaysInMonth(year, month);
-  const firstDay = getFirstDayOfMonth(year, month);
-
-  const monthNames = [
-    "一月",
-    "二月",
-    "三月",
-    "四月",
-    "五月",
-    "六月",
-    "七月",
-    "八月",
-    "九月",
-    "十月",
-    "十一月",
-    "十二月",
-  ];
-  const weekdays = ["日", "一", "二", "三", "四", "五", "六"];
-
-  // 生成日历格子
-  const calendarDays = useMemo(() => {
-    const today = new Date();
-    const days: { day: number; isToday: boolean; isCurrentMonth: boolean }[] =
-      [];
-
-    // 上个月的天数
-    const prevMonthDays = getDaysInMonth(year, month - 1);
-    for (let i = firstDay - 1; i >= 0; i--) {
-      days.push({
-        day: prevMonthDays - i,
-        isToday: false,
-        isCurrentMonth: false,
-      });
-    }
-
-    // 当月的天数
-    for (let i = 1; i <= daysInMonth; i++) {
-      days.push({
-        day: i,
-        isToday: isSameDay(new Date(year, month, i), today),
-        isCurrentMonth: true,
-      });
-    }
-
-    // 下个月的天数填满格子
-    const remaining = 42 - days.length;
-    for (let i = 1; i <= remaining; i++) {
-      days.push({
-        day: i,
-        isToday: false,
-        isCurrentMonth: false,
-      });
-    }
-
-    return days;
-  }, [year, month, daysInMonth, firstDay]);
-
-  const goToPrevMonth = () => {
-    setCurrentDate(new Date(year, month - 1, 1));
-  };
-
-  const goToNextMonth = () => {
-    setCurrentDate(new Date(year, month + 1, 1));
-  };
-
-  const handleDateClick = (dayInfo: {
-    day: number;
-    isCurrentMonth: boolean;
-  }) => {
-    if (!dayInfo.isCurrentMonth || onDateSelect) {
-      const selectedDate = new Date(year, month, dayInfo.day);
-      onDateSelect?.(selectedDate);
-    }
-  };
-
-  return (
-    <div className={styles.calendarMini}>
-      <div className={styles.calendarHeader}>
-        <span className={styles.calendarMonth}>
-          {monthNames[month]} {year}
-        </span>
-        <div className={styles.calendarNav}>
-          <button type="button" onClick={goToPrevMonth} aria-label="上个月">
-            ‹
-          </button>
-          <button type="button" onClick={goToNextMonth} aria-label="下个月">
-            ›
-          </button>
-        </div>
-      </div>
-      <div className={styles.calendarGrid}>
-        {weekdays.map((day) => (
-          <div key={day} className={styles.calendarWeekday}>
-            {day}
-          </div>
-        ))}
-        {calendarDays.map((dayInfo, index) => (
-          <div
-            key={index}
-            className={`${styles.calendarDay} ${dayInfo.isToday ? styles.today : ""} ${!dayInfo.isCurrentMonth ? styles.otherMonth : ""}`}
-            onClick={() => handleDateClick(dayInfo)}
-          >
-            {dayInfo.day}
-          </div>
-        ))}
-      </div>
-    </div>
   );
 }
 
@@ -200,6 +71,37 @@ export function HomePage({ onOpenQuickAdd, onEditRecord }: HomePageProps) {
 
   // 获取今天的日期格式化
   const todayFormatted = useMemo(() => getTodayFormatted(), []);
+
+  // 统计计算
+  const stats = useMemo(() => {
+    const today = new Date();
+    const todayStr = formatDateKey(today);
+
+    // 今日任务：所有日期为今天的任务
+    const todayRecords = records.filter((record) => {
+      const recordDate =
+        record.plannedEndTime || record.plannedStartTime || record.createdAt;
+      return formatDateKey(new Date(recordDate)) === todayStr;
+    });
+
+    // 已完成：今天且状态为 completed
+    const completedToday = todayRecords.filter(
+      (r) => r.status === "completed",
+    ).length;
+
+    // 紧急任务：截止日期 <= 今天
+    const urgentTasks = records.filter((r) => {
+      if (!r.plannedEndTime) return false;
+      const endDate = formatDateKey(new Date(r.plannedEndTime));
+      return endDate <= todayStr;
+    }).length;
+
+    return {
+      total: todayRecords.length,
+      completed: completedToday,
+      urgent: urgentTasks,
+    };
+  }, [records]);
 
   // 筛选今天的任务
   const todayRecords = useMemo(() => {
@@ -256,8 +158,12 @@ export function HomePage({ onOpenQuickAdd, onEditRecord }: HomePageProps) {
         </div>
       </div>
 
-      {/* CalendarMini */}
-      <CalendarMini />
+      {/* Stats Cards */}
+      <div className={styles.statsGrid}>
+        <StatsCard number={stats.total} label="今日任务" />
+        <StatsCard number={stats.completed} label="已完成" />
+        <StatsCard number={stats.urgent} label="紧急任务" variant="danger" />
+      </div>
 
       {/* Filter Pills */}
       <div className={styles.filterPills}>
