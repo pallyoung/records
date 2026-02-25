@@ -152,67 +152,6 @@ export function ProfileCenterPage({ onNavigate }: ProfileCenterPageProps) {
     font-size: 32px;
   }
 }
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-}
-
-.card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 24px 16px;
-  background: var(--bg-card);
-  border: 1px solid var(--accent-tertiary);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.card:hover {
-  background: var(--bg-secondary);
-  transform: translateY(-2px);
-  border-color: var(--accent-secondary);
-}
-
-.card:focus-visible {
-  outline: 2px solid var(--accent-primary);
-  outline-offset: 2px;
-}
-
-.cardIcon {
-  font-size: 32px;
-  margin-bottom: 12px;
-}
-
-.cardLabel {
-  font-size: var(--text-sm);
-  color: var(--text-primary);
-  font-weight: 500;
-}
-
-@media (min-width: 1025px) {
-  .profileCenter {
-    padding: 32px;
-  }
-
-  .grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-  }
-
-  .card {
-    padding: 32px 24px;
-  }
-
-  .cardIcon {
-    font-size: 40px;
-  }
-}
 ```
 
 **Step 3: Commit**
