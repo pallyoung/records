@@ -31,6 +31,10 @@ pnpm format   # Biome 自动格式化
 pnpm preview  # 预览构建产物
 ```
 
+### 环境配置
+
+需要连接后端（登录、同步、附件等）时，在 `app/` 下复制 `.env.example` 为 `.env.local`，设置 `VITE_API_URL`（如 `http://localhost:8080`）。详见根目录 README 与 `docs/PRD.md`。
+
 ## 主题
 
 支持浅色、深色、自动（跟随系统）三种主题模式。

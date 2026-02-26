@@ -3,6 +3,7 @@ import styles from "./index.module.scss";
 import { useTags } from "../../hooks/useTags";
 import { useRelaxValue, recordsState } from "../../store/recordStore";
 import { TimeRangePicker } from "../time-range-picker";
+import { uploadAttachment } from "../../services/api/attachments";
 import type { Record, RecordStatus } from "../../types";
 
 export type TaskFormMode = "quick-add" | "detail";
@@ -17,6 +18,7 @@ export interface TaskFormProps {
     content: string;
     tags: string[];
     status: "pending" | "in_progress" | "completed";
+    images?: string[];
     plannedStartTime?: Date;
     plannedEndTime?: Date;
     actualStartTime?: Date;

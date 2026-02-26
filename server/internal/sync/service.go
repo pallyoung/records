@@ -7,13 +7,21 @@ import (
 	"records/server/internal/observability"
 )
 
+// AttachmentLinker links file metadata to tasks (for sync attachment_ids).
+type AttachmentLinker interface {
+	LinkToTask(ctx context.Context, fileID, taskID, userID string) error
+	UnlinkFromTask(ctx context.Context, fileID, userID string) error
+	ListIDsByTaskID(ctx context.Context, taskID string) ([]string, error)
+}
+
 // Service handles sync push and pull (phase 1 + 2).
 type Service struct {
-	TaskRepo       TaskRepo
-	CursorRepo     CursorRepo
-	ChangeLogRepo  ChangeLogRepo
-	Metrics        observability.SyncMetrics
-	FailureTracker FailureTracker
+	TaskRepo        TaskRepo
+	CursorRepo      CursorRepo
+	ChangeLogRepo   ChangeLogRepo
+	AttachmentLinker AttachmentLinker // optional: links files to tasks when payload has attachment_ids
+	Metrics         observability.SyncMetrics
+	FailureTracker  FailureTracker
 }
 
 // Push applies a batch of operations for the user. Idempotent by op_id.
@@ -117,7 +125,16 @@ func (s *Service) applyCreate(ctx context.Context, userID string, op *Operation)
 		dueAt = &d
 	}
 	_, err := s.TaskRepo.CreateTask(ctx, userID, op.EntityID, title, status, dueAt)
-	return err
+	if err != nil {
+		return err
+	}
+	// Link attachments when payload includes attachment_ids
+	if s.AttachmentLinker != nil {
+		for _, fileID := range strSlicePayload(op.Payload, "attachment_ids") {
+			_ = s.AttachmentLinker.LinkToTask(ctx, fileID, op.EntityID, userID)
+		}
+	}
+	return nil
 }
 
 func (s *Service) applyUpdate(ctx context.Context, userID string, op *Operation) error {
@@ -127,6 +144,31 @@ func (s *Service) applyUpdate(ctx context.Context, userID string, op *Operation)
 	}
 	if op.BaseVersion > 0 && cur.Version != op.BaseVersion {
 		return errVersionMismatch
+	}
+	// Update attachment links when payload explicitly includes attachment_ids
+	if s.AttachmentLinker != nil && op.Payload != nil {
+		if _, hasKey := op.Payload["attachment_ids"]; hasKey {
+			newIDs := strSlicePayload(op.Payload, "attachment_ids")
+			curIDs, _ := s.AttachmentLinker.ListIDsByTaskID(ctx, op.EntityID)
+			curSet := make(map[string]bool)
+			for _, id := range curIDs {
+				curSet[id] = true
+			}
+			newSet := make(map[string]bool)
+			for _, id := range newIDs {
+				newSet[id] = true
+			}
+			for _, id := range curIDs {
+				if !newSet[id] {
+					_ = s.AttachmentLinker.UnlinkFromTask(ctx, id, userID)
+				}
+			}
+			for _, id := range newIDs {
+				if !curSet[id] {
+					_ = s.AttachmentLinker.LinkToTask(ctx, id, op.EntityID, userID)
+				}
+			}
+		}
 	}
 	// Copy so we don't mutate before UpdateTask
 	cur = copySnapshot(cur)
@@ -157,6 +199,9 @@ func (s *Service) makeChangeEntry(ctx context.Context, userID string, operation,
 	snap, _ := s.TaskRepo.GetTask(ctx, entityID, userID)
 	if snap != nil {
 		entry.Snapshot = copySnapshot(snap)
+		if entry.Snapshot != nil && s.AttachmentLinker != nil {
+			entry.Snapshot.AttachmentIDs, _ = s.AttachmentLinker.ListIDsByTaskID(ctx, entityID)
+		}
 	}
 	return entry
 }
@@ -178,6 +223,9 @@ func copySnapshot(s *TaskSnapshot) *TaskSnapshot {
 		deleted = &t3
 	}
 	t.DeletedAt = deleted
+	if s.AttachmentIDs != nil {
+		t.AttachmentIDs = append([]string(nil), s.AttachmentIDs...)
+	}
 	return &t
 }
 
@@ -211,4 +259,25 @@ func timePayload(p map[string]interface{}, key string) (time.Time, bool) {
 	default:
 		return time.Time{}, false
 	}
+}
+
+func strSlicePayload(p map[string]interface{}, key string) []string {
+	if p == nil {
+		return nil
+	}
+	v, ok := p[key]
+	if !ok {
+		return nil
+	}
+	sl, ok := v.([]interface{})
+	if !ok {
+		return nil
+	}
+	var out []string
+	for _, e := range sl {
+		if s, ok := e.(string); ok && s != "" {
+			out = append(out, s)
+		}
+	}
+	return out
 }

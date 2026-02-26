@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/joho/godotenv"
 	"records/server/internal/ai"
 	"records/server/internal/auth"
 	"records/server/internal/infra/config"
@@ -20,6 +21,10 @@ import (
 )
 
 func main() {
+	// 可选：从当前工作目录加载 .env（如 cd server && go run ./cmd/api）
+	// 文件不存在时忽略错误；已存在的环境变量不会被覆盖
+	_ = godotenv.Load(".env")
+
 	cfg := config.Load()
 
 	var db *sql.DB
@@ -84,6 +89,32 @@ func main() {
 	}
 	tasksHandler := &tasks.Handler{Service: &tasks.Service{Repo: taskRepo}}
 
+	var fileRepo storage.FileRepository
+	if db != nil {
+		fileRepo = storage.NewPostgresFileRepo(db)
+	} else {
+		fileRepo = storage.NewInMemoryFileRepo()
+	}
+	storageBucket := cfg.OSSBucket
+	if storageBucket == "" {
+		storageBucket = "attachments"
+	}
+	var presigner storage.Presigner = &storage.MockPresigner{}
+	if cfg.OSSEndpoint != "" && cfg.OSSAccessKeyID != "" && cfg.OSSAccessKeySecret != "" {
+		ossPresigner, err := storage.NewOSSPresigner(cfg.OSSEndpoint, cfg.OSSAccessKeyID, cfg.OSSAccessKeySecret)
+		if err != nil {
+			log.Fatalf("oss presigner: %v", err)
+		}
+		presigner = ossPresigner
+		log.Print("storage using Aliyun OSS presigner")
+	}
+	storageSvc := &storage.Service{
+		Presigner: presigner,
+		Repo:      fileRepo,
+		Bucket:    storageBucket,
+	}
+	storageHandler := &storage.Handler{Service: storageSvc}
+
 	syncTaskRepo := sync.TaskRepoFromTasksRepo(taskRepo)
 	syncMetrics := &observability.MemMetrics{}
 	var cursorRepo sync.CursorRepo
@@ -96,26 +127,14 @@ func main() {
 		changeLogRepo = sync.NewInMemoryChangeLogRepo()
 	}
 	syncSvc := &sync.Service{
-		TaskRepo:       syncTaskRepo,
-		CursorRepo:     cursorRepo,
-		ChangeLogRepo:  changeLogRepo,
-		Metrics:        syncMetrics,
-		FailureTracker: sync.NewMemFailureTracker(0), // 0 = default budget 3
+		TaskRepo:         syncTaskRepo,
+		CursorRepo:       cursorRepo,
+		ChangeLogRepo:    changeLogRepo,
+		AttachmentLinker: storageSvc,
+		Metrics:          syncMetrics,
+		FailureTracker:   sync.NewMemFailureTracker(0),
 	}
 	syncHandler := &sync.Handler{Service: syncSvc, Metrics: syncMetrics}
-
-	var fileRepo storage.FileRepository
-	if db != nil {
-		fileRepo = storage.NewPostgresFileRepo(db)
-	} else {
-		fileRepo = storage.NewInMemoryFileRepo()
-	}
-	storageSvc := &storage.Service{
-		Presigner: &storage.MockPresigner{},
-		Repo:      fileRepo,
-		Bucket:    "attachments",
-	}
-	storageHandler := &storage.Handler{Service: storageSvc}
 
 	var aiLogRepo ai.RequestLogRepo
 	if db != nil {
@@ -123,8 +142,13 @@ func main() {
 	} else {
 		aiLogRepo = ai.NewInMemoryRequestLogRepo()
 	}
+	var aiProvider ai.Provider = &ai.MockProvider{Content: ""}
+	if cfg.AIApiURL != "" && cfg.AIApiKey != "" {
+		aiProvider = ai.NewOpenAIProvider(cfg.AIApiURL, cfg.AIApiKey, cfg.AIDefaultModel)
+		log.Print("ai using OpenAI-compatible provider")
+	}
 	aiSvc := &ai.Service{
-		Provider: &ai.MockProvider{Content: ""},
+		Provider: aiProvider,
 		LogRepo:  aiLogRepo,
 		Timeout:  30 * time.Second,
 	}

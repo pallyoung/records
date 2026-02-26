@@ -105,6 +105,72 @@
   margin-bottom: var(--space-3);
 }
 
+/* Image upload */
+.imageSection {
+  margin-bottom: var(--space-4);
+}
+
+.imageRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.fileInput {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  overflow: hidden;
+}
+
+.addImageBtn {
+  padding: 8px 14px;
+  font-size: var(--text-sm);
+  color: var(--accent);
+  background: var(--bg-secondary);
+  border: 1px dashed var(--accent);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background: rgba(196, 164, 132, 0.1);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.uploadError {
+  margin-top: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--danger);
+}
+
+.imageList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.imageChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: var(--bg-secondary);
+  border-radius: 16px;
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.imageChipLabel {
+  margin-right: 2px;
+}
+
 .inputLabel {
   display: block;
   font-size: var(--text-base);

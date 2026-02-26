@@ -26,14 +26,15 @@ type TaskRepo interface {
 
 // TaskSnapshot is the task shape used by sync (id, version, fields).
 type TaskSnapshot struct {
-	ID        string
-	UserID    string
-	Title     string
-	Status    string
-	DueAt     *time.Time
-	Version   int64
-	UpdatedAt time.Time
-	DeletedAt *time.Time
+	ID             string
+	UserID         string
+	Title          string
+	Status         string
+	DueAt          *time.Time
+	Version        int64
+	UpdatedAt      time.Time
+	DeletedAt      *time.Time
+	AttachmentIDs   []string // file IDs linked to this task
 }
 
 // CursorRepo stores and advances cursor per user, and tracks applied op_id for idempotency.

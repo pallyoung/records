@@ -189,8 +189,7 @@ function AppContent() {
           onSave={async (data) => {
             await recordActions.addRecord({
               ...data,
-              images: [],
-              // If user provided plannedStartTime, use it; otherwise if status is not pending, set to now
+              images: data.images ?? [],
               plannedStartTime:
                 data.plannedStartTime ||
                 (data.status !== "pending" ? new Date() : undefined),
@@ -212,7 +211,10 @@ function AppContent() {
           }}
           onSave={async (data) => {
             if (!selectedTaskId) return;
-            await recordActions.updateRecord(selectedTaskId, data);
+            await recordActions.updateRecord(selectedTaskId, {
+              ...data,
+              ...(data.images !== undefined && { images: data.images }),
+            });
             setShowTaskDetail(false);
             setSelectedTaskId(null);
           }}

@@ -112,19 +112,51 @@ bash scripts/generate-types.sh
 
 表结构说明见 **[server/docs/SCHEMA.md](server/docs/SCHEMA.md)**；迁移文件位于 `server/migrations/`。
 
-### 环境变量摘要
+### 环境配置
 
-| 作用域   | 变量           | 说明                    |
-|----------|----------------|-------------------------|
-| 前端构建/开发 | `VITE_API_URL` | 后端 API 根地址，如 `https://api.example.com` |
-| 后端     | `PORT`         | 服务监听端口，默认 8080 |
-| 后端     | `JWT_SECRET`   | JWT 签名密钥，必填       |
-| 后端     | `DATABASE_URL` | PostgreSQL 连接串；配置后启用持久化 |
-| 后端     | `REDIS_URL`    | Redis 连接串（可选，用于刷新令牌存储） |
-| 后端     | `CORS_ORIGINS` | CORS 允许来源（逗号分隔；`*`=全部；空=不启用） |
-| 后端     | `RATE_LIMIT_AUTH` | 登录/注册每 IP 每分钟请求上限（0=不限制） |
+#### 配置文件示例
 
-更多后端配置见 `server/.env.example`。
+| 作用域 | 文件 | 说明 |
+|--------|------|------|
+| 后端 | `server/.env.example` | 复制为 `server/.env`，按需取消注释并填写 |
+| 前端 | `app/.env.example` | 开发时复制为 `app/.env.local`，或构建时传入环境变量 |
+
+#### 后端环境变量（server）
+
+| 变量 | 必填 | 说明 | 默认或行为 |
+|------|------|------|------------|
+| `PORT` | 否 | 服务监听端口 | 8080 |
+| `JWT_SECRET` | 是 | JWT 签名密钥 | 无默认，生产必改 |
+| `DATABASE_URL` | 否 | PostgreSQL 连接串 | 不配则内存存储 |
+| `REDIS_URL` | 否 | Redis 连接串 | 不配则刷新令牌用 Postgres 或内存 |
+| `CORS_ORIGINS` | 否 | CORS 允许来源（逗号分隔） | 空=不启用；`*`=全部 |
+| `RATE_LIMIT_AUTH` | 否 | 登录/注册每 IP 每分钟上限 | 0=不限制 |
+| `OSS_ENDPOINT` | 否 | 阿里云 OSS Endpoint | 与下两项齐配才启用 OSS |
+| `OSS_ACCESS_KEY_ID` | 否 | 阿里云 AccessKey ID | 同上 |
+| `OSS_ACCESS_KEY_SECRET` | 否 | 阿里云 AccessKey Secret | 同上 |
+| `OSS_BUCKET` | 否 | OSS 桶名 | 不配则用 `attachments` |
+| `AI_API_URL` | 否 | OpenAI 兼容 API 根地址 | 与 `AI_API_KEY` 齐配才启用 |
+| `AI_API_KEY` | 否 | API Key | 同上 |
+| `AI_DEFAULT_MODEL` | 否 | 默认模型名 | 不配则 `gpt-3.5-turbo` |
+
+#### 前端环境变量（app）
+
+| 变量 | 必填 | 说明 |
+|------|------|------|
+| `VITE_API_URL` | 否 | 后端 API 根地址（如 `http://localhost:8080`）；不配则无法登录与云端同步 |
+
+`.env.example` 不会被加载，仅作模板。复制为 `app/.env.local` 后，由 **Vite** 在 `app/` 目录下自动加载（`root: "app"`）；仅 `VITE_` 前缀变量会暴露给前端。
+
+#### 谁在什么时候加载 .env / .env.local？
+
+| 端 | 谁加载 | 何时、何处 | 控制位置 |
+|----|--------|------------|----------|
+| **前端** | **Vite** | 启动/构建时，从项目根（本仓库为 `app/`）按顺序读文件，后加载的覆盖先加载的同名变量；已存在的进程环境变量优先级最高 | Vite 内置逻辑，不可配置；见 [Vite Env and Mode](https://vitejs.dev/guide/env-and-mode) |
+| **后端** | **godotenv** + **os** | 进程启动时，`main()` 里先执行 `godotenv.Load(".env")`（从**当前工作目录**找 `.env`，可选、不存在不报错），再 `config.Load()` 读 `os.Getenv(...)`；已存在的环境变量不会被 .env 覆盖 | `server/cmd/api/main.go` |
+
+**前端 Vite 加载顺序（后者覆盖前者）：**  
+`.env` → `.env.local` → `.env.[mode]`（如 `.env.development`）→ `.env.[mode].local`。  
+后端只认当前工作目录下的 `.env`（通常 `cd server` 后运行，即 `server/.env`）；没有 `.env.local` 的区分。
 
 ## 文档与规范
 

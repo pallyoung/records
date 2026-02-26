@@ -116,6 +116,21 @@ func (s *Service) DownloadURL(ctx context.Context, fileID, userID string) (*Down
 	}, nil
 }
 
+// LinkToTask links an uploaded file to a task (for sync attachment_ids).
+func (s *Service) LinkToTask(ctx context.Context, fileID, taskID, userID string) error {
+	return s.Repo.LinkToTask(ctx, fileID, taskID, userID)
+}
+
+// UnlinkFromTask removes the task link from a file.
+func (s *Service) UnlinkFromTask(ctx context.Context, fileID, userID string) error {
+	return s.Repo.UnlinkFromTask(ctx, fileID, userID)
+}
+
+// ListIDsByTaskID returns file IDs linked to the given task.
+func (s *Service) ListIDsByTaskID(ctx context.Context, taskID string) ([]string, error) {
+	return s.Repo.ListIDsByTaskID(ctx, taskID)
+}
+
 func objectKeyForUser(userID, filename string) string {
 	ext := path.Ext(filename)
 	if ext == "" {

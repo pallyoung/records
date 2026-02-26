@@ -1,5 +1,6 @@
 import type React from "react";
 import { IconCheck, IconMore } from "../../shared/icons";
+import { AttachmentImage } from "../attachment-image";
 import type { Record, RecordStatus } from "../../types";
 import styles from "./index.module.scss";
 import {
@@ -152,7 +153,7 @@ export function TaskCard({
   const dateStr = formatTaskDate(record);
   const progress = calculateProgress(record);
   const overdue = isOverdue(record);
-  const overdueDays = getOverdueDays(record);
+  const _overdueDays = getOverdueDays(record);
   const timeReminder = getTimeReminder(record);
   const startDelayDays = getStartDelayDays(record);
 

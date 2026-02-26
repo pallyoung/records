@@ -27,6 +27,8 @@ export interface PullChange {
     Status?: string;
     DueAt?: string | null;
     Version?: number;
+    AttachmentIDs?: string[];
+    attachment_ids?: string[];
   };
   deleted?: boolean;
 }

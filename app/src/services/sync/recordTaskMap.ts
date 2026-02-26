@@ -1,11 +1,12 @@
 import type { Record } from "../../types";
 import type { PullChange } from "./syncEngine";
 
-/** Server task payload for sync push (title, status, due_at). */
+/** Server task payload for sync push (title, status, due_at, attachment_ids). */
 export interface TaskPayload {
   title: string;
   status: string;
   due_at?: string;
+  attachment_ids?: string[];
 }
 
 /**
@@ -18,11 +19,15 @@ export function recordToPayload(record: Record): TaskPayload {
       : "Untitled";
   const dueAt =
     record.plannedEndTime ?? record.plannedStartTime ?? undefined;
-  return {
+  const payload: TaskPayload = {
     title,
     status: record.status,
     ...(dueAt && { due_at: dueAt instanceof Date ? dueAt.toISOString() : String(dueAt) }),
   };
+  if (record.images?.length) {
+    payload.attachment_ids = [...record.images];
+  }
+  return payload;
 }
 
 /**
@@ -57,11 +62,14 @@ export function snapshotToRecord(
       ? snapshot.Version
       : 1;
 
+  const attachmentIds =
+    (snapshot as { AttachmentIDs?: string[] }).AttachmentIDs ??
+    (snapshot as { attachment_ids?: string[] }).attachment_ids;
   const partial: Partial<Record> & { id: string } = {
     id: snapshot.ID,
     content,
     status,
-    images: [],
+    images: Array.isArray(attachmentIds) ? [...attachmentIds] : [],
     tags: [],
     updatedAt,
     version,
