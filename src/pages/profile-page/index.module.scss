@@ -13,8 +13,8 @@
 }
 
 .headerTitle {
-  font-size: 28px;
-  font-weight: 600;
+  font-size: var(--text-xl);
+  font-weight: 300;
   color: var(--text-primary);
   margin: 0;
   line-height: 1.2;
@@ -40,8 +40,8 @@
   align-items: center;
   justify-content: center;
   color: white;
-  font-size: 24px;
-  font-weight: 600;
+  font-size: var(--text-xl);
+  font-weight: 300;
 }
 
 .userInfo {
@@ -49,15 +49,15 @@
 }
 
 .username {
-  font-size: 18px;
-  font-weight: 600;
+  font-size: var(--text-lg);
+  font-weight: 400;
   color: var(--text-primary);
   margin-bottom: 4px;
 }
 
 .logoutBtn {
   padding: 6px 12px;
-  font-size: 13px;
+  font-size: var(--text-sm);
   background: transparent;
   border: 1px solid var(--border-color);
   border-radius: 8px;
@@ -86,16 +86,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 32px;
-  font-weight: 600;
+  font-size: var(--text-2xl);
+  font-weight: 300;
   color: white;
   margin-bottom: var(--space-3);
   box-shadow: var(--shadow-md);
 }
 
 .profileName {
-  font-size: 22px;
-  font-weight: 600;
+  font-size: var(--text-xl);
+  font-weight: 300;
   color: var(--text-primary);
   margin-bottom: var(--space-4);
 }
@@ -115,14 +115,14 @@
 }
 
 .profileStatValue {
-  font-size: 24px;
-  font-weight: 700;
+  font-size: var(--text-xl);
+  font-weight: 400;
   color: var(--text-primary);
   margin-bottom: 2px;
 }
 
 .profileStatLabel {
-  font-size: 12px;
+  font-size: var(--text-sm);
   color: var(--text-secondary);
 }
 
@@ -132,8 +132,8 @@
 }
 
 .sectionTitle {
-  font-size: 15px;
-  font-weight: 600;
+  font-size: var(--text-base);
+  font-weight: 400;
   color: var(--text-primary);
   margin-bottom: var(--space-2);
 }
@@ -189,7 +189,7 @@
 }
 
 .settingsLabel {
-  font-size: 15px;
+  font-size: var(--text-base);
   color: var(--text-primary);
 }
 
@@ -200,7 +200,7 @@
 }
 
 .settingsArrow {
-  font-size: 20px;
+  font-size: var(--text-lg);
   color: var(--text-tertiary);
   font-weight: 300;
 }
@@ -216,7 +216,7 @@
 
 .themeOption {
   padding: 4px 10px;
-  font-size: 12px;
+  font-size: var(--text-sm);
   border: none;
   background: transparent;
   color: var(--text-secondary);
@@ -242,20 +242,20 @@
   }
 
   .headerTitle {
-    font-size: 34px;
+    font-size: var(--text-2xl);
   }
 
   .profileAvatar {
     width: 100px;
     height: 100px;
-    font-size: 40px;
+    font-size: var(--text-2xl);
   }
 
   .profileName {
-    font-size: 26px;
+    font-size: var(--text-xl);
   }
 
   .profileStatValue {
-    font-size: 28px;
+    font-size: var(--text-xl);
   }
 }
