@@ -63,7 +63,8 @@
   }
 
   .greeting {
-    font-size: 28px;
+    font-size: var(--text-xl);
+    font-weight: 300;
   }
 }
 
@@ -152,8 +153,8 @@
 }
 
 .page-placeholder h2 {
-  font-size: 24px;
-  font-weight: 600;
+  font-size: var(--text-xl);
+  font-weight: 300;
   color: var(--text-primary);
   margin: 0 0 8px 0;
 }
@@ -171,8 +172,8 @@
 }
 
 .greeting {
-  font-size: 24px;
-  font-weight: 600;
+  font-size: var(--text-xl);
+  font-weight: 300;
   color: var(--text-primary);
   margin: 0 0 4px 0;
 }
