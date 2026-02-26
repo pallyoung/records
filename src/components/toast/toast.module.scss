@@ -23,9 +23,11 @@
   color: white;
   background: rgba(0, 0, 0, 0.75);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  white-space: nowrap;
+  white-space: normal;
+  max-width: calc(100vw - 32px);
   pointer-events: auto;
   animation: toastEnter 0.3s ease-out;
+  text-align: center;
 }
 
 .toastExiting {

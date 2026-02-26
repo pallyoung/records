@@ -3,6 +3,9 @@ import {
   useContext,
   useState,
   useCallback,
+  useRef,
+  useEffect,
+  useMemo,
   type ReactNode,
 } from "react";
 import styles from "./toast.module.scss";
@@ -24,10 +27,13 @@ interface ToastContextValue {
 
 const ToastContext = createContext<ToastContextValue | null>(null);
 
-let toastId = 0;
-let toastFunction:
-  | ((message: string, type?: ToastType, duration?: number) => void)
-  | null = null;
+// Use refs to avoid global mutable state
+const toastIdRef = { current: 0 };
+const toastFunctionRef = {
+  current: null as
+    | ((message: string, type?: ToastType, duration?: number) => void)
+    | null,
+};
 
 interface ToastContainerProps {
   children?: ReactNode;
@@ -36,49 +42,78 @@ interface ToastContainerProps {
 export function ToastContainer({ children }: ToastContainerProps) {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
+  // Track timeouts to clean up on unmount
+  const timeoutIdsRef = useRef<number[]>([]);
+
   const removeToast = useCallback((id: number) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
+  // Cleanup timeouts on unmount
+  useEffect(() => {
+    return () => {
+      for (const id of timeoutIdsRef.current) {
+        clearTimeout(id);
+      }
+      timeoutIdsRef.current = [];
+    };
+  }, []);
+
   const addToast = useCallback(
     (message: string, type: ToastType = "info", duration: number = 2000) => {
-      const id = ++toastId;
+      toastIdRef.current += 1;
+      const id = toastIdRef.current;
 
       // Add new toast
       setToasts((prev) => [...prev, { id, message, type, duration }]);
 
       // Auto remove after duration
-      setTimeout(() => {
+      const exitTimeoutId = window.setTimeout(() => {
         // Mark as exiting for animation
         setToasts((prev) =>
           prev.map((t) => (t.id === id ? { ...t, exiting: true } : t)),
         );
 
         // Actually remove after exit animation
-        setTimeout(() => {
+        const removeTimeoutId = window.setTimeout(() => {
           removeToast(id);
+          // Clean up timeout references
+          timeoutIdsRef.current = timeoutIdsRef.current.filter(
+            (tid) => tid !== exitTimeoutId && tid !== removeTimeoutId,
+          );
         }, 300);
+
+        timeoutIdsRef.current.push(removeTimeoutId);
       }, duration);
+
+      timeoutIdsRef.current.push(exitTimeoutId);
     },
     [removeToast],
   );
 
   // Store toast function for external access
-  toastFunction = addToast;
+  toastFunctionRef.current = addToast;
 
-  // Context value with toast function
-  const contextValue: ToastContextValue = {
-    toast: addToast,
-  };
+  // Memoize context value to prevent unnecessary re-renders
+  const contextValue = useMemo<ToastContextValue>(
+    () => ({ toast: addToast }),
+    [addToast],
+  );
 
   return (
     <ToastContext.Provider value={contextValue}>
       {children}
-      <div className={styles.container}>
+      <div
+        className={styles.container}
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+      >
         {toasts.map((t) => (
           <div
             key={t.id}
             className={`${styles.toast} ${styles[t.type]} ${t.exiting ? styles.toastExiting : ""}`}
+            role="alert"
           >
             {t.message}
           </div>
@@ -115,8 +150,8 @@ export function toast(
   type?: ToastType,
   duration?: number,
 ): void {
-  if (toastFunction) {
-    toastFunction(message, type ?? "info", duration ?? 2000);
+  if (toastFunctionRef.current) {
+    toastFunctionRef.current(message, type ?? "info", duration ?? 2000);
   } else {
     console.warn(
       "ToastContainer is not mounted. Please wrap your app with ToastContainer.",
