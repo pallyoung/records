@@ -37,11 +37,19 @@ func main() {
 		db = conn
 		log.Print("database connected")
 	}
-	_ = db // used when wiring PostgreSQL repos in B3+
 
+	var userRepo auth.UserRepository
+	var tokenRepo auth.RefreshTokenRepository
+	if db != nil {
+		userRepo = auth.NewPostgresUserRepo(db)
+		tokenRepo = auth.NewPostgresRefreshRepo(db)
+	} else {
+		userRepo = auth.NewInMemoryUserRepo()
+		tokenRepo = auth.NewInMemoryRefreshRepo()
+	}
 	authSvc := &auth.AuthService{
-		Users:     auth.NewInMemoryUserRepo(),
-		Tokens:    auth.NewInMemoryRefreshRepo(),
+		Users:     userRepo,
+		Tokens:    tokenRepo,
 		JWTSecret: cfg.JWTSecret,
 	}
 	authHandler := &auth.Handler{Service: authSvc}
