@@ -111,11 +111,6 @@ export function ConfirmDialog({ children }: ConfirmDialogProps) {
             aria-modal="true"
             aria-labelledby={options.title ? titleId : undefined}
             aria-describedby={messageId}
-            onClick={(e) => {
-              if (e.target === e.currentTarget) {
-                closeDialog(false);
-              }
-            }}
           >
             <div className={styles.dialog} id={dialogId}>
               {options.title && (
