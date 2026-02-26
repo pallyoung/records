@@ -3,8 +3,10 @@ package config
 import "os"
 
 type Config struct {
-	Port      string
-	JWTSecret string
+	Port         string
+	JWTSecret    string
+	DatabaseURL  string
+	RedisURL     string
 }
 
 func Load() Config {
@@ -16,9 +18,13 @@ func Load() Config {
 	if jwtSecret == "" {
 		jwtSecret = "dev-secret-change-in-production"
 	}
+	databaseURL := os.Getenv("DATABASE_URL")
+	redisURL := os.Getenv("REDIS_URL")
 
 	return Config{
-		Port:      port,
-		JWTSecret: jwtSecret,
+		Port:        port,
+		JWTSecret:   jwtSecret,
+		DatabaseURL: databaseURL,
+		RedisURL:    redisURL,
 	}
 }

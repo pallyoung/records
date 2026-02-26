@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+	"database/sql"
 	"log"
 	"net/http"
 	"time"
@@ -8,6 +10,7 @@ import (
 	"records/server/internal/ai"
 	"records/server/internal/auth"
 	"records/server/internal/infra/config"
+	infradb "records/server/internal/infra/db"
 	serverhttp "records/server/internal/infra/http"
 	"records/server/internal/observability"
 	"records/server/internal/storage"
@@ -17,6 +20,24 @@ import (
 
 func main() {
 	cfg := config.Load()
+
+	var db *sql.DB
+	if cfg.DatabaseURL != "" {
+		conn, err := infradb.Open(cfg.DatabaseURL)
+		if err != nil {
+			log.Fatalf("database open: %v", err)
+		}
+		defer conn.Close()
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		if err := infradb.Ping(ctx, conn); err != nil {
+			cancel()
+			log.Fatalf("database ping: %v", err)
+		}
+		cancel()
+		db = conn
+		log.Print("database connected")
+	}
+	_ = db // used when wiring PostgreSQL repos in B3+
 
 	authSvc := &auth.AuthService{
 		Users:     auth.NewInMemoryUserRepo(),
