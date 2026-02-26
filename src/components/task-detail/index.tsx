@@ -8,6 +8,7 @@ import {
 import { useTags } from "../../hooks/useTags";
 import type { Record, RecordStatus } from "../../types";
 import { TimeRangePicker } from "../time-range-picker";
+import { confirm } from "../confirm/ConfirmDialog";
 import {
   calculateProgress,
   isOverdue,
@@ -67,9 +68,10 @@ export function TaskDetail({ recordId, visible, onClose }: TaskDetailProps) {
     onClose();
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!recordId) return;
-    if (confirm("确定要删除这个任务吗？")) {
+    const ok = await confirm({ message: "确定要删除这个任务吗？" });
+    if (ok) {
       recordActions.deleteRecord(recordId);
       onClose();
     }
