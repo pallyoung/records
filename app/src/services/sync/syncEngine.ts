@@ -1,5 +1,6 @@
 import { session } from "../auth/session";
 import { createApiClient, getApiBaseUrl } from "../api/client";
+import { db } from "../../db";
 import { syncQueue } from "./syncQueue";
 
 const CURSOR_KEY = "sync_cursor";
@@ -76,13 +77,25 @@ export function startSyncEngine(onPullChanges?: OnPullChanges): void {
     const pending = syncQueue.getPending();
     if (pending.length === 0) return;
     client
-      .post<{ applied: string[]; conflicts: unknown[]; new_cursor: string }>(
-        "/sync/push",
-        { operations: pending },
-      )
+      .post<{
+        applied: string[];
+        conflicts: Array<{ op_id?: string; latest?: { Version?: number } }>;
+        new_cursor: string;
+      }>("/sync/push", { operations: pending })
       .then((res) => {
         syncQueue.markApplied(res.applied);
         setCursor(res.new_cursor);
+        if (res.conflicts?.length && pending.length > 0) {
+          const byOpId = new Map(pending.map((op) => [op.op_id, op]));
+          for (const c of res.conflicts) {
+            const op = c.op_id ? byOpId.get(c.op_id) : undefined;
+            const entityId = op?.entity_id;
+            const version = c.latest?.Version;
+            if (entityId != null && typeof version === "number" && version > 0) {
+              db.records.update(entityId, { version });
+            }
+          }
+        }
       })
       .catch(() => {
         // Retry later
