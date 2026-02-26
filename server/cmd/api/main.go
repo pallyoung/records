@@ -7,19 +7,36 @@ import (
 	"records/server/internal/auth"
 	"records/server/internal/infra/config"
 	serverhttp "records/server/internal/infra/http"
+	"records/server/internal/sync"
+	"records/server/internal/tasks"
 )
 
 func main() {
 	cfg := config.Load()
 
 	authSvc := &auth.AuthService{
-		Users:      auth.NewInMemoryUserRepo(),
-		Tokens:     auth.NewInMemoryRefreshRepo(),
-		JWTSecret:  cfg.JWTSecret,
+		Users:     auth.NewInMemoryUserRepo(),
+		Tokens:    auth.NewInMemoryRefreshRepo(),
+		JWTSecret: cfg.JWTSecret,
 	}
 	authHandler := &auth.Handler{Service: authSvc}
 
-	router := serverhttp.NewRouter(authHandler)
+	taskRepo := tasks.NewInMemoryRepo()
+	tasksHandler := &tasks.Handler{Service: &tasks.Service{Repo: taskRepo}}
+
+	syncTaskRepo := sync.TaskRepoFromTasksRepo(taskRepo)
+	syncSvc := &sync.Service{
+		TaskRepo:   syncTaskRepo,
+		CursorRepo: sync.NewInMemoryCursorRepo(),
+	}
+	syncHandler := &sync.Handler{Service: syncSvc}
+
+	router := serverhttp.NewRouter(serverhttp.RouterDeps{
+		AuthHandler:  authHandler,
+		TasksHandler: tasksHandler,
+		SyncHandler:  syncHandler,
+		JWTSecret:    cfg.JWTSecret,
+	})
 
 	addr := ":" + cfg.Port
 	log.Printf("api listening on %s", addr)
