@@ -8,10 +8,10 @@ export class RecordsDatabase extends Dexie {
 
   constructor() {
     super("RecordsDB");
-    this.version(2).stores({
-      records: "id, status, createdAt, *tags",
-      habits: "++id, name, frequency, createdAt",
-      habitLogs: "++id, habitId, date",
+    this.version(3).stores({
+      records: "id, status, createdAt, *tags, userId",
+      habits: "++id, name, frequency, createdAt, userId",
+      habitLogs: "++id, habitId, date, userId",
     });
   }
 }

@@ -44,6 +44,7 @@ export interface Record {
   review?: Review;
   createdAt: Date;
   updatedAt: Date;
+  userId?: string;
 }
 
 export type TimelineGranularity = "day" | "week" | "month";
@@ -60,6 +61,7 @@ export interface Habit {
   frequency: "daily" | "weekly";
   targetDays: number[];
   createdAt: Date;
+  userId?: string;
 }
 
 export interface HabitLog {
@@ -67,4 +69,5 @@ export interface HabitLog {
   habitId: string;
   date: string; // YYYY-MM-DD
   completed: boolean;
+  userId?: string;
 }
