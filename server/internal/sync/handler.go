@@ -4,13 +4,16 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"time"
 
 	"records/server/internal/auth"
+	"records/server/internal/observability"
 )
 
 // Handler exposes sync HTTP endpoints. Requires auth middleware.
 type Handler struct {
 	Service *Service
+	Metrics observability.SyncMetrics
 }
 
 // Push handles POST /sync/push.
@@ -32,10 +35,24 @@ func (h *Handler) Push(w http.ResponseWriter, r *http.Request) {
 	if req.Operations == nil {
 		req.Operations = []Operation{}
 	}
+	start := time.Now()
 	resp, err := h.Service.Push(r.Context(), userID, req)
+	if h.Metrics != nil {
+		h.Metrics.RecordSyncPushDuration(time.Since(start))
+	}
 	if err != nil {
+		if h.Metrics != nil {
+			h.Metrics.RecordSyncPushFailure()
+		}
 		respondJSON(w, http.StatusInternalServerError, map[string]string{"error": "internal error"})
 		return
+	}
+	if h.Metrics != nil {
+		if len(resp.Conflicts) > 0 {
+			h.Metrics.RecordSyncPushConflict(len(resp.Conflicts))
+		} else {
+			h.Metrics.RecordSyncPushSuccess()
+		}
 	}
 	respondJSON(w, http.StatusOK, resp)
 }
@@ -58,10 +75,20 @@ func (h *Handler) Pull(w http.ResponseWriter, r *http.Request) {
 			limit = n
 		}
 	}
+	start := time.Now()
 	resp, err := h.Service.Pull(r.Context(), userID, cursor, limit)
+	if h.Metrics != nil {
+		h.Metrics.RecordSyncPullDuration(time.Since(start))
+	}
 	if err != nil {
+		if h.Metrics != nil {
+			h.Metrics.RecordSyncPullFailure()
+		}
 		respondJSON(w, http.StatusInternalServerError, map[string]string{"error": "internal error"})
 		return
+	}
+	if h.Metrics != nil {
+		h.Metrics.RecordSyncPullSuccess()
 	}
 	respondJSON(w, http.StatusOK, resp)
 }

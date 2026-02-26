@@ -9,6 +9,7 @@ import (
 	"records/server/internal/auth"
 	"records/server/internal/infra/config"
 	serverhttp "records/server/internal/infra/http"
+	"records/server/internal/observability"
 	"records/server/internal/storage"
 	"records/server/internal/sync"
 	"records/server/internal/tasks"
@@ -28,12 +29,15 @@ func main() {
 	tasksHandler := &tasks.Handler{Service: &tasks.Service{Repo: taskRepo}}
 
 	syncTaskRepo := sync.TaskRepoFromTasksRepo(taskRepo)
+	syncMetrics := &observability.MemMetrics{}
 	syncSvc := &sync.Service{
-		TaskRepo:      syncTaskRepo,
-		CursorRepo:    sync.NewInMemoryCursorRepo(),
-		ChangeLogRepo: sync.NewInMemoryChangeLogRepo(),
+		TaskRepo:       syncTaskRepo,
+		CursorRepo:     sync.NewInMemoryCursorRepo(),
+		ChangeLogRepo:  sync.NewInMemoryChangeLogRepo(),
+		Metrics:        syncMetrics,
+		FailureTracker: sync.NewMemFailureTracker(0), // 0 = default budget 3
 	}
-	syncHandler := &sync.Handler{Service: syncSvc}
+	syncHandler := &sync.Handler{Service: syncSvc, Metrics: syncMetrics}
 
 	storageSvc := &storage.Service{
 		Presigner: &storage.MockPresigner{},

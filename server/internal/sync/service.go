@@ -3,13 +3,17 @@ package sync
 import (
 	"context"
 	"time"
+
+	"records/server/internal/observability"
 )
 
 // Service handles sync push and pull (phase 1 + 2).
 type Service struct {
-	TaskRepo     TaskRepo
-	CursorRepo   CursorRepo
-	ChangeLogRepo ChangeLogRepo
+	TaskRepo       TaskRepo
+	CursorRepo     CursorRepo
+	ChangeLogRepo  ChangeLogRepo
+	Metrics        observability.SyncMetrics
+	FailureTracker FailureTracker
 }
 
 // Push applies a batch of operations for the user. Idempotent by op_id.
@@ -40,6 +44,15 @@ func (s *Service) Push(ctx context.Context, userID string, req PushRequest) (*Pu
 		}
 
 		if err != nil {
+			if s.FailureTracker != nil {
+				s.FailureTracker.RecordFailure(ctx, userID, op.OpID)
+				if s.FailureTracker.ShouldDeadLetter(ctx, userID, op.OpID) {
+					s.FailureTracker.MarkDeadLetter(ctx, userID, op.OpID)
+					if s.Metrics != nil {
+						s.Metrics.RecordSyncDeadLetter()
+					}
+				}
+			}
 			ce := map[string]interface{}{"op_id": op.OpID, "error": err.Error()}
 			if err == errVersionMismatch {
 				if latest, _ := s.TaskRepo.GetTask(ctx, op.EntityID, userID); latest != nil {
