@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { useRelaxValue, recordsState } from "../../store/recordStore";
 import { authActions, store, currentUserState } from "../../store/authStore";
+import { confirm } from "../../components/confirm/ConfirmDialog";
 import {
   IconExport,
   IconInfo,
@@ -150,8 +151,9 @@ export function ProfilePage(props?: PageProps) {
   const currentUser = store.get(currentUserState);
 
   // 添加登出处理函数
-  const handleLogout = () => {
-    if (confirm("确定要退出登录吗？")) {
+  const handleLogout = async () => {
+    const ok = await confirm({ message: "确定要退出登录吗？" });
+    if (ok) {
       authActions.logout();
     }
   };
