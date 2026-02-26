@@ -7,12 +7,14 @@ import {
   tagsState,
   recordActions,
 } from "./store/recordStore";
+import { store as authStore, isAuthenticatedState } from "./store/authStore";
 import { TabBar, type TabType } from "./components/tab-bar";
 import { TaskForm } from "./components/task-form";
 import { HomePage } from "./pages/home-page";
 import { TasksPage } from "./pages/tasks-page";
 import { InsightsPage } from "./pages/insights-page";
 import { ProfilePage } from "./pages/profile-page";
+import { LoginForm } from "./pages/auth-page/LoginForm";
 import { checkAndResetRecurringRecords } from "./db/recordRepository";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 import type { Record } from "./types";
@@ -20,6 +22,28 @@ import { IconAdd } from "./shared/icons";
 import "./App.css";
 
 type ThemeMode = "light" | "dark" | "auto";
+
+// 登录检查组件 - 在 RelaxProvider 外部检查认证状态
+function AuthCheck({ children }: { children: React.ReactNode }) {
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    authStore.get(isAuthenticatedState),
+  );
+
+  // 监听登录状态变化（使用轮询方式）
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const currentAuth = authStore.get(isAuthenticatedState);
+      setIsAuthenticated(currentAuth);
+    }, 500);
+    return () => clearInterval(interval);
+  }, []);
+
+  if (!isAuthenticated) {
+    return <LoginForm />;
+  }
+
+  return <>{children}</>;
+}
 
 function AppContent() {
   const records = useRelaxValue(recordsState) as Record[];
@@ -223,7 +247,9 @@ function AppContent() {
 function App() {
   return (
     <RelaxProvider store={store}>
-      <AppContent />
+      <AuthCheck>
+        <AppContent />
+      </AuthCheck>
     </RelaxProvider>
   );
 }
