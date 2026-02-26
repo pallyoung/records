@@ -29,6 +29,14 @@
   /* Shadows */
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
   --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  /* Typography */
+  --text-2xl: 22px;
+  --text-xl: 18px;
+  --text-lg: 16px;
+  --text-base: 14px;
+  --text-sm: 12px;
+  --text-xs: 11px;
 }
 
 /* Dark Mode */
@@ -71,6 +79,7 @@
 body {
   font-family:
     -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", sans-serif;
+  font-weight: 300;
   background: var(--bg-primary);
   color: var(--text-primary);
   line-height: 1.4;
