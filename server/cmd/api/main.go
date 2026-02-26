@@ -3,7 +3,9 @@ package main
 import (
 	"log"
 	"net/http"
+	"time"
 
+	"records/server/internal/ai"
 	"records/server/internal/auth"
 	"records/server/internal/infra/config"
 	serverhttp "records/server/internal/infra/http"
@@ -40,11 +42,19 @@ func main() {
 	}
 	storageHandler := &storage.Handler{Service: storageSvc}
 
+	aiSvc := &ai.Service{
+		Provider: &ai.MockProvider{Content: ""},
+		LogRepo:  ai.NewInMemoryRequestLogRepo(),
+		Timeout:  30 * time.Second,
+	}
+	aiHandler := &ai.Handler{Service: aiSvc}
+
 	router := serverhttp.NewRouter(serverhttp.RouterDeps{
 		AuthHandler:    authHandler,
 		TasksHandler:   tasksHandler,
 		SyncHandler:    syncHandler,
 		StorageHandler: storageHandler,
+		AIHandler:      aiHandler,
 		JWTSecret:      cfg.JWTSecret,
 	})
 

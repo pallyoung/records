@@ -3,6 +3,7 @@ package http
 import (
 	"net/http"
 
+	"records/server/internal/ai"
 	"records/server/internal/auth"
 	"records/server/internal/storage"
 	"records/server/internal/sync"
@@ -15,6 +16,7 @@ type RouterDeps struct {
 	TasksHandler   *tasks.Handler
 	SyncHandler    *sync.Handler
 	StorageHandler *storage.Handler
+	AIHandler      *ai.Handler
 	JWTSecret      string
 }
 
@@ -51,6 +53,11 @@ func NewRouter(deps RouterDeps) http.Handler {
 		mux.Handle("POST /files/presign-upload", wrap(http.HandlerFunc(deps.StorageHandler.PresignUpload)))
 		mux.Handle("POST /files/complete", wrap(http.HandlerFunc(deps.StorageHandler.Complete)))
 		mux.Handle("GET /files/{id}/download-url", wrap(http.HandlerFunc(deps.StorageHandler.DownloadURL)))
+	}
+
+	if deps.AIHandler != nil && deps.JWTSecret != "" {
+		wrap := auth.RequireAuth(deps.JWTSecret)
+		mux.Handle("POST /ai/chat", wrap(http.HandlerFunc(deps.AIHandler.Chat)))
 	}
 
 	return mux
