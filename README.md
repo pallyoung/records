@@ -14,6 +14,8 @@ records/
 ├── server/              # Go API 服务
 │   ├── cmd/api/         # 入口
 │   ├── internal/        # auth, tasks, sync, storage, ai, observability, infra
+│   ├── docs/            # 服务端文档（含 SCHEMA.md 表结构）
+│   ├── migrations/      # 数据库迁移（接入 PostgreSQL 后使用）
 │   ├── go.mod
 │   ├── Makefile
 │   └── README.md
@@ -96,6 +98,20 @@ bash scripts/generate-types.sh
 - 运行：`./bin/api`，通过环境变量或 `.env` 配置 `PORT`、`JWT_SECRET` 等（参考 `server/.env.example`）。
 - 生产建议使用进程管理器（systemd、supervisor）或容器（Docker）部署，并配置 TLS 与反向代理。
 
+### 数据库与 Redis
+
+**未配置 DATABASE_URL 时**：后端使用内存存储，重启后数据丢失，仅适合开发或单机演示。
+
+**使用 PostgreSQL 时**：
+
+1. 在 `server/.env` 中配置 `DATABASE_URL`（如 `postgres://user:pass@host:5432/dbname?sslmode=disable`）。
+2. **首次部署或升级前**执行迁移：进入 `server/` 目录，安装 [golang-migrate](https://github.com/golang-migrate/migrate) CLI 后执行 `make migrate-up`（或 `migrate -path migrations -database "$DATABASE_URL" up`）。
+3. 启动服务后，用户、任务、同步游标、附件元数据、AI 请求日志等将持久化到 PostgreSQL。
+
+**Redis（可选）**：当前未接入；规划用于刷新令牌存储、限流等，配置 `REDIS_URL` 后可由后续实现使用。未配置时刷新令牌存于 PostgreSQL sessions 表。
+
+表结构说明见 **[server/docs/SCHEMA.md](server/docs/SCHEMA.md)**；迁移文件位于 `server/migrations/`。
+
 ### 环境变量摘要
 
 | 作用域   | 变量           | 说明                    |
@@ -103,6 +119,8 @@ bash scripts/generate-types.sh
 | 前端构建/开发 | `VITE_API_URL` | 后端 API 根地址，如 `https://api.example.com` |
 | 后端     | `PORT`         | 服务监听端口，默认 8080 |
 | 后端     | `JWT_SECRET`   | JWT 签名密钥，必填       |
+| 后端     | `DATABASE_URL` | PostgreSQL 连接串；配置后启用持久化 |
+| 后端     | `REDIS_URL`    | Redis 连接串（可选，当前未使用）   |
 
 更多后端配置见 `server/.env.example`。
 
@@ -110,5 +128,6 @@ bash scripts/generate-types.sh
 
 - 前端功能与开发细节：[app/README.md](app/README.md)
 - 后端目录与规划：[server/README.md](server/README.md)
+- **数据模型与表结构**：[server/docs/SCHEMA.md](server/docs/SCHEMA.md)（users、tasks、sync_cursors、sessions、task_attachments、ai_request_logs 等）
 - 契约与类型约定：[shared/README.md](shared/README.md)
 - 提交信息：不在 commit message 中出现 Cursor/Claude 等 AI 署名（见 `.cursor/rules/commit-message-no-cursor.mdc`）。
