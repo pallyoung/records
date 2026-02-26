@@ -19,6 +19,8 @@ import { checkAndResetRecurringRecords } from "./db/recordRepository";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 import type { Record } from "./types";
 import { IconAdd } from "./shared/icons";
+import { ToastContainer } from "./components/toast/ToastContainer";
+import { ConfirmDialog } from "./components/confirm/ConfirmDialog";
 import "./App.css";
 
 type ThemeMode = "light" | "dark" | "auto";
@@ -248,7 +250,10 @@ function App() {
   return (
     <RelaxProvider store={store}>
       <AuthCheck>
-        <AppContent />
+        <ConfirmDialog>
+          <AppContent />
+          <ToastContainer />
+        </ConfirmDialog>
       </AuthCheck>
     </RelaxProvider>
   );
