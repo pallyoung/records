@@ -5,7 +5,7 @@ import styles from "./index.module.scss";
 export interface DateTimeRowProps {
   label: string;
   value?: Date | null;
-  onChange?: (date: Date | null) => void;
+  onChange?: (date: Date) => void;
 }
 
 export function DateTimeRow({ label, value, onChange }: DateTimeRowProps) {
