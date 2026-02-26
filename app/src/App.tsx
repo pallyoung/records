@@ -26,6 +26,8 @@ import {
   writeAppSettings,
   type ThemeMode,
 } from "./store/appSettings";
+import { startSyncEngine, stopSyncEngine } from "./services/sync/syncEngine";
+import { session } from "./services/auth/session";
 import "./App.css";
 
 // 登录检查组件 - 在 RelaxProvider 外部检查认证状态
@@ -53,6 +55,13 @@ function AuthCheck({ children }: { children: React.ReactNode }) {
 function AppContent() {
   const records = useRelaxValue(recordsState) as Record[];
   const tags = useRelaxValue(tagsState);
+
+  useEffect(() => {
+    if (session.hasTokens()) {
+      startSyncEngine();
+      return () => stopSyncEngine();
+    }
+  }, []);
 
   const [activeTab, setActiveTab] = useState<TabType>("home");
   const [showQuickAdd, setShowQuickAdd] = useState(false);

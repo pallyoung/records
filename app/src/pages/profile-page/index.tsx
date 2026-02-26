@@ -2,6 +2,8 @@ import { useMemo } from "react";
 import { useRelaxValue, recordsState } from "../../store/recordStore";
 import { authActions, store, currentUserState } from "../../store/authStore";
 import { confirm } from "../../components/confirm/ConfirmDialog";
+import { session } from "../../services/auth/session";
+import { stopSyncEngine } from "../../services/sync/syncEngine";
 import {
   IconExport,
   IconInfo,
@@ -155,6 +157,8 @@ export function ProfilePage(props?: PageProps) {
   const handleLogout = async () => {
     const ok = await confirm({ message: "确定要退出登录吗？" });
     if (ok) {
+      session.clear();
+      stopSyncEngine();
       authActions.logout();
     }
   };

@@ -2,6 +2,8 @@ import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { authActions } from "../../store/authStore";
 import { hashPassword } from "../../utils/crypto";
+import { getApiBaseUrl } from "../../services/api/client";
+import { session } from "../../services/auth/session";
 import styles from "./LoginForm.module.scss";
 
 interface LoginData {
@@ -95,13 +97,34 @@ export default function LoginForm() {
       return;
     }
 
-    // 检查用户名是否已存在
+    const baseUrl = getApiBaseUrl();
+    if (baseUrl) {
+      try {
+        const res = await fetch(`${baseUrl.replace(/\/$/, "")}/auth/register`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: username, password }),
+        });
+        if (!res.ok) {
+          const data = (await res.json()) as { error?: string };
+          setError(data.error ?? "注册失败");
+          return;
+        }
+        setSuccess("注册成功！请登录");
+        setRegisterData({ username: "", password: "", confirmPassword: "" });
+        setTimeout(() => handleTabChange("login"), 1500);
+        return;
+      } catch {
+        setError("网络错误，请重试");
+        return;
+      }
+    }
+
     if (authActions.isUsernameTaken(username)) {
       setError("用户名已存在");
       return;
     }
 
-    // 创建用户
     const newUser = {
       userId: uuidv4(),
       username,
@@ -110,15 +133,9 @@ export default function LoginForm() {
     };
 
     authActions.register(newUser);
-
-    // 注册成功，显示成功信息并切换到登录
     setSuccess("注册成功！请登录");
     setRegisterData({ username: "", password: "", confirmPassword: "" });
-
-    // 1.5秒后自动切换到登录标签
-    setTimeout(() => {
-      handleTabChange("login");
-    }, 1500);
+    setTimeout(() => handleTabChange("login"), 1500);
   };
 
   const handleLoginInputChange = (field: keyof LoginData, value: string) => {
