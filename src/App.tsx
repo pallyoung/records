@@ -200,9 +200,10 @@ function AppContent() {
             setShowTaskDetail(false);
             setSelectedTaskId(null);
           }}
-          onDelete={() => {
+          onDelete={async () => {
             if (!selectedTaskId) return;
-            if (confirm("确定要删除这个任务吗？")) {
+            const ok = await confirm({ message: "确定要删除这个任务吗？" });
+            if (ok) {
               recordActions.deleteRecord(selectedTaskId);
               setShowTaskDetail(false);
               setSelectedTaskId(null);
