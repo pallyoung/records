@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 
 export const recordRepository = {
   async create(
-    data: Omit<Record, "id" | "createdAt" | "updatedAt">,
+    data: Omit<Record, "id" | "createdAt" | "updatedAt" | "version">,
   ): Promise<Record> {
     const now = new Date();
     const record: Record = {
@@ -12,13 +12,20 @@ export const recordRepository = {
       id: uuidv4(),
       createdAt: now,
       updatedAt: now,
+      version: 1,
     };
     await db.records.add(record);
     return record;
   },
 
   async update(id: string, data: Partial<Record>): Promise<void> {
-    await db.records.update(id, { ...data, updatedAt: new Date() });
+    const existing = await db.records.get(id);
+    const nextVersion = existing ? (existing.version ?? 1) + 1 : 1;
+    await db.records.update(id, {
+      ...data,
+      updatedAt: new Date(),
+      version: nextVersion,
+    });
   },
 
   async delete(id: string): Promise<void> {

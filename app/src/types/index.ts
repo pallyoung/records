@@ -44,6 +44,8 @@ export interface Record {
   review?: Review;
   createdAt: Date;
   updatedAt: Date;
+  /** Version for sync optimistic locking; default 1 when absent. */
+  version?: number;
   userId?: string;
 }
 
