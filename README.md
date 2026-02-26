@@ -108,7 +108,7 @@ bash scripts/generate-types.sh
 2. **首次部署或升级前**执行迁移：进入 `server/` 目录，安装 [golang-migrate](https://github.com/golang-migrate/migrate) CLI 后执行 `make migrate-up`（或 `migrate -path migrations -database "$DATABASE_URL" up`）。
 3. 启动服务后，用户、任务、同步游标、附件元数据、AI 请求日志等将持久化到 PostgreSQL。
 
-**Redis（可选）**：当前未接入；规划用于刷新令牌存储、限流等，配置 `REDIS_URL` 后可由后续实现使用。未配置时刷新令牌存于 PostgreSQL sessions 表。
+**Redis（可选）**：配置 `REDIS_URL` 后，刷新令牌存于 Redis（便于多实例共享与 TTL）。未配置时刷新令牌存于 PostgreSQL `sessions` 表或内存。
 
 表结构说明见 **[server/docs/SCHEMA.md](server/docs/SCHEMA.md)**；迁移文件位于 `server/migrations/`。
 
@@ -120,7 +120,7 @@ bash scripts/generate-types.sh
 | 后端     | `PORT`         | 服务监听端口，默认 8080 |
 | 后端     | `JWT_SECRET`   | JWT 签名密钥，必填       |
 | 后端     | `DATABASE_URL` | PostgreSQL 连接串；配置后启用持久化 |
-| 后端     | `REDIS_URL`    | Redis 连接串（可选，当前未使用）   |
+| 后端     | `REDIS_URL`    | Redis 连接串（可选，用于刷新令牌存储） |
 
 更多后端配置见 `server/.env.example`。
 

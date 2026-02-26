@@ -11,6 +11,7 @@ import (
 	"records/server/internal/auth"
 	"records/server/internal/infra/config"
 	infradb "records/server/internal/infra/db"
+	redisclient "records/server/internal/infra/redis"
 	serverhttp "records/server/internal/infra/http"
 	"records/server/internal/observability"
 	"records/server/internal/storage"
@@ -42,10 +43,31 @@ func main() {
 	var tokenRepo auth.RefreshTokenRepository
 	if db != nil {
 		userRepo = auth.NewPostgresUserRepo(db)
+	}
+	if cfg.RedisURL != "" {
+		rdb, err := redisclient.Open(cfg.RedisURL)
+		if err != nil {
+			log.Fatalf("redis open: %v", err)
+		}
+		defer rdb.Close()
+		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+		if err := rdb.Ping(ctx); err != nil {
+			cancel()
+			log.Fatalf("redis ping: %v", err)
+		}
+		cancel()
+		tokenRepo = auth.NewRedisRefreshRepo(rdb)
+		log.Print("redis connected (refresh tokens)")
+	} else if db != nil {
 		tokenRepo = auth.NewPostgresRefreshRepo(db)
 	} else {
-		userRepo = auth.NewInMemoryUserRepo()
+		if userRepo == nil {
+			userRepo = auth.NewInMemoryUserRepo()
+		}
 		tokenRepo = auth.NewInMemoryRefreshRepo()
+	}
+	if userRepo == nil {
+		userRepo = auth.NewInMemoryUserRepo()
 	}
 	authSvc := &auth.AuthService{
 		Users:     userRepo,
