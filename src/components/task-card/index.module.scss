@@ -44,7 +44,7 @@
 }
 
 .taskTitle {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 400;
   color: var(--text-primary);
   margin: 0;
@@ -171,14 +171,43 @@
   background: var(--bg-hover);
 }
 
+/* Progress row - contains progress bar and time reminder */
+.progressRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
 /* Progress bar */
 .progressBar {
-  width: 100%;
+  flex: 0 0 65%;
   height: 4px;
   background: #e5e7eb;
   border-radius: 2px;
   overflow: hidden;
-  margin-top: var(--space-2);
+}
+
+/* Time reminder */
+.timeReminder {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.reminderText {
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.reminderNormal {
+  color: var(--text-tertiary);
+  opacity: 0.8;
+}
+
+.reminderOverdue {
+  color: #ef4444;
 }
 
 .progressFill {

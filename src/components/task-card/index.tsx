@@ -6,7 +6,72 @@ import {
   calculateProgress,
   isOverdue,
   getOverdueDays,
+  getStartDelayDays,
 } from "../../utils/progress";
+
+// 获取任务时间提醒文案
+function getTimeReminder(record: Record): string | null {
+  const now = new Date();
+  const status = record.status;
+
+  // 没有计划时间则不显示
+  if (!record.plannedStartTime && !record.plannedEndTime) {
+    return null;
+  }
+
+  // 已完成不显示
+  if (status === "completed") {
+    return null;
+  }
+
+  // 有计划开始时间的情况
+  if (record.plannedStartTime) {
+    const startTime = new Date(record.plannedStartTime);
+
+    // 未开始（pending 状态且未到开始时间）
+    if (status === "pending" && now < startTime) {
+      const diffMs = startTime.getTime() - now.getTime();
+      const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+      if (diffDays === 0) {
+        return "今天开始";
+      } else if (diffDays === 1) {
+        return "明天开始";
+      }
+      return `预计${diffDays}天后开始`;
+    }
+
+    // 已延期开始（超过计划开始时间）
+    if (now > startTime) {
+      const diffMs = now.getTime() - startTime.getTime();
+      const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+      return `已延期${diffDays}天`;
+    }
+  }
+
+  // 进行中状态，显示预计结束时间
+  if (status === "in_progress" && record.plannedEndTime) {
+    const endTime = new Date(record.plannedEndTime);
+
+    // 已延期完成
+    if (now > endTime) {
+      const diffMs = now.getTime() - endTime.getTime();
+      const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+      return `延期${diffDays}天`;
+    }
+
+    // 预计结束
+    const diffMs = endTime.getTime() - now.getTime();
+    const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+    if (diffDays === 0) {
+      return "今天结束";
+    } else if (diffDays === 1) {
+      return "明天结束";
+    }
+    return `预计${diffDays}天后结束`;
+  }
+
+  return null;
+}
 
 interface TaskCardProps {
   record: Record;
@@ -88,6 +153,8 @@ export function TaskCard({
   const progress = calculateProgress(record);
   const overdue = isOverdue(record);
   const overdueDays = getOverdueDays(record);
+  const timeReminder = getTimeReminder(record);
+  const startDelayDays = getStartDelayDays(record);
 
   let progressClass = styles.progressNormal;
   if (record.status === "completed") {
@@ -95,6 +162,10 @@ export function TaskCard({
   } else if (overdue) {
     progressClass = styles.progressOverdue;
   }
+
+  // 判断时间提醒是否为延期（用于颜色区分）
+  const isReminderOverdue =
+    timeReminder?.includes("延期") || timeReminder?.includes("已延期");
 
   const handleCheckboxClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -121,17 +192,38 @@ export function TaskCard({
         <div className={styles.taskMeta}>
           {dateStr && <span className={styles.taskDate}>{dateStr}</span>}
         </div>
-        {/* Progress bar */}
-        <div className={styles.progressBar}>
-          <div
-            className={`${styles.progressFill} ${progressClass}`}
-            style={{ width: `${progress}%` }}
-          />
+        {/* Progress bar + Time reminder */}
+        <div className={styles.progressRow}>
+          <div className={styles.progressBar}>
+            <div
+              className={`${styles.progressFill} ${progressClass}`}
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+          {/* Time reminder */}
+          {(timeReminder || startDelayDays > 0) && (
+            <div className={styles.timeReminder}>
+              {startDelayDays > 0 && !timeReminder && (
+                <span
+                  className={`${styles.reminderText} ${styles.reminderOverdue}`}
+                >
+                  开始延期 {startDelayDays} 天
+                </span>
+              )}
+              {timeReminder && (
+                <span
+                  className={`${styles.reminderText} ${
+                    isReminderOverdue
+                      ? styles.reminderOverdue
+                      : styles.reminderNormal
+                  }`}
+                >
+                  {timeReminder}
+                </span>
+              )}
+            </div>
+          )}
         </div>
-        {/* Overdue badge */}
-        {overdue && overdueDays > 0 && (
-          <span className={styles.overdueBadge}>已延期 {overdueDays} 天</span>
-        )}
       </div>
       <div className={styles.taskActions}>
         <button
