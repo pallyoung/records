@@ -43,6 +43,7 @@ func NewRouter(deps RouterDeps) http.Handler {
 	if deps.SyncHandler != nil && deps.JWTSecret != "" {
 		wrap := auth.RequireAuth(deps.JWTSecret)
 		mux.Handle("POST /sync/push", wrap(http.HandlerFunc(deps.SyncHandler.Push)))
+		mux.Handle("GET /sync/pull", wrap(http.HandlerFunc(deps.SyncHandler.Pull)))
 	}
 
 	if deps.StorageHandler != nil && deps.JWTSecret != "" {

@@ -5,10 +5,11 @@ import (
 	"time"
 )
 
-// Service handles sync push (phase 1).
+// Service handles sync push and pull (phase 1 + 2).
 type Service struct {
-	TaskRepo   TaskRepo
-	CursorRepo CursorRepo
+	TaskRepo     TaskRepo
+	CursorRepo   CursorRepo
+	ChangeLogRepo ChangeLogRepo
 }
 
 // Push applies a batch of operations for the user. Idempotent by op_id.
@@ -39,16 +40,25 @@ func (s *Service) Push(ctx context.Context, userID string, req PushRequest) (*Pu
 		}
 
 		if err != nil {
-			conflicts = append(conflicts, map[string]interface{}{
-				"op_id": op.OpID,
-				"error": err.Error(),
-			})
+			ce := map[string]interface{}{"op_id": op.OpID, "error": err.Error()}
+			if err == errVersionMismatch {
+				if latest, _ := s.TaskRepo.GetTask(ctx, op.EntityID, userID); latest != nil {
+					ce["latest"] = latest
+				}
+			}
+			conflicts = append(conflicts, ce)
 			continue
 		}
 
 		cursor, _ := s.CursorRepo.AdvanceCursor(ctx, userID)
 		_ = s.CursorRepo.MarkApplied(ctx, userID, op.OpID, cursor)
 		applied = append(applied, op.OpID)
+
+		// Append to change log for pull (phase 2)
+		if s.ChangeLogRepo != nil {
+			entry := s.makeChangeEntry(ctx, userID, op.Operation, op.EntityID, cursor)
+			_ = s.ChangeLogRepo.Append(ctx, userID, entry)
+		}
 	}
 
 	cursor, _ := s.CursorRepo.GetCursor(ctx, userID)
@@ -57,6 +67,27 @@ func (s *Service) Push(ctx context.Context, userID string, req PushRequest) (*Pu
 		Conflicts: conflicts,
 		NewCursor: string(cursor),
 	}, nil
+}
+
+const defaultPullLimit = 200
+const maxPullLimit = 200
+
+// Pull returns changes after the given cursor for the user.
+func (s *Service) Pull(ctx context.Context, userID string, cursor string, limit int) (*PullResponse, error) {
+	if s.ChangeLogRepo == nil {
+		return &PullResponse{Changes: nil, NextCursor: cursor}, nil
+	}
+	if limit <= 0 {
+		limit = defaultPullLimit
+	}
+	if limit > maxPullLimit {
+		limit = maxPullLimit
+	}
+	changes, nextCursor, err := s.ChangeLogRepo.GetAfter(ctx, userID, cursor, limit)
+	if err != nil {
+		return nil, err
+	}
+	return &PullResponse{Changes: changes, NextCursor: nextCursor}, nil
 }
 
 func (s *Service) applyCreate(ctx context.Context, userID string, op *Operation) error {
@@ -84,6 +115,8 @@ func (s *Service) applyUpdate(ctx context.Context, userID string, op *Operation)
 	if op.BaseVersion > 0 && cur.Version != op.BaseVersion {
 		return errVersionMismatch
 	}
+	// Copy so we don't mutate before UpdateTask
+	cur = copySnapshot(cur)
 	if v, ok := strPayload(op.Payload, "title"); ok && v != "" {
 		cur.Title = v
 	}
@@ -100,6 +133,39 @@ func (s *Service) applyUpdate(ctx context.Context, userID string, op *Operation)
 
 func (s *Service) applyDelete(ctx context.Context, userID string, op *Operation) error {
 	return s.TaskRepo.SoftDeleteTask(ctx, op.EntityID, userID)
+}
+
+func (s *Service) makeChangeEntry(ctx context.Context, userID string, operation, entityID string, cursor Cursor) ChangeEntry {
+	entry := ChangeEntry{Cursor: string(cursor), EntityID: entityID, Operation: operation}
+	if operation == "delete" {
+		entry.Deleted = true
+		return entry
+	}
+	snap, _ := s.TaskRepo.GetTask(ctx, entityID, userID)
+	if snap != nil {
+		entry.Snapshot = copySnapshot(snap)
+	}
+	return entry
+}
+
+func copySnapshot(s *TaskSnapshot) *TaskSnapshot {
+	if s == nil {
+		return nil
+	}
+	t := *s
+	var due *time.Time
+	if s.DueAt != nil {
+		t2 := *s.DueAt
+		due = &t2
+	}
+	t.DueAt = due
+	var deleted *time.Time
+	if s.DeletedAt != nil {
+		t3 := *s.DeletedAt
+		deleted = &t3
+	}
+	t.DeletedAt = deleted
+	return &t
 }
 
 func strPayload(p map[string]interface{}, key string) (string, bool) {

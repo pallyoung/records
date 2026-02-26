@@ -20,3 +20,18 @@ type PushResponse struct {
 	Conflicts []interface{} `json:"conflicts"`
 	NewCursor string        `json:"new_cursor"`
 }
+
+// ChangeEntry is a single change in the pull stream (create/update/delete).
+type ChangeEntry struct {
+	Cursor   string         `json:"cursor"`
+	EntityID string         `json:"entity_id"`
+	Operation string        `json:"operation"`
+	Snapshot *TaskSnapshot  `json:"snapshot,omitempty"`
+	Deleted  bool           `json:"deleted"`
+}
+
+// PullResponse is the response of GET /sync/pull.
+type PullResponse struct {
+	Changes    []ChangeEntry `json:"changes"`
+	NextCursor string        `json:"next_cursor"`
+}

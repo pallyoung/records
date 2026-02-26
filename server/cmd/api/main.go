@@ -27,8 +27,9 @@ func main() {
 
 	syncTaskRepo := sync.TaskRepoFromTasksRepo(taskRepo)
 	syncSvc := &sync.Service{
-		TaskRepo:   syncTaskRepo,
-		CursorRepo: sync.NewInMemoryCursorRepo(),
+		TaskRepo:      syncTaskRepo,
+		CursorRepo:    sync.NewInMemoryCursorRepo(),
+		ChangeLogRepo: sync.NewInMemoryChangeLogRepo(),
 	}
 	syncHandler := &sync.Handler{Service: syncSvc}
 
