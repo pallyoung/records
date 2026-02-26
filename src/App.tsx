@@ -14,7 +14,7 @@ import { HomePage } from "./pages/home-page";
 import { TasksPage } from "./pages/tasks-page";
 import { InsightsPage } from "./pages/insights-page";
 import { ProfilePage } from "./pages/profile-page";
-import { LoginForm } from "./pages/auth-page/LoginForm";
+import LoginForm from "./pages/auth-page/LoginForm";
 import { checkAndResetRecurringRecords } from "./db/recordRepository";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 import type { Record } from "./types";
