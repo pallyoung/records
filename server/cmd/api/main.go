@@ -7,6 +7,7 @@ import (
 	"records/server/internal/auth"
 	"records/server/internal/infra/config"
 	serverhttp "records/server/internal/infra/http"
+	"records/server/internal/storage"
 	"records/server/internal/sync"
 	"records/server/internal/tasks"
 )
@@ -31,11 +32,19 @@ func main() {
 	}
 	syncHandler := &sync.Handler{Service: syncSvc}
 
+	storageSvc := &storage.Service{
+		Presigner: &storage.MockPresigner{},
+		Repo:      storage.NewInMemoryFileRepo(),
+		Bucket:    "attachments",
+	}
+	storageHandler := &storage.Handler{Service: storageSvc}
+
 	router := serverhttp.NewRouter(serverhttp.RouterDeps{
-		AuthHandler:  authHandler,
-		TasksHandler: tasksHandler,
-		SyncHandler:  syncHandler,
-		JWTSecret:    cfg.JWTSecret,
+		AuthHandler:    authHandler,
+		TasksHandler:   tasksHandler,
+		SyncHandler:    syncHandler,
+		StorageHandler: storageHandler,
+		JWTSecret:      cfg.JWTSecret,
 	})
 
 	addr := ":" + cfg.Port

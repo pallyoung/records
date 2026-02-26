@@ -4,16 +4,18 @@ import (
 	"net/http"
 
 	"records/server/internal/auth"
+	"records/server/internal/storage"
 	"records/server/internal/sync"
 	"records/server/internal/tasks"
 )
 
 // RouterDeps holds optional handlers and config for the API router.
 type RouterDeps struct {
-	AuthHandler  *auth.Handler
-	TasksHandler *tasks.Handler
-	SyncHandler  *sync.Handler
-	JWTSecret    string
+	AuthHandler    *auth.Handler
+	TasksHandler   *tasks.Handler
+	SyncHandler    *sync.Handler
+	StorageHandler *storage.Handler
+	JWTSecret      string
 }
 
 // NewRouter returns the API router.
@@ -41,6 +43,13 @@ func NewRouter(deps RouterDeps) http.Handler {
 	if deps.SyncHandler != nil && deps.JWTSecret != "" {
 		wrap := auth.RequireAuth(deps.JWTSecret)
 		mux.Handle("POST /sync/push", wrap(http.HandlerFunc(deps.SyncHandler.Push)))
+	}
+
+	if deps.StorageHandler != nil && deps.JWTSecret != "" {
+		wrap := auth.RequireAuth(deps.JWTSecret)
+		mux.Handle("POST /files/presign-upload", wrap(http.HandlerFunc(deps.StorageHandler.PresignUpload)))
+		mux.Handle("POST /files/complete", wrap(http.HandlerFunc(deps.StorageHandler.Complete)))
+		mux.Handle("GET /files/{id}/download-url", wrap(http.HandlerFunc(deps.StorageHandler.DownloadURL)))
 	}
 
 	return mux
