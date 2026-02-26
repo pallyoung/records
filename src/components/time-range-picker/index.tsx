@@ -1,5 +1,6 @@
 // src/components/time-range-picker/index.tsx
 import { useState, useEffect } from "react";
+import { DateTimeRow } from "../datetime-row";
 import styles from "./index.module.scss";
 
 export interface TimeRangePickerProps {
@@ -15,37 +16,23 @@ export function TimeRangePicker({
   onStartTimeChange,
   onEndTimeChange,
 }: TimeRangePickerProps) {
-  const [localStartTime, setLocalStartTime] = useState<string>("");
-  const [localEndTime, setLocalEndTime] = useState<string>("");
+  const [localStartTime, setLocalStartTime] = useState<Date | null>(null);
+  const [localEndTime, setLocalEndTime] = useState<Date | null>(null);
 
   // Initialize from props
   useEffect(() => {
-    if (startTime) {
-      setLocalStartTime(formatDateTimeLocal(new Date(startTime)));
-    }
-    if (endTime) {
-      setLocalEndTime(formatDateTimeLocal(new Date(endTime)));
-    }
+    setLocalStartTime(startTime ?? null);
+    setLocalEndTime(endTime ?? null);
   }, [startTime, endTime]);
 
-  const handleStartTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setLocalStartTime(value);
-    if (value) {
-      onStartTimeChange?.(new Date(value));
-    } else {
-      onStartTimeChange?.(null);
-    }
+  const handleStartTimeChange = (date: Date) => {
+    setLocalStartTime(date);
+    onStartTimeChange?.(date);
   };
 
-  const handleEndTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setLocalEndTime(value);
-    if (value) {
-      onEndTimeChange?.(new Date(value));
-    } else {
-      onEndTimeChange?.(null);
-    }
+  const handleEndTimeChange = (date: Date) => {
+    setLocalEndTime(date);
+    onEndTimeChange?.(date);
   };
 
   const setQuickRange = (type: "today" | "tomorrow" | "week") => {
@@ -104,40 +91,22 @@ export function TimeRangePicker({
         break;
     }
 
-    setLocalStartTime(formatDateTimeLocal(start));
-    setLocalEndTime(formatDateTimeLocal(end));
-    onStartTimeChange?.(start);
-    onEndTimeChange?.(end);
+    handleStartTimeChange(start);
+    handleEndTimeChange(end);
   };
 
   return (
     <div className={styles.timePicker}>
-      <div className={styles.timeRow}>
-        <label htmlFor="start-time" className={styles.timeLabel}>
-          开始时间
-        </label>
-        <input
-          id="start-time"
-          type="datetime-local"
-          className={styles.timeInput}
-          value={localStartTime}
-          onChange={handleStartTimeChange}
-        />
-      </div>
-
-      <div className={styles.timeRow}>
-        <label htmlFor="end-time" className={styles.timeLabel}>
-          结束时间
-        </label>
-        <input
-          id="end-time"
-          type="datetime-local"
-          className={styles.timeInput}
-          value={localEndTime}
-          onChange={handleEndTimeChange}
-        />
-      </div>
-
+      <DateTimeRow
+        label="开始时间"
+        value={localStartTime}
+        onChange={handleStartTimeChange}
+      />
+      <DateTimeRow
+        label="结束时间"
+        value={localEndTime}
+        onChange={handleEndTimeChange}
+      />
       <div className={styles.quickButtons}>
         <button type="button" onClick={() => setQuickRange("today")}>
           今天
@@ -151,13 +120,4 @@ export function TimeRangePicker({
       </div>
     </div>
   );
-}
-
-function formatDateTimeLocal(date: Date): string {
-  const year = date.getFullYear();
-  const month = (date.getMonth() + 1).toString().padStart(2, "0");
-  const day = date.getDate().toString().padStart(2, "0");
-  const hours = date.getHours().toString().padStart(2, "0");
-  const minutes = date.getMinutes().toString().padStart(2, "0");
-  return `${year}-${month}-${day}T${hours}:${minutes}`;
 }

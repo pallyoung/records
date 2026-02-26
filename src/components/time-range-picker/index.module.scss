@@ -2,32 +2,7 @@
 .timePicker {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
-}
-
-.timeRow {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-}
-
-.timeLabel {
-  font-size: 13px;
-  color: var(--text-muted);
-}
-
-.timeInput {
-  padding: 10px 12px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  font-size: 15px;
-  background: var(--bg-primary);
-  color: var(--text-primary);
-
-  &:focus {
-    outline: none;
-    border-color: var(--accent);
-  }
+  gap: var(--space-4);
 }
 
 .quickButtons {
