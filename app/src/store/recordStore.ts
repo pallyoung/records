@@ -7,8 +7,12 @@ import {
   useRelaxValue,
   RelaxProvider,
 } from "@relax-state/react";
-
 import { action, type Store } from "@relax-state/react";
+import { v4 as uuidv4 } from "uuid";
+import { getApiBaseUrl } from "../services/api/client";
+import { session } from "../services/auth/session";
+import { syncQueue } from "../services/sync/syncQueue";
+import { recordToPayload } from "../services/sync/recordTaskMap";
 
 // 创建状态描述符
 const recordsState = state<Record[]>([], "records");
@@ -125,7 +129,7 @@ const searchAction = action<string, void>(
 // 导出 actions (保持向后兼容)
 export const recordActions = {
   loadRecords: () => loadRecordsAction(store),
-  addRecord: (data: Omit<Record, "id" | "createdAt" | "updatedAt">) =>
+  addRecord: (data: Omit<Record, "id" | "createdAt" | "updatedAt" | "version">) =>
     addRecordAction(store, data),
   updateRecord: (id: string, data: Partial<Record>) =>
     updateRecordAction(store, { id, data }),
