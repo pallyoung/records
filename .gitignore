@@ -29,3 +29,9 @@ docs/plans
 # Go build output (e.g. go build -o api ./cmd/api)
 server/api
 server/bin/
+
+# Build and cache
+coverage
+*.tsbuildinfo
+.vite
+.turbo
