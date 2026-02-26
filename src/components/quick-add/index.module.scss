@@ -32,8 +32,8 @@
 
 /* 标题 */
 .sheetTitle {
-  font-size: 20px;
-  font-weight: 600;
+  font-size: var(--text-lg);
+  font-weight: 400;
   color: var(--text-primary);
   margin: 0 0 var(--space-3);
   text-align: center;
@@ -51,7 +51,7 @@
   padding: 12px;
   border: none;
   border-radius: var(--radius-md);
-  font-size: 17px;
+  font-size: var(--text-lg);
   background: var(--bg-primary);
   resize: none;
   font-family: inherit;
@@ -80,7 +80,7 @@
 }
 
 .categoryLabel {
-  font-size: 13px;
+  font-size: var(--text-sm);
   color: var(--text-muted);
   margin-bottom: var(--space-2);
 }
@@ -96,7 +96,7 @@
   border: none;
   border-radius: var(--radius-sm);
   background: var(--bg-primary);
-  font-size: 14px;
+  font-size: var(--text-base);
   color: var(--text-primary);
   cursor: pointer;
   transition: all 0.15s ease;
@@ -130,7 +130,7 @@
   border: none;
   background: transparent;
   text-align: left;
-  font-size: 15px;
+  font-size: var(--text-base);
   color: var(--text-primary);
   cursor: pointer;
 
@@ -141,7 +141,7 @@
 
 .dropdownEmpty {
   padding: 12px 16px;
-  font-size: 14px;
+  font-size: var(--text-base);
   color: var(--text-muted);
   text-align: center;
 }
@@ -151,7 +151,7 @@
   border: none;
   border-radius: var(--radius-sm);
   background: var(--bg-primary);
-  font-size: 14px;
+  font-size: var(--text-base);
   color: var(--text-primary);
   cursor: pointer;
   transition: all 0.15s ease;
@@ -176,8 +176,8 @@
   flex: 1;
   padding: 14px;
   border-radius: var(--radius-md);
-  font-size: 17px;
-  font-weight: 500;
+  font-size: var(--text-lg);
+  font-weight: 300;
   cursor: pointer;
   transition: all 0.15s ease;
   border: none;
