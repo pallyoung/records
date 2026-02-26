@@ -82,16 +82,28 @@ func main() {
 	}
 	syncHandler := &sync.Handler{Service: syncSvc, Metrics: syncMetrics}
 
+	var fileRepo storage.FileRepository
+	if db != nil {
+		fileRepo = storage.NewPostgresFileRepo(db)
+	} else {
+		fileRepo = storage.NewInMemoryFileRepo()
+	}
 	storageSvc := &storage.Service{
 		Presigner: &storage.MockPresigner{},
-		Repo:      storage.NewInMemoryFileRepo(),
+		Repo:      fileRepo,
 		Bucket:    "attachments",
 	}
 	storageHandler := &storage.Handler{Service: storageSvc}
 
+	var aiLogRepo ai.RequestLogRepo
+	if db != nil {
+		aiLogRepo = ai.NewPostgresRequestLogRepo(db)
+	} else {
+		aiLogRepo = ai.NewInMemoryRequestLogRepo()
+	}
 	aiSvc := &ai.Service{
 		Provider: &ai.MockProvider{Content: ""},
-		LogRepo:  ai.NewInMemoryRequestLogRepo(),
+		LogRepo:  aiLogRepo,
 		Timeout:  30 * time.Second,
 	}
 	aiHandler := &ai.Handler{Service: aiSvc}
