@@ -21,9 +21,12 @@ import type { Record } from "./types";
 import { IconAdd } from "./shared/icons";
 import { ToastContainer } from "./components/toast/ToastContainer";
 import { ConfirmDialog, confirm } from "./components/confirm/ConfirmDialog";
+import {
+  readAppSettings,
+  writeAppSettings,
+  type ThemeMode,
+} from "./store/appSettings";
 import "./App.css";
-
-type ThemeMode = "light" | "dark" | "auto";
 
 // 登录检查组件 - 在 RelaxProvider 外部检查认证状态
 function AuthCheck({ children }: { children: React.ReactNode }) {
@@ -55,7 +58,7 @@ function AppContent() {
   const [showQuickAdd, setShowQuickAdd] = useState(false);
   const [showTaskDetail, setShowTaskDetail] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
-  const [theme, setTheme] = useState<ThemeMode>("auto");
+  const [theme, setTheme] = useState<ThemeMode>(() => readAppSettings().theme);
 
   // 应用主题到 document
   useEffect(() => {
@@ -70,6 +73,7 @@ function AppContent() {
 
   const handleThemeChange = (newTheme: ThemeMode) => {
     setTheme(newTheme);
+    writeAppSettings({ ...readAppSettings(), theme: newTheme });
   };
 
   useEffect(() => {

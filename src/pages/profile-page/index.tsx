@@ -5,6 +5,7 @@ import { confirm } from "../../components/confirm/ConfirmDialog";
 import {
   IconExport,
   IconInfo,
+  IconLogout,
   IconNotification,
   IconTheme,
 } from "../../shared/icons";
@@ -169,8 +170,9 @@ export function ProfilePage(props?: PageProps) {
     return { total, completed, completionRate, streakDays };
   }, [records]);
 
-  // 获取用户名首字母
-  const userInitial = "W"; // 默认用户名首字母
+  // 获取用户名和首字母
+  const displayName = currentUser?.username ?? "用户";
+  const userInitial = displayName.charAt(0).toUpperCase();
 
   // 处理主题变化
   const handleThemeChange = (newTheme: "light" | "dark" | "auto") => {
@@ -184,29 +186,10 @@ export function ProfilePage(props?: PageProps) {
         <h1 className={styles.headerTitle}>我的</h1>
       </div>
 
-      {/* User Section - 显示已登录用户信息 */}
-      {currentUser && (
-        <div className={styles.userSection}>
-          <div className={styles.avatar}>
-            {currentUser.username.charAt(0).toUpperCase()}
-          </div>
-          <div className={styles.userInfo}>
-            <div className={styles.username}>{currentUser.username}</div>
-            <button
-              type="button"
-              className={styles.logoutBtn}
-              onClick={handleLogout}
-            >
-              退出登录
-            </button>
-          </div>
-        </div>
-      )}
-
       {/* Profile Header */}
       <div className={styles.profileHeader}>
         <div className={styles.profileAvatar}>{userInitial}</div>
-        <div className={styles.profileName}>用户</div>
+        <div className={styles.profileName}>{displayName}</div>
         <div className={styles.profileStats}>
           <div className={styles.profileStat}>
             <div className={styles.profileStatValue}>{stats.total}</div>
@@ -260,6 +243,13 @@ export function ProfilePage(props?: PageProps) {
             icon={<IconInfo size={20} />}
             label="关于"
             right={<span className={styles.settingsArrow}>&#8250;</span>}
+          />
+
+          {/* 账号 */}
+          <SettingsItem
+            icon={<IconLogout size={20} />}
+            label="退出登录"
+            onClick={handleLogout}
           />
         </div>
       </div>

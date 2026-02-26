@@ -10,6 +10,7 @@ import {
   Info,
   MagnifyingGlass,
   Plus,
+  SignOut,
   SunDim,
   User,
 } from "@phosphor-icons/react";
@@ -67,4 +68,8 @@ export function IconExport(props: AppIconProps) {
 
 export function IconInfo(props: AppIconProps) {
   return <Info {...BASE_ICON_PROPS} {...props} />;
+}
+
+export function IconLogout(props: AppIconProps) {
+  return <SignOut {...BASE_ICON_PROPS} {...props} />;
 }
