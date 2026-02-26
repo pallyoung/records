@@ -64,10 +64,19 @@ func main() {
 
 	syncTaskRepo := sync.TaskRepoFromTasksRepo(taskRepo)
 	syncMetrics := &observability.MemMetrics{}
+	var cursorRepo sync.CursorRepo
+	var changeLogRepo sync.ChangeLogRepo
+	if db != nil {
+		cursorRepo = sync.NewPostgresCursorRepo(db)
+		changeLogRepo = sync.NewPostgresChangeLogRepo(db)
+	} else {
+		cursorRepo = sync.NewInMemoryCursorRepo()
+		changeLogRepo = sync.NewInMemoryChangeLogRepo()
+	}
 	syncSvc := &sync.Service{
 		TaskRepo:       syncTaskRepo,
-		CursorRepo:     sync.NewInMemoryCursorRepo(),
-		ChangeLogRepo:  sync.NewInMemoryChangeLogRepo(),
+		CursorRepo:     cursorRepo,
+		ChangeLogRepo:  changeLogRepo,
 		Metrics:        syncMetrics,
 		FailureTracker: sync.NewMemFailureTracker(0), // 0 = default budget 3
 	}
