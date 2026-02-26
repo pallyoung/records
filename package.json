@@ -4,12 +4,12 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "biome lint .",
-    "format": "biome format --write .",
+    "dev": "vite --config app/vite.config.ts",
+    "build": "tsc -b app/tsconfig.json && vite build --config app/vite.config.ts",
+    "lint": "biome lint app/src app/vite.config.ts",
+    "format": "biome format --write app/src app/vite.config.ts",
     "prepare": "husky",
-    "preview": "vite preview"
+    "preview": "vite preview --config app/vite.config.ts"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",

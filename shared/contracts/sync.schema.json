@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://records.local/schemas/sync.schema.json",
+  "title": "Sync Operation",
+  "type": "object",
+  "required": ["op_id", "entity_id", "operation", "base_version"],
+  "properties": {
+    "op_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "entity_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "operation": {
+      "type": "string",
+      "enum": ["create", "update", "delete"]
+    },
+    "base_version": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "payload": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "cursor": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

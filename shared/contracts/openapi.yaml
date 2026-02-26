@@ -1,0 +1,297 @@
+openapi: 3.0.3
+info:
+  title: Records API
+  version: 0.1.0
+servers:
+  - url: http://localhost:8080
+paths:
+  /auth/register:
+    post:
+      summary: Register user account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        "201":
+          description: Registered
+  /auth/login:
+    post:
+      summary: Login with credentials
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        "200":
+          description: Tokens issued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthTokenResponse'
+  /auth/refresh:
+    post:
+      summary: Refresh access token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshRequest'
+      responses:
+        "200":
+          description: Refreshed token pair
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthTokenResponse'
+  /auth/logout:
+    post:
+      summary: Revoke refresh token
+      responses:
+        "204":
+          description: Logged out
+  /files/presign-upload:
+    post:
+      summary: Issue signed upload payload for OSS
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PresignUploadRequest'
+      responses:
+        "200":
+          description: Signed upload payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PresignUploadResponse'
+  /files/complete:
+    post:
+      summary: Finalize uploaded file metadata
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FileCompleteRequest'
+      responses:
+        "201":
+          description: File metadata created
+  /files/{id}/download-url:
+    get:
+      summary: Issue signed private download URL
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Signed download URL
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DownloadURLResponse'
+  /sync/push:
+    post:
+      summary: Push local operation batch
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SyncPushRequest'
+      responses:
+        "200":
+          description: Push result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SyncPushResponse'
+  /sync/pull:
+    get:
+      summary: Pull server changes after cursor
+      parameters:
+        - name: cursor
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 200
+      responses:
+        "200":
+          description: Pull result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SyncPullResponse'
+  /ai/chat:
+    post:
+      summary: Chat endpoint through server-side AI adapter
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AIChatRequest'
+      responses:
+        "200":
+          description: Model response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AIChatResponse'
+
+components:
+  schemas:
+    RegisterRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+    RefreshRequest:
+      type: object
+      required: [refresh_token]
+      properties:
+        refresh_token:
+          type: string
+    AuthTokenResponse:
+      type: object
+      required: [access_token, refresh_token]
+      properties:
+        access_token:
+          type: string
+        refresh_token:
+          type: string
+    PresignUploadRequest:
+      type: object
+      required: [filename, mime_type, size]
+      properties:
+        filename:
+          type: string
+        mime_type:
+          type: string
+        size:
+          type: integer
+    PresignUploadResponse:
+      type: object
+      required: [url, method, headers, object_key]
+      properties:
+        url:
+          type: string
+        method:
+          type: string
+        headers:
+          type: object
+          additionalProperties:
+            type: string
+        object_key:
+          type: string
+    FileCompleteRequest:
+      type: object
+      required: [object_key, size, mime_type]
+      properties:
+        object_key:
+          type: string
+        size:
+          type: integer
+        mime_type:
+          type: string
+        sha256:
+          type: string
+    DownloadURLResponse:
+      type: object
+      required: [url, expires_in_seconds]
+      properties:
+        url:
+          type: string
+        expires_in_seconds:
+          type: integer
+    SyncOperation:
+      type: object
+      required: [op_id, entity_id, operation, base_version]
+      properties:
+        op_id:
+          type: string
+        entity_id:
+          type: string
+        operation:
+          type: string
+          enum: [create, update, delete]
+        base_version:
+          type: integer
+        payload:
+          type: object
+          additionalProperties: true
+    SyncPushRequest:
+      type: object
+      required: [operations]
+      properties:
+        operations:
+          type: array
+          items:
+            $ref: '#/components/schemas/SyncOperation'
+    SyncPushResponse:
+      type: object
+      required: [applied, conflicts, new_cursor]
+      properties:
+        applied:
+          type: array
+          items:
+            type: string
+        conflicts:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        new_cursor:
+          type: string
+    SyncPullResponse:
+      type: object
+      required: [changes, next_cursor]
+      properties:
+        changes:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        next_cursor:
+          type: string
+    AIChatRequest:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string
+        provider:
+          type: string
+        model:
+          type: string
+    AIChatResponse:
+      type: object
+      required: [content]
+      properties:
+        content:
+          type: string
