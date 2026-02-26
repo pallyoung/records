@@ -137,6 +137,8 @@ func main() {
 		StorageHandler: storageHandler,
 		AIHandler:      aiHandler,
 		JWTSecret:      cfg.JWTSecret,
+		CORSOrigins:    cfg.CORSOrigins,
+		RateLimitAuth:  cfg.RateLimitAuth,
 	})
 
 	addr := ":" + cfg.Port

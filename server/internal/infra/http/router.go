@@ -18,9 +18,11 @@ type RouterDeps struct {
 	StorageHandler *storage.Handler
 	AIHandler      *ai.Handler
 	JWTSecret      string
+	CORSOrigins    string // comma-separated; "*" = allow all
+	RateLimitAuth  int    // max per IP per minute for auth; 0 = disabled
 }
 
-// NewRouter returns the API router.
+// NewRouter returns the API router wrapped with CORS, security headers, and optional rate limit.
 func NewRouter(deps RouterDeps) http.Handler {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /healthz", HealthHandler)
@@ -60,5 +62,14 @@ func NewRouter(deps RouterDeps) http.Handler {
 		mux.Handle("POST /ai/chat", wrap(http.HandlerFunc(deps.AIHandler.Chat)))
 	}
 
-	return mux
+	h := http.Handler(mux)
+	if deps.RateLimitAuth > 0 {
+		limiter := NewAuthRateLimiter(deps.RateLimitAuth, []string{"/auth/login", "/auth/register"})
+		h = limiter.Middleware(h)
+	}
+	h = SecurityHeaders(h)
+	if deps.CORSOrigins != "" {
+		h = CORS(deps.CORSOrigins)(h)
+	}
+	return h
 }

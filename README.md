@@ -121,6 +121,8 @@ bash scripts/generate-types.sh
 | 后端     | `JWT_SECRET`   | JWT 签名密钥，必填       |
 | 后端     | `DATABASE_URL` | PostgreSQL 连接串；配置后启用持久化 |
 | 后端     | `REDIS_URL`    | Redis 连接串（可选，用于刷新令牌存储） |
+| 后端     | `CORS_ORIGINS` | CORS 允许来源（逗号分隔；`*`=全部；空=不启用） |
+| 后端     | `RATE_LIMIT_AUTH` | 登录/注册每 IP 每分钟请求上限（0=不限制） |
 
 更多后端配置见 `server/.env.example`。
 
