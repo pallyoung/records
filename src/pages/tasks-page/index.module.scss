@@ -16,8 +16,8 @@
 }
 
 .headerTitle {
-  font-size: 28px;
-  font-weight: 600;
+  font-size: var(--text-xl);
+  font-weight: 300;
   color: var(--text-primary);
   margin: 0;
   line-height: 1.2;
@@ -36,7 +36,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-size: var(--text-lg);
   cursor: pointer;
 }
 
@@ -63,7 +63,7 @@
   flex: 1;
   border: none;
   background: transparent;
-  font-size: 15px;
+  font-size: var(--text-base);
   color: var(--text-primary);
   outline: none;
 }
@@ -73,7 +73,7 @@
 }
 
 .searchFilterBtn {
-  font-size: 13px;
+  font-size: var(--text-sm);
   color: var(--accent);
   cursor: pointer;
   flex-shrink: 0;
@@ -97,8 +97,8 @@
 .filterPill {
   padding: var(--space-2) var(--space-3);
   border-radius: 20px;
-  font-size: 13px;
-  font-weight: 500;
+  font-size: var(--text-sm);
+  font-weight: 300;
   border: 1px solid rgba(0, 0, 0, 0.1);
   background: var(--bg-card);
   color: var(--text-secondary);
@@ -139,8 +139,8 @@
 }
 
 .timelineDate {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: var(--text-base);
+  font-weight: 400;
   color: var(--text-secondary);
   margin-bottom: var(--space-2);
   padding-left: var(--space-1);
@@ -199,8 +199,8 @@
 }
 
 .taskTitle {
-  font-size: 15px;
-  font-weight: 400;
+  font-size: var(--text-base);
+  font-weight: 300;
   color: var(--text-primary);
   margin: 0;
   line-height: 1.4;
@@ -221,7 +221,7 @@
 }
 
 .taskTag {
-  font-size: 11px;
+  font-size: var(--text-xs);
   padding: 2px 6px;
   border-radius: var(--radius-sm);
   white-space: nowrap;
@@ -253,7 +253,7 @@
 }
 
 .taskDate {
-  font-size: 12px;
+  font-size: var(--text-sm);
   color: var(--text-tertiary);
 }
 
@@ -335,12 +335,12 @@
 }
 
 .emptyIcon {
-  font-size: 48px;
+  font-size: var(--text-2xl);
   margin-bottom: var(--space-3);
 }
 
 .emptyText {
-  font-size: 15px;
+  font-size: var(--text-base);
   color: var(--text-secondary);
 }
 
@@ -351,10 +351,10 @@
   }
 
   .headerTitle {
-    font-size: 34px;
+    font-size: var(--text-2xl);
   }
 
   .taskTitle {
-    font-size: 16px;
+    font-size: var(--text-lg);
   }
 }
