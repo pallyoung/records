@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { useRelaxValue, recordsState } from "../../store/recordStore";
+import { authActions, store, currentUserState } from "../../store/authStore";
 import {
   IconExport,
   IconInfo,
@@ -145,6 +146,16 @@ export function ProfilePage(props?: PageProps) {
   const theme = props?.currentTheme ?? "auto";
   const onThemeChange = props?.onThemeChange;
 
+  // 获取当前用户
+  const currentUser = store.get(currentUserState);
+
+  // 添加登出处理函数
+  const handleLogout = () => {
+    if (confirm("确定要退出登录吗？")) {
+      authActions.logout();
+    }
+  };
+
   // 计算统计数据
   const stats = useMemo(() => {
     const total = records.length;
@@ -170,6 +181,25 @@ export function ProfilePage(props?: PageProps) {
       <div className={styles.header}>
         <h1 className={styles.headerTitle}>我的</h1>
       </div>
+
+      {/* User Section - 显示已登录用户信息 */}
+      {currentUser && (
+        <div className={styles.userSection}>
+          <div className={styles.avatar}>
+            {currentUser.username.charAt(0).toUpperCase()}
+          </div>
+          <div className={styles.userInfo}>
+            <div className={styles.username}>{currentUser.username}</div>
+            <button
+              type="button"
+              className={styles.logoutBtn}
+              onClick={handleLogout}
+            >
+              退出登录
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Profile Header */}
       <div className={styles.profileHeader}>

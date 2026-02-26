@@ -20,6 +20,55 @@
   line-height: 1.2;
 }
 
+/* ==================== User Section ==================== */
+.userSection {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: var(--bg-card);
+  border-radius: 16px;
+  margin-bottom: 20px;
+}
+
+.avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #007aff, #5856d6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.userInfo {
+  flex: 1;
+}
+
+.username {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.logoutBtn {
+  padding: 6px 12px;
+  font-size: 13px;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  cursor: pointer;
+
+  &:hover {
+    background: var(--bg-primary);
+  }
+}
+
 /* ==================== Profile Header ==================== */
 .profileHeader {
   display: flex;
