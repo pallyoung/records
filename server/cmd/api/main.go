@@ -54,7 +54,12 @@ func main() {
 	}
 	authHandler := &auth.Handler{Service: authSvc}
 
-	taskRepo := tasks.NewInMemoryRepo()
+	var taskRepo tasks.Repository
+	if db != nil {
+		taskRepo = tasks.NewPostgresRepo(db)
+	} else {
+		taskRepo = tasks.NewInMemoryRepo()
+	}
 	tasksHandler := &tasks.Handler{Service: &tasks.Service{Repo: taskRepo}}
 
 	syncTaskRepo := sync.TaskRepoFromTasksRepo(taskRepo)
