@@ -27,6 +27,7 @@ import {
   type ThemeMode,
 } from "./store/appSettings";
 import { startSyncEngine, stopSyncEngine } from "./services/sync/syncEngine";
+import { applyPullChanges } from "./services/sync/applyPullChanges";
 import { session } from "./services/auth/session";
 import "./App.css";
 
@@ -58,7 +59,9 @@ function AppContent() {
 
   useEffect(() => {
     if (session.hasTokens()) {
-      startSyncEngine();
+      startSyncEngine((changes) => {
+        applyPullChanges(changes).then(() => recordActions.loadRecords());
+      });
       return () => stopSyncEngine();
     }
   }, []);
