@@ -11,8 +11,8 @@
 }
 
 .headerTitle {
-  font-size: 34px;
-  font-weight: 700;
+  font-size: var(--text-2xl);
+  font-weight: 300;
   color: var(--text-primary);
   margin: 0;
 }
@@ -31,8 +31,8 @@
   border: none;
   background: var(--bg-card);
   color: var(--text-secondary);
-  font-size: 14px;
-  font-weight: 500;
+  font-size: var(--text-sm);
+  font-weight: 300;
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: var(--shadow-sm);
@@ -49,8 +49,8 @@
 }
 
 .sectionTitle {
-  font-size: 20px;
-  font-weight: 600;
+  font-size: var(--text-lg);
+  font-weight: 400;
   color: var(--text-primary);
   margin-bottom: var(--space-3);
 }
@@ -106,8 +106,8 @@
 }
 
 .donutPercent {
-  font-size: 16px;
-  font-weight: 600;
+  font-size: var(--text-lg);
+  font-weight: 400;
   color: var(--text-primary);
 }
 
@@ -125,8 +125,8 @@
 }
 
 .statValue {
-  font-size: 28px;
-  font-weight: 600;
+  font-size: var(--text-xl);
+  font-weight: 300;
   color: var(--text-primary);
 }
 
@@ -139,7 +139,7 @@
 }
 
 .statLabel {
-  font-size: 13px;
+  font-size: var(--text-sm);
   color: var(--text-secondary);
 }
 
@@ -165,18 +165,18 @@
 
 .statLabel {
   flex: 1;
-  font-size: 15px;
+  font-size: var(--text-base);
   color: var(--text-primary);
 }
 
 .statCount {
-  font-size: 15px;
-  font-weight: 600;
+  font-size: var(--text-base);
+  font-weight: 400;
   color: var(--text-primary);
 }
 
 .statPercent {
-  font-size: 13px;
+  font-size: var(--text-sm);
   color: var(--text-secondary);
   min-width: 40px;
   text-align: right;
@@ -202,13 +202,13 @@
 }
 
 .tagBarLabel {
-  font-size: 14px;
+  font-size: var(--text-base);
   color: var(--text-primary);
 }
 
 .tagBarCount {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: var(--text-base);
+  font-weight: 400;
   color: var(--text-primary);
 }
 
@@ -256,7 +256,7 @@
 }
 
 .trendLabel {
-  font-size: 12px;
+  font-size: var(--text-sm);
   color: var(--text-secondary);
   margin-top: var(--space-2);
 }
@@ -266,5 +266,5 @@
   text-align: center;
   padding: var(--space-4);
   color: var(--text-secondary);
-  font-size: 14px;
+  font-size: var(--text-base);
 }
