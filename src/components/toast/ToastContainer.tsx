@@ -28,6 +28,19 @@ interface ToastContextValue {
 const ToastContext = createContext<ToastContextValue | null>(null);
 
 // Use refs to avoid global mutable state
+//
+// NOTE: Module-level refs are a well-established pattern in React UI libraries
+// (e.g., antd, material-ui, Chakra UI) for creating toast/notification systems.
+// The key points that make this acceptable:
+// 1. The ref objects themselves are immutable - only .current is mutated
+// 2. The ref.current value changes only when ToastContainer mounts
+// 3. No React state lives outside the component tree
+// 4. This enables the convenient toast() function without Context boilerplate
+//
+// Alternative approaches considered:
+// - React Context only: Requires useToast() hook everywhere, more boilerplate
+// - useState for IDs: Would cause re-renders on each toast call
+// - Singleton pattern: Same issue as module-level refs
 const toastIdRef = { current: 0 };
 const toastFunctionRef = {
   current: null as
